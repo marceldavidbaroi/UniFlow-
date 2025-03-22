@@ -5,16 +5,21 @@
         <div class="text-h2 text-heading-shadow text-center">LOGIN</div>
       </q-card-section>
       <q-card-section>
-        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-lg">
+        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sm">
           <!-- email -->
           <q-input
             outlined
             v-model="email"
+            type="email"
             placeholder="Email"
             :dense="dense"
             color="primary"
             input-style="color: #d7d8d3;"
             placeholder-style="color: #d7d8d3;"
+            :rules="[
+              (val) => !!val || 'Email is required',
+              (val) => /.+@.+\..+/.test(val) || 'Please enter a valid email address',
+            ]"
           >
             <template v-slot:prepend>
               <q-icon name="fa-solid fa-envelope" color="accent" />
@@ -34,12 +39,17 @@
           <q-input
             outlined
             v-model="password"
+            type="password"
             placeholder="Password"
             :dense="dense"
             class=""
             color="primary"
             input-style="color: #d7d8d3;"
             placeholder-style="color: #d7d8d3;"
+            :rules="[
+              (val) => !!val || 'Password is required',
+              (val) => val.length >= 6 || 'Password must be at least 6 characters long',
+            ]"
           >
             <template v-slot:prepend>
               <q-icon name="fa-solid fa-key" color="accent" />
@@ -72,7 +82,7 @@
 
       <q-card-section class="q-pt-lg text-body2 text-center text-accent">
         Don't have Account??
-        <span class="cursor-pointer text-heading-solid text-h6" @click="router.push('register')"
+        <span class="cursor-pointer text-heading-solid text-h6" @click="router.push('signup')"
           >Register Now</span
         >
       </q-card-section>

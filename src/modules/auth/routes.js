@@ -1,7 +1,10 @@
 export default [
   {
-    path: '/',
+    path: '/auth',
     component: () => import('src/layouts/AuthLayout.vue'),
-    children: [{ path: 'login', component: () => import('./pages/loginIndex.vue') }],
+    children: [
+      { path: 'login', component: () => import('./pages/LoginIndex.vue') },
+      { path: 'signup', component: () => import('./pages/SignupIndex.vue') },
+    ],
   },
 ]
