@@ -127,10 +127,9 @@
   background-color: #d7d8d3;
   background-image: url('/public/images/home-description-banner.png');
   background-size: cover;
-  width: 100%; /* Adjust as needed */
-  height: fit-content; /* Adjust as needed */
+  width: 100%;
+  height: fit-content;
   background-position: center;
   background-repeat: no-repeat;
-  // border-top: 3px dashed #272727;
 }
 </style>
