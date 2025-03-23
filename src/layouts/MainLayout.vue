@@ -26,13 +26,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer class="bg-accent text-black">
-      <q-toolbar>
-        <q-toolbar-title>
-          <div>this is the footer</div>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>
+    <FooterCard />
   </q-layout>
 </template>
 
@@ -40,6 +34,7 @@
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 import ClockCard from 'src/components/ClockCard.vue'
+import FooterCard from 'src/components/FooterCard.vue'
 
 const linksList = [
   {
