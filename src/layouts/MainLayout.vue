@@ -8,7 +8,9 @@
           <q-img src="/public//images/Logo-nav.svg" height="50px" width="170px" />
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <ClockCard />
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -37,6 +39,7 @@
 <script setup>
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
+import ClockCard from 'src/components/ClockCard.vue'
 
 const linksList = [
   {
