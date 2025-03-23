@@ -1,11 +1,16 @@
 <template>
   <q-page class="flex flex-center">
     <q-card class="my-card q-pa-lg" style="max-width: 600px; width: 520px; border-radius: 8%">
-      <q-card-section class="q-pt-md q-pb-xl">
-        <div class="text-h2 text-heading-shadow text-center">SIGNUP</div>
+      <q-card-section class="q-pt-md q-pb-sm">
+        <div
+          class="cursor-pointer text-h2 text-heading-shadow text-center"
+          @click="router.push('/home')"
+        >
+          SIGNUP
+        </div>
       </q-card-section>
       <q-card-section>
-        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sm">
+        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-xs">
           <!-- user name -->
           <q-input
             outlined
@@ -14,12 +19,12 @@
             placeholder="Full Name"
             :dense="dense"
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[(val) => !!val || 'Full Name is required']"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-regular fa-user" color="accent" />
+              <q-icon name="fa-regular fa-user" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -27,7 +32,7 @@
                 name="fa-solid fa-xmark"
                 @click="userName = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -40,15 +45,15 @@
             placeholder="Email"
             :dense="dense"
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[
               (val) => !!val || 'Email is required',
               (val) => /.+@.+\..+/.test(val) || 'Please enter a valid email address',
             ]"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-regular fa-envelope" color="accent" />
+              <q-icon name="fa-regular fa-envelope" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -56,7 +61,7 @@
                 name="fa-solid fa-xmark"
                 @click="email = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -68,12 +73,12 @@
             placeholder="Batch"
             :dense="dense"
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[(val) => !!val || 'Batch is required']"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-solid fa-user-group" color="accent" />
+              <q-icon name="fa-solid fa-user-group" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -81,7 +86,7 @@
                 name="fa-solid fa-xmark"
                 @click="batch = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -94,12 +99,12 @@
             placeholder="ID Ex: XXX-XXX-XXXX"
             :dense="dense"
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[(val) => !!val || 'ID is required']"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-regular fa-id-card" color="accent" />
+              <q-icon name="fa-regular fa-id-card" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -107,7 +112,7 @@
                 name="fa-solid fa-xmark"
                 @click="id = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -122,13 +127,13 @@
             color="primary"
             class="text-primary"
             label-color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[(val) => !!val || 'Deparment  is required']"
             menu-class="black-dropdown"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-regular fa-building" color="accent" />
+              <q-icon name="fa-regular fa-building" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -136,7 +141,7 @@
                 name="fa-solid fa-xmark"
                 @click="department = 'Department'"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-select>
@@ -151,15 +156,15 @@
             :dense="dense"
             class=""
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[
               (val) => !!val || 'Password is required',
               (val) => val.length >= 6 || 'Password must be at least 6 characters long',
             ]"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-solid fa-key" color="accent" />
+              <q-icon name="fa-solid fa-key" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -167,7 +172,7 @@
                 name="fa-solid fa-xmark"
                 @click="password = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -181,15 +186,15 @@
             :dense="dense"
             class=""
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[
               (val) => !!val || 'Password is required',
               (val) => val === password || 'Password do not match',
             ]"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-solid fa-key" color="accent" />
+              <q-icon name="fa-solid fa-key" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -197,7 +202,7 @@
                 name="fa-solid fa-xmark"
                 @click="confirmPassword = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -217,9 +222,9 @@
         </q-form>
       </q-card-section>
 
-      <q-card-section class="q-pt-lg text-body2 text-center text-accent">
+      <q-card-section class="q-pt-lg text-body2 text-center text-dark">
         Have Account??
-        <span class="cursor-pointer text-heading-solid text-h6" @click="router.push('login')"
+        <span class="cursor-pointer hover-transform text-h6" @click="router.push('login')"
           >Login</span
         >
       </q-card-section>
@@ -276,15 +281,30 @@ const onSubmit = () => {
   backdrop-filter: blur(10px);
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
 }
 
 .text-heading-shadow {
   font-family: 'Londrina Shadow', cursive;
   color: #c29d48;
+  transition: transform 0.3s ease-in-out;
 }
+.text-heading-shadow:hover {
+  transform: scale(1.2);
+}
+
 .text-heading-solid {
   font-family: 'Londrina Solid', cursive;
   color: #c29d48;
+}
+
+.hover-transform {
+  font-family: 'Londrina Solid', cursive;
+  color: #c29d48;
+  display: inline-block;
+  transition: transform 0.3s ease-in-out;
+}
+.hover-transform:hover {
+  transform: scale(1.2);
 }
 </style>

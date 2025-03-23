@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-dark q-py-sm">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
@@ -12,7 +12,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer v-model="leftDrawerOpen" show-if-above elevated class="bg-accent">
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
 
@@ -20,9 +20,17 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="bg-accent">
       <router-view />
     </q-page-container>
+
+    <q-footer class="bg-accent text-black">
+      <q-toolbar>
+        <q-toolbar-title>
+          <div>this is the footer</div>
+        </q-toolbar-title>
+      </q-toolbar>
+    </q-footer>
   </q-layout>
 </template>
 

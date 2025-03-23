@@ -10,8 +10,8 @@
 
 <style scoped lang="scss">
 .auth-layout {
-  background-color: #f5f5f5;
-  background-image: url('/public//images/auth-bg-2.svg');
+  background-color: #d7d8d3;
+  background-image: url('/public//images/auth-bg-3-light.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
