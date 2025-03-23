@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-dark q-py-sm">
-      <q-toolbar>
+    <q-header class="q-py-none" style="background: rgba(255, 255, 255, 0)">
+      <!-- <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
@@ -11,7 +11,8 @@
         <div>
           <ClockCard />
         </div>
-      </q-toolbar>
+      </q-toolbar> -->
+      <HeaderCard @toggle-drawer="toggleDrawer" />
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above elevated class="bg-accent">
@@ -33,8 +34,9 @@
 <script setup>
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-import ClockCard from 'src/components/ClockCard.vue'
+// import ClockCard from 'src/components/ClockCard.vue'
 import FooterCard from 'src/components/FooterCard.vue'
+import HeaderCard from 'src/components/HeaderCard.vue'
 
 const linksList = [
   {
@@ -65,7 +67,7 @@ const linksList = [
 
 const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer() {
+function toggleDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>

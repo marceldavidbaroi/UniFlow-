@@ -1,7 +1,8 @@
 <template>
   <q-card
     flat
-    class="q-py-none q-pr-sm q-ma-none flex flex-center bg-dark text-heading-shadow cursor-none"
+    class="q-py-none q-pr-sm q-ma-none flex flex-center text-heading-shadow cursor-none"
+    style="background: rgba(255, 255, 255, 0)"
   >
     <q-card-section class="q-pa-none">
       <div class="text-h6 text-primary">{{ time }}</div>
@@ -48,11 +49,11 @@ onBeforeUnmount(() => {
 }
 
 .text-heading-shadow {
-  font-family: 'Londrina Shadow', cursive;
+  font-family: 'Londrina Solid', cursive;
   color: #c29d48;
 }
 .text-heading-shadow:hover {
-  font-family: 'Londrina Solid', cursive;
+  font-family: 'Londrina Shadow', cursive;
   color: #c29d48;
 }
 </style>
