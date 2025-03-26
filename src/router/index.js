@@ -4,7 +4,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import auth from 'src/modules/auth/routes'
 import dashboard from 'src/modules/dashboard/routes'
 import home from 'src/modules/home/routes'
-const routes = [...auth, ...home, ...dashboard]
+import group from 'src/modules/group/routes'
+import session from 'src/modules/session/routes'
+const routes = [...auth, ...home, ...dashboard, ...group,...session]
 
 const router = createRouter({
   history: createWebHistory(),
