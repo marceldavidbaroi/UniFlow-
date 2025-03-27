@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { auth } from 'boot/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { registerUser, loginUser, logoutUser } from './actions'; // Fix import
+import { registerUser, loginUser, logoutUser } from './action'; // Fix import
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);

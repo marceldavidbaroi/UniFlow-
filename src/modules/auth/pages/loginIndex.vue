@@ -9,20 +9,21 @@
           <!-- email -->
           <q-input
             outlined
+            fill
             v-model="email"
             type="email"
             placeholder="Email"
             :dense="dense"
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[
               (val) => !!val || 'Email is required',
               (val) => /.+@.+\..+/.test(val) || 'Please enter a valid email address',
             ]"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-solid fa-envelope" color="accent" />
+              <q-icon name="fa-solid fa-envelope" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -30,7 +31,7 @@
                 name="fa-solid fa-xmark"
                 @click="email = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -38,21 +39,22 @@
           <!-- password -->
           <q-input
             outlined
+            fill
             v-model="password"
             type="password"
             placeholder="Password"
             :dense="dense"
             class=""
             color="primary"
-            input-style="color: #d7d8d3;"
-            placeholder-style="color: #d7d8d3;"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
             :rules="[
               (val) => !!val || 'Password is required',
               (val) => val.length >= 6 || 'Password must be at least 6 characters long',
             ]"
           >
             <template v-slot:prepend>
-              <q-icon name="fa-solid fa-key" color="accent" />
+              <q-icon name="fa-solid fa-key" color="dark" />
             </template>
             <template v-slot:append>
               <q-icon
@@ -60,7 +62,7 @@
                 name="fa-solid fa-xmark"
                 @click="password = ''"
                 class="cursor-pointer"
-                color="accent"
+                color="dark"
               />
             </template>
           </q-input>
@@ -80,7 +82,7 @@
         </q-form>
       </q-card-section>
 
-      <q-card-section class="q-pt-lg text-body2 text-center text-accent">
+      <q-card-section class="q-pt-lg text-body2 text-center text-dark">
         Don't have Account??
         <span class="cursor-pointer text-heading-solid text-h6" @click="router.push('signup')"
           >Register Now</span
@@ -93,13 +95,15 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from 'stores/auth-store'
 
+const authStore = useAuthStore()
 const router = useRouter()
 
-const email = ref('')
-const password = ref('')
+const email = ref('d@gmail.com')
+const password = ref('123123')
 const onSubmit = () => {
-  console.log('Form submitted with text:')
+  authStore.loginUser(email.value, password.value)
 }
 </script>
 

@@ -235,16 +235,19 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from 'stores/auth-store'
+
+const authStore = useAuthStore()
 
 const router = useRouter()
 
-const userName = ref('')
-const email = ref('')
-const batch = ref('')
-const id = ref('')
+const userName = ref('dd')
+const email = ref('d@gmail.com')
+const batch = ref('44')
+const id = ref('44')
 const department = ref('Department')
-const password = ref('')
-const confirmPassword = ref('')
+const password = ref('123123')
+const confirmPassword = ref('123123')
 
 const departmentOptions = ref([
   { label: 'Computer Science & Engineering', value: 'CSE' },
@@ -270,6 +273,14 @@ const departmentOptions = ref([
 ])
 
 const onSubmit = () => {
+  authStore.registerUser(
+    userName.value,
+    email.value,
+    batch.value,
+    id.value,
+    department.value,
+    password.value,
+  )
   console.log('Form submitted with text:')
 }
 </script>
