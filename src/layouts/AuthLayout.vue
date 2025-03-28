@@ -14,7 +14,6 @@
   background-image: url('/public//images/auth-bg-3-light.png');
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
+  height: 100%;
 }
 </style>
