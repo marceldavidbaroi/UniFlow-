@@ -17,6 +17,7 @@
             v-model="userName"
             type="text"
             placeholder="Full Name"
+            label="Full Name"
             :dense="dense"
             color="primary"
             input-style="color: #272727;"
@@ -42,6 +43,7 @@
             outlined
             v-model="email"
             type="text"
+            label="Email"
             placeholder="Email"
             :dense="dense"
             color="primary"
@@ -65,37 +67,13 @@
               />
             </template>
           </q-input>
-          <!-- batch-->
-          <q-input
-            outlined
-            v-model="batch"
-            type="text"
-            placeholder="Batch"
-            :dense="dense"
-            color="primary"
-            input-style="color: #272727;"
-            placeholder-style="color: #272727;"
-            :rules="[(val) => !!val || 'Batch is required']"
-          >
-            <template v-slot:prepend>
-              <q-icon name="fa-solid fa-user-group" color="dark" />
-            </template>
-            <template v-slot:append>
-              <q-icon
-                v-if="batch !== ''"
-                name="fa-solid fa-xmark"
-                @click="batch = ''"
-                class="cursor-pointer"
-                color="dark"
-              />
-            </template>
-          </q-input>
 
           <!-- id-->
           <q-input
             outlined
             v-model="id"
             type="text"
+            label="ID Ex: XXX-XXX-XXXX"
             placeholder="ID Ex: XXX-XXX-XXXX"
             :dense="dense"
             color="primary"
@@ -117,16 +95,140 @@
             </template>
           </q-input>
 
+          <!-- teacher or student  -->
+          <q-select
+            outlined
+            v-model="role"
+            :options="roleOptions"
+            label="Role"
+            placeholder="Role"
+            :dense="dense"
+            color="primary"
+            class="text-primary"
+            label-color="dark"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
+            :rules="[(val) => !!val || 'Role  is required']"
+            menu-class="black-dropdown"
+          >
+            <template v-slot:prepend>
+              <q-icon name="fa-regular fa-user" color="dark" />
+            </template>
+            <template v-slot:append>
+              <q-icon
+                v-if="role !== ''"
+                name="fa-solid fa-xmark"
+                @click="role = ''"
+                class="cursor-pointer"
+                color="dark"
+              />
+            </template>
+          </q-select>
+
+          <!-- password -->
+
+          <q-input
+            v-if="role.value === 'teacher'"
+            outlined
+            v-model="adminAccessPassword"
+            type="password"
+            label="Admin Passwpord (Teacher)"
+            placeholder="Admin Passwpord (Teacher)"
+            :dense="dense"
+            class=""
+            color="primary"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
+            :rules="[
+              (val) => !!val || 'Password is required',
+              (val) => val.length >= 6 || 'Password must be at least 6 characters long',
+            ]"
+          >
+            <template v-slot:prepend>
+              <q-icon name="fa-solid fa-key" color="dark" />
+            </template>
+            <template v-slot:append>
+              <q-icon
+                v-if="adminAccessPassword !== ''"
+                name="fa-solid fa-xmark"
+                @click="adminAccessPassword = ''"
+                class="cursor-pointer"
+                color="dark"
+              />
+            </template>
+          </q-input>
+
+          <!-- batch-->
+          <q-input
+            v-if="role.value === 'student'"
+            outlined
+            v-model="batch"
+            type="text"
+            label="Batch"
+            placeholder="Batch"
+            :dense="dense"
+            color="dark"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
+            :rules="[(val) => !!val || 'Batch is required']"
+          >
+            <template v-slot:prepend>
+              <q-icon name="fa-solid fa-user-group" color="dark" />
+            </template>
+            <template v-slot:append>
+              <q-icon
+                v-if="batch !== ''"
+                name="fa-solid fa-xmark"
+                @click="batch = ''"
+                class="cursor-pointer"
+                color="dark"
+              />
+            </template>
+          </q-input>
+
+          <!-- faculty-->
+          <q-select
+            v-if="role.value === 'teacher'"
+            outlined
+            v-model="faculty"
+            :options="facultyOptions"
+            label="Faculty"
+            placeholder="Select Faculty"
+            :dense="dense"
+            color="primary"
+            class="text-primary"
+            label-color="dark"
+            input-style="color: #272727;"
+            placeholder-style="color: #272727;"
+            :rules="[(val) => !!val || 'Faculty  is required']"
+            menu-class="black-dropdown"
+          >
+            <template v-slot:prepend>
+              <q-icon name="fa-regular fa-user" color="dark" />
+            </template>
+            <template v-slot:append>
+              <q-icon
+                v-if="faculty !== ''"
+                name="fa-solid fa-xmark"
+                @click="faculty = ''"
+                class="cursor-pointer"
+                color="dark"
+              />
+            </template>
+          </q-select>
+
           <!-- department-->
           <q-select
+            v-if="role.value"
             outlined
             v-model="department"
             :options="departmentOptions"
+            label="Deparment"
             placeholder="Select Deparment"
             :dense="dense"
             color="primary"
             class="text-primary"
-            label-color="primary"
+            label-color="dark"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[(val) => !!val || 'Deparment  is required']"
@@ -137,9 +239,9 @@
             </template>
             <template v-slot:append>
               <q-icon
-                v-if="department !== 'Department'"
+                v-if="department !== ''"
                 name="fa-solid fa-xmark"
-                @click="department = 'Department'"
+                @click="department = ''"
                 class="cursor-pointer"
                 color="dark"
               />
@@ -149,9 +251,11 @@
           <!-- password -->
 
           <q-input
+            v-if="role.value"
             outlined
             v-model="password"
             type="password"
+            label="Password"
             placeholder="Password"
             :dense="dense"
             class=""
@@ -179,9 +283,11 @@
 
           <!-- confirm password -->
           <q-input
+            v-if="role.value"
             outlined
             v-model="confirmPassword"
             type="password"
+            label="Confirm Password"
             placeholder="Confirm Password"
             :dense="dense"
             class=""
@@ -242,11 +348,14 @@ const authStore = useAuthStore()
 
 const router = useRouter()
 
-const userName = ref('dd')
+const userName = ref('')
 const email = ref('d@gmail.com')
 const batch = ref('44')
 const id = ref('44')
-const department = ref('Department')
+const role = ref('')
+const department = ref('')
+const faculty = ref('')
+const adminAccessPassword = ref('')
 const password = ref('123123')
 const confirmPassword = ref('123123')
 
@@ -271,6 +380,26 @@ const departmentOptions = ref([
   { label: 'Environmental Science', value: 'ENV' },
   { label: 'Medical Science', value: 'MED' },
   { label: 'Nursing', value: 'NURS' },
+])
+
+const roleOptions = ref([
+  { label: 'Teacher', value: 'teacher' },
+  { label: 'Student', value: 'student' },
+])
+const facultyOptions = ref([
+  { label: 'Professor', value: 'professor' },
+  { label: 'Associate Professor', value: 'associate_professor' },
+  { label: 'Assistant Professor', value: 'assistant_professor' },
+  { label: 'Lecturer', value: 'lecturer' },
+  { label: 'Teaching Assistant', value: 'teaching_assistant' },
+  { label: 'Research Scholar', value: 'research_scholar' },
+  { label: 'Postdoctoral Researcher', value: 'postdoc' },
+  { label: 'Dean', value: 'dean' },
+  { label: 'Head of Department (HOD)', value: 'hod' },
+  { label: 'Lab Instructor', value: 'lab_instructor' },
+  { label: 'Academic Advisor', value: 'academic_advisor' },
+  { label: 'Administrative Staff', value: 'admin_staff' },
+  { label: 'Librarian', value: 'librarian' },
 ])
 
 const onSubmit = () => {
