@@ -1,23 +1,23 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAU1TQ4OomzN2RjVesWI2EkL5kKsl1OzE4",
-  authDomain: "uniflow-6a064.firebaseapp.com",
-  projectId: "uniflow-6a064",
-  storageBucket: "uniflow-6a064.firebasestorage.app",
-  messagingSenderId: "339539887499",
-  appId: "1:339539887499:web:01beeaac184009ace01b8e"
-};
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+}
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app); // Initialize Firebase Authentication
-const db = getFirestore(app); // Initialize Firestore
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app) // Initialize Firebase Authentication
+const db = getFirestore(app) // Initialize Firestore
 
-console.log("Firebase initialized:", app.name); // Should log "[DEFAULT]"
+console.log('Firebase initialized:', app.name) // Should log "[DEFAULT]"
 
 // Export auth and db
-export { auth, db };
+export { auth, db }
