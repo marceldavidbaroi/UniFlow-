@@ -120,8 +120,11 @@ const onSubmit = () => {
       })
       if (result.success) {
         setTimeout(() => {
-          if()
-          router.push('/auth/login') // Redirect to login page after success
+          if (userStore.currentRole === 'teacher') {
+            router.push('/dashboard/teacher')
+          } else if (userStore.currentRole === 'student') {
+            router.push('/dashboard/student')
+          } // Redirect to login page after success
         }, 2000) // Delay for better UX (optional)
       }
     })

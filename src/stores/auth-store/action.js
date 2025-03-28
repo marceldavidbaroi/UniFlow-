@@ -91,7 +91,7 @@ export default {
           this.user = user
           userStore.currentUser = user
           userStore.currentRole = user.role
-          return { success: true, message: 'Login successful', user }
+          return { success: true, message: `Login successful as ${userStore.currentRole}`, user }
         } else {
           console.error('Invalid password.')
           return { success: false, message: 'Invalid password' }
