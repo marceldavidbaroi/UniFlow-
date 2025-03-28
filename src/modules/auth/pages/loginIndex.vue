@@ -96,9 +96,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'stores/auth-store'
+import { useUserStore } from 'src/stores/user-store'
+
 import { Notify } from 'quasar'
 
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const router = useRouter()
 
 const email = ref('d@gmail.com')
@@ -117,6 +120,7 @@ const onSubmit = () => {
       })
       if (result.success) {
         setTimeout(() => {
+          if()
           router.push('/auth/login') // Redirect to login page after success
         }, 2000) // Delay for better UX (optional)
       }

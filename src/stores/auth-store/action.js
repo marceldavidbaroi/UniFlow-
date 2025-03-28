@@ -1,6 +1,9 @@
 import { db } from 'boot/firebase' // Ensure you have proper Firestore import
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
 import bcrypt from 'bcryptjs' // Make sure to install bcryptjs for password hashing
+import { useUserStore } from '../user-store'
+
+const userStore = useUserStore()
 
 export default {
   async registerUser(
@@ -86,6 +89,8 @@ export default {
         if (isPasswordCorrect) {
           console.log('Login successful for user:', user)
           this.user = user
+          userStore.currentUser = user
+          userStore.currentRole = user.role
           return { success: true, message: 'Login successful', user }
         } else {
           console.error('Invalid password.')
