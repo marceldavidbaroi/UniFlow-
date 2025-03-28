@@ -236,6 +236,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'stores/auth-store'
+import { Notify } from 'quasar'
 
 const authStore = useAuthStore()
 
@@ -273,15 +274,40 @@ const departmentOptions = ref([
 ])
 
 const onSubmit = () => {
-  authStore.registerUser(
-    userName.value,
-    email.value,
-    batch.value,
-    id.value,
-    department.value,
-    password.value,
-  )
-  console.log('Form submitted with text:')
+  authStore
+    .registerUser(
+      userName.value,
+      email.value,
+      batch.value,
+      id.value,
+      department.value,
+      password.value,
+    )
+    .then((result) => {
+      Notify.create({
+        message: result.message,
+        color: result.success ? 'green' : 'red', // Green for success, Red for failure
+        position: 'top',
+        icon: 'warning', // Adds an icon
+        timeout: 5000, // Stays for 5 seconds
+        actions: [{ icon: 'close', color: 'white', handler: () => {} }],
+      })
+      if (result.success) {
+        setTimeout(() => {
+          router.push('/auth/login') // Redirect to login page after success
+        }, 2000) // Delay for better UX (optional)
+      }
+    })
+    .catch(() => {
+      Notify.create({
+        message: 'Something went wrong!',
+        color: 'red',
+        position: 'top',
+        icon: 'warning', // Adds an icon
+        timeout: 5000, // Stays for 5 seconds
+        actions: [{ icon: 'close', color: 'white', handler: () => {} }],
+      })
+    })
 }
 </script>
 
