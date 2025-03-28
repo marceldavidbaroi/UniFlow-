@@ -1,6 +1,4 @@
 import { defineStore } from 'pinia'
-// import { auth } from 'boot/firebase' // Assuming you're importing your Firebase auth setup
-// import { onAuthStateChanged } from 'firebase/auth'
 import actions from './action' // Fix import
 
 export const useUserStore = defineStore('user', {
@@ -29,15 +27,14 @@ export const useUserStore = defineStore('user', {
     // },
 
     logout() {
-      // Implement your logout logic here (clear user data, etc.)
       this.currentUser = null
       this.currentRole = null
     },
   },
 
   persist: {
-    key: 'auth', // LocalStorage key for persistence
-    pick: ['currentUser', 'currentRole'], // Persist the currentUser and currentRole
+    key: 'auth',
+    pick: ['currentUser', 'currentRole'],
   },
 
   created() {

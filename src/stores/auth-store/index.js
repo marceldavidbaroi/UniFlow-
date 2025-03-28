@@ -1,7 +1,5 @@
-import { defineStore } from 'pinia';
-// import { auth } from 'boot/firebase';
-// import { onAuthStateChanged } from 'firebase/auth';
-import actions from './action'; // Fix import
+import { defineStore } from 'pinia'
+import actions from './action'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -14,6 +12,6 @@ export const useAuthStore = defineStore('auth', {
     pick: ['user', 'isAuthenticated'],
   },
   created() {
-    this.initAuthState();
+    this.initAuthState()
   },
-});
+})
