@@ -1,6 +1,9 @@
 <template>
   <q-page class="flex flex-center">
-    <q-card class="my-card q-pa-lg" style="max-width: 600px; width: 520px; border-radius: 8%">
+    <q-card
+      class="my-card q-pa-lg q-my-xl"
+      style="max-width: 600px; width: 520px; border-radius: 8%"
+    >
       <q-card-section class="q-pt-md q-pb-sm">
         <div
           class="cursor-pointer text-h2 text-heading-shadow text-center"
@@ -333,6 +336,9 @@
         <span class="cursor-pointer hover-transform text-h6" @click="router.push('login')"
           >Login</span
         >
+        {{ role }}
+        {{ faculty }}
+        {{ adminAccessPassword }}
       </q-card-section>
     </q-card>
   </q-page>
@@ -403,6 +409,7 @@ const facultyOptions = ref([
 ])
 
 const onSubmit = () => {
+  console.log('the role is ', role.value)
   authStore
     .registerUser(
       userName.value,
@@ -410,6 +417,9 @@ const onSubmit = () => {
       batch.value,
       id.value,
       department.value,
+      faculty.value,
+      adminAccessPassword.value,
+      role.value,
       password.value,
     )
     .then((result) => {

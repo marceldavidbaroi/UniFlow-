@@ -1,9 +1,30 @@
 import { db } from 'boot/firebase' // Ensure you have proper Firestore import
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
+// import bcrypt from 'bcryptjs' // Make sure to install bcryptjs for password hashing
 
 export default {
-  async registerUser(name, email, batch, id, department, password) {
-    console.log('Input Data:', { name, email, batch, id, department })
+  async registerUser(
+    name,
+    email,
+    batch,
+    id,
+    department,
+    faculty,
+    adminAccessPassword,
+    role,
+    password,
+  ) {
+    console.log('Input Data:', {
+      Name: name,
+      Email: email,
+      Batch: batch,
+      ID: id,
+      Department: department,
+      Role: role.value,
+      Faculty: faculty,
+      'Admin Access Password': adminAccessPassword,
+      Password: password,
+    })
 
     try {
       // Query Firestore to check if a user with the given email already exists
@@ -18,14 +39,24 @@ export default {
         return { success: false, message: 'User already exists' }
       }
 
+      // Check if role is teacher and validate admin access password
+      if (role.value === 'teacher' && adminAccessPassword !== '123456') {
+        return { success: false, message: 'Wrong admin access password for Teacher' }
+      }
+
+      // Hash password before saving
+      // const hashedPassword = await bcrypt.hash(password, 10) // 10 is the salt rounds
+
       // If user does not exist, proceed with registration
       const userRef = await addDoc(usersRef, {
         name,
         email,
-        studentId: id,
+        personId: id,
+        role: role.value,
         batch,
+        faculty,
         department,
-        password, // WARNING: Plain text password storage is insecure
+        password, // Store hashed password instead of plain text
         createdAt: new Date(),
       })
 
@@ -36,6 +67,7 @@ export default {
       throw error
     }
   },
+
   // Log in a user
   async loginUser(email, password) {
     try {

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
+    "bcryptjs": "^3.0.2",
     "firebase": "^11.5.0",
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
