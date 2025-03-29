@@ -12,13 +12,13 @@
         :rules="[(val) => !!val || 'Group Name is required']"
         class="q-mb-sm"
       />
-      <q-input
+      <!-- <q-input
         v-model="groupAdmin"
         label="Group Admin"
         outlined
         :rules="[(val) => !!val || 'Group Admin is required']"
         class="q-mb-sm"
-      />
+      /> -->
       <q-input
         v-model="batch"
         label="Batch"
@@ -95,10 +95,15 @@
 <script setup>
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import { useGroupStore } from 'src/stores/group-store'
+
+import { Notify } from 'quasar'
+
+const groupStore = useGroupStore()
 
 const $q = useQuasar()
 const groupName = ref('')
-const groupAdmin = ref('')
+// const groupAdmin = ref('')
 const batch = ref('')
 const semester = ref('')
 const year = ref('')
@@ -111,25 +116,45 @@ const maxMembers = ref('')
 const labGroup = ref(false)
 
 const submitForm = () => {
-  if (
-    !groupName.value ||
-    !groupAdmin.value ||
-    !batch.value ||
-    !semester.value ||
-    !year.value ||
-    !subjectName.value ||
-    !password.value ||
-    !confirmPassword.value ||
-    !maxMembers.value
-  ) {
-    $q.notify({ type: 'negative', message: 'Please fill in all required fields' })
-    return
-  }
-  if (password.value !== confirmPassword.value) {
-    $q.notify({ type: 'negative', message: 'Passwords do not match' })
-    return
-  }
-  $q.notify({ type: 'positive', message: 'Group Created Successfully' })
+  groupStore
+    .createGroup(
+      groupName.value,
+      batch.value,
+      semester.value,
+      year.value,
+      subjectName.value,
+      description.value,
+      groupRules.value,
+      password.value,
+      confirmPassword.value,
+      maxMembers.value,
+      labGroup.value,
+    )
+    .then((result) => {
+      Notify.create({
+        message: result.message,
+        color: result.success ? 'green' : 'red',
+        position: 'top',
+        icon: 'warning',
+        timeout: 5000,
+        actions: [{ icon: 'close', color: 'white', handler: () => {} }],
+      })
+
+      // Reset form fields if successful
+      if (result.success) {
+        groupName.value = ''
+        batch.value = ''
+        semester.value = ''
+        year.value = ''
+        subjectName.value = ''
+        description.value = ''
+        groupRules.value = ''
+        password.value = ''
+        confirmPassword.value = ''
+        maxMembers.value = ''
+        labGroup.value = false
+      }
+    })
 }
 </script>
 

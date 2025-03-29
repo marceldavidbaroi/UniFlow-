@@ -18,17 +18,17 @@ export default {
     role,
     password,
   ) {
-    console.log('Input Data:', {
-      Name: name,
-      Email: email,
-      Batch: batch,
-      ID: id,
-      Department: department,
-      Role: role.value,
-      Faculty: faculty,
-      'Admin Access Password': adminAccessPassword,
-      Password: password,
-    })
+    // console.log('Input Data:', {
+    //   Name: name,
+    //   Email: email,
+    //   Batch: batch,
+    //   ID: id,
+    //   Department: department,
+    //   Role: role.value,
+    //   Faculty: faculty,
+    //   'Admin Access Password': adminAccessPassword,
+    //   Password: password,
+    // })
 
     try {
       const usersRef = collection(db, 'users')
