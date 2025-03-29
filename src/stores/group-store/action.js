@@ -69,4 +69,18 @@ export default {
       return { success: false, error: error.message }
     }
   },
+
+  async fetchAllGroups() {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'group'))
+      const groups = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      this.groupList = groups
+      return { success: true, message: 'all data fetched', data: groups }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  },
 }

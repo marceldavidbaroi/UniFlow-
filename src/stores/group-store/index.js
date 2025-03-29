@@ -4,6 +4,7 @@ import actions from './action'
 export const useGroupStore = defineStore('group', {
   state: () => ({
     group: null,
+    groupList: [],
   }),
   actions,
   persist: {

@@ -94,14 +94,14 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useQuasar } from 'quasar'
+// import { useQuasar } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
 
 import { Notify } from 'quasar'
 
 const groupStore = useGroupStore()
 
-const $q = useQuasar()
+// const $q = useQuasar()
 const groupName = ref('')
 // const groupAdmin = ref('')
 const batch = ref('')
