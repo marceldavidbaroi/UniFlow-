@@ -1,7 +1,5 @@
 <template>
   <q-page class="q-pa-md">
-    this is new new
-    {{ groupStore.groupList }}
     <GroupListItems v-for="group in formattedGroupData" :key="group.id" :group="group" />
   </q-page>
 </template>
