@@ -9,7 +9,7 @@ export const useGroupStore = defineStore('group', {
   actions,
   persist: {
     key: 'group',
-    pick: ['group'],
+    pick: ['group', 'groupList'],
   },
   // created() {
   //   this.initAuthState()
