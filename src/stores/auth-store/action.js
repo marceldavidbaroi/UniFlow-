@@ -1,4 +1,4 @@
-import { db } from 'boot/firebase' // Ensure you have proper Firestore import
+import { db } from 'boot/firebase'
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
 import bcrypt from 'bcryptjs'
 
@@ -18,18 +18,6 @@ export default {
     role,
     password,
   ) {
-    // console.log('Input Data:', {
-    //   Name: name,
-    //   Email: email,
-    //   Batch: batch,
-    //   ID: id,
-    //   Department: department,
-    //   Role: role.value,
-    //   Faculty: faculty,
-    //   'Admin Access Password': adminAccessPassword,
-    //   Password: password,
-    // })
-
     try {
       const usersRef = collection(db, 'users')
       const q = query(usersRef, where('email', '==', email))
@@ -42,45 +30,6 @@ export default {
       if (role.value === 'teacher' && adminAccessPassword !== '123123') {
         return { success: false, message: 'Wrong admin access password for Teacher' }
       }
-
-      // let payload = null
-      // if (role.value === 'teacher') {
-      //   payload = {
-      //     name,
-      //     email,
-      //     personId: id,
-      //     role: role.value,
-      //     faculty,
-      //     department,
-      //     password: hashedPassword,
-      //     createdAt: new Date(),
-      //   }
-      // } else if (role.value === 'student') {
-      //   payload = {
-      //     name,
-      //     email,
-      //     personId: id,
-      //     role: role.value,
-      //     batch,
-      //     department,
-      //     password: hashedPassword,
-      //     createdAt: new Date(),
-      //   }
-      // }
-
-      // const hashedPassword = await bcrypt.hash(password, 10) // 10 is the salt rounds
-      // const userRef = await addDoc(usersRef, payload)
-      // // const userRef = await addDoc(usersRef, {
-      // //   name,
-      // //   email,
-      // //   personId: id,
-      // //   role: role.value,
-      // //   batch,
-      // //   faculty,
-      // //   department,
-      // //   password: hashedPassword,
-      // //   createdAt: new Date(),
-      // // })
 
       const commonPayload = {
         name,
@@ -99,12 +48,11 @@ export default {
       const payload = {
         ...commonPayload,
         ...roleSpecificData,
-        password: hashedPassword, // Add hashed password at the end
+        password: hashedPassword,
       }
 
       const userRef = await addDoc(usersRef, payload)
 
-      console.log('User registered successfully:', userRef.id)
       return { success: true, message: 'User registered successfully', userId: userRef.id }
     } catch (error) {
       console.error('Error saving user data to Firestore:', error.code, error.message)
@@ -125,10 +73,8 @@ export default {
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
         if (isPasswordCorrect) {
-          console.log('Login successful for user:', user)
           this.user = user
           userStore.setUser(user)
-          console.log(userStore.currentUser)
           return { success: true, message: `Login successful as ${userStore.currentRole}`, user }
         } else {
           console.error('Invalid password.')

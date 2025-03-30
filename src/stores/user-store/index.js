@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    currentUser: null, // ✅ Use `null` instead of `[]`
+    currentUser: null,
     currentRole: null,
   }),
 
@@ -19,8 +19,8 @@ export const useUserStore = defineStore('user', {
   },
 
   persist: {
-    key: 'user', // ✅ Key for localStorage/sessionStorage
-    storage: localStorage, // ✅ Use sessionStorage if you prefer non-persistent login
-    paths: ['currentUser', 'currentRole'], // ✅ Only persist these
+    key: 'user',
+    storage: localStorage,
+    paths: ['currentUser', 'currentRole'],
   },
 })

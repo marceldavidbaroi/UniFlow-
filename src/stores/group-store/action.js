@@ -1,10 +1,11 @@
-import { db } from 'boot/firebase' // Ensure you have proper Firestore import
+import { db } from 'boot/firebase'
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
 import bcrypt from 'bcryptjs'
 import { useUserStore } from '../user-store'
 
 const userStore = useUserStore()
 export default {
+  // create a group
   async createGroup(
     groupName,
     batch,
@@ -32,14 +33,12 @@ export default {
       }
 
       if (password !== confirmPassword) {
-        // throw new Error('Passwords do not match.')
         return { success: false, message: 'Passwords do not match.' }
       }
       const groupQuery = query(collection(db, 'group'), where('groupName', '==', groupName))
       const existingGroups = await getDocs(groupQuery)
 
       if (!existingGroups.empty) {
-        // throw new Error('Group name already exists. Please choose a different name.')
         return {
           success: false,
           message: 'Group name already exists. Please choose a different name.',
@@ -72,9 +71,8 @@ export default {
     }
   },
 
+  // get all group data by user
   async fetchAllGroups() {
-    // console.log('current user ', userStore.currentUser)
-
     try {
       const querySnapshot = await getDocs(collection(db, 'group'))
       const groups = querySnapshot.docs
@@ -82,7 +80,7 @@ export default {
           id: doc.id,
           ...doc.data(),
         }))
-        .filter((group) => group.owner?.id === userStore.currentUser?.id) // ✅ Filter groups by owner ID
+        .filter((group) => group.owner?.id === userStore.currentUser?.id)
 
       this.groupList = groups
       this.groupCount = groups.length

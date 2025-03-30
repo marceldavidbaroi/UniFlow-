@@ -336,9 +336,6 @@
         <span class="cursor-pointer hover-transform text-h6" @click="router.push('login')"
           >Login</span
         >
-        {{ role }}
-        {{ faculty }}
-        {{ adminAccessPassword }}
       </q-card-section>
     </q-card>
   </q-page>

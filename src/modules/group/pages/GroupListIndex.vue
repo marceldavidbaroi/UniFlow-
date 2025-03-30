@@ -1,8 +1,5 @@
 <template>
   <q-page class="q-pa-md">
-    {{ userStore.currentUser.id }}
-
-    {{ groupStore.groupList }}
     <div class="row justify-center text-center q-ma-md">
       <div class="col q-pa-xl q-mx-xl my-card text-center">
         <div class="text-heading-solid text-h3">{{ groupStore.groupCount }}</div>
@@ -12,25 +9,22 @@
         <div class="text-heading-solid text-h3">10</div>
         <div class="caption">Students</div>
       </div>
-      <!-- <div class="col q-pa-xl q-mx-xl my-card">total sesstions</div> -->
     </div>
     <GroupListItems v-for="group in formattedGroupData" :key="group.id" :group="group" />
   </q-page>
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import GroupListItems from '../components/GroupListItems.vue'
 import { useGroupStore } from 'src/stores/group-store'
-import { useUserStore } from 'src/stores/user-store'
-const userStore = useUserStore()
 
 const groupStore = useGroupStore()
 
 // Make formattedGroupData reactive
 const formattedGroupData = computed(() =>
   groupStore.groupList.map((group) => ({
-    id: group.id, // Ensure ID is included for v-for
+    id: group.id,
     groupName: group.groupName,
     semester: group.semester,
     subjectName: group.subjectName,
@@ -40,8 +34,7 @@ const formattedGroupData = computed(() =>
 )
 
 onMounted(async () => {
-  await groupStore.fetchAllGroups() // Wait for the data to be fetched
-  console.log('Groups fetched:', groupStore.groupList)
+  await groupStore.fetchAllGroups()
 })
 
 console.log(formattedGroupData)

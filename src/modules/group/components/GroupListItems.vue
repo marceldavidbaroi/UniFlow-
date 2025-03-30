@@ -14,9 +14,6 @@
           </div>
         </div>
       </q-item-section>
-      <q-item-section side>
-        <!-- <q-btn flat round icon="delete" color="negative" @click.stop="$emit('delete', group.id)" /> -->
-      </q-item-section>
     </q-item>
   </div>
 </template>
@@ -34,7 +31,7 @@ defineProps({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%; /* Adjust as needed */
+  height: 100%;
   width: 100%;
 }
 

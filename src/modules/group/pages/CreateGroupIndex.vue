@@ -12,13 +12,7 @@
         :rules="[(val) => !!val || 'Group Name is required']"
         class="q-mb-sm"
       />
-      <!-- <q-input
-        v-model="groupAdmin"
-        label="Group Admin"
-        outlined
-        :rules="[(val) => !!val || 'Group Admin is required']"
-        class="q-mb-sm"
-      /> -->
+
       <q-input
         v-model="batch"
         label="Batch"
@@ -101,9 +95,7 @@ import { Notify } from 'quasar'
 
 const groupStore = useGroupStore()
 
-// const $q = useQuasar()
 const groupName = ref('')
-// const groupAdmin = ref('')
 const batch = ref('')
 const semester = ref('')
 const year = ref('')

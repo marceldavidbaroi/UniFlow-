@@ -6,9 +6,9 @@
 // const userStore = useUserStore()
 
 export default {
+  //set current user data
   setUser(user) {
     this.currentUser = user
-    // console.log('current user from', this.currentUser)
     this.currentRole = user.role
   },
 }
