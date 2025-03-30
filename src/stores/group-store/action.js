@@ -60,6 +60,7 @@ export default {
         maxMembers: maxMembers ? parseInt(maxMembers, 10) : null,
         labGroup: Boolean(labGroup),
         createdAt: new Date(),
+        owner: userStore.currentUser,
       }
 
       const docRef = await addDoc(collection(db, 'group'), newGroup)
