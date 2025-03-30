@@ -1,7 +1,9 @@
 import { db } from 'boot/firebase' // Ensure you have proper Firestore import
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
 import bcrypt from 'bcryptjs'
+import { useUserStore } from '../user-store'
 
+const userStore = useUserStore()
 export default {
   async createGroup(
     groupName,
@@ -33,7 +35,7 @@ export default {
         // throw new Error('Passwords do not match.')
         return { success: false, message: 'Passwords do not match.' }
       }
-      // console.log('connected')
+      console.log('current user ', userStore.currentUser)
       const groupQuery = query(collection(db, 'group'), where('groupName', '==', groupName))
       const existingGroups = await getDocs(groupQuery)
 

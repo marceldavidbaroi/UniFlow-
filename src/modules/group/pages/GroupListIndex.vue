@@ -16,21 +16,28 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import GroupListItems from '../components/GroupListItems.vue'
 import { useGroupStore } from 'src/stores/group-store'
 
 const groupStore = useGroupStore()
 
-const formattedGroupData = groupStore.groupList.map((group) => ({
-  groupName: group.groupName,
-  semester: group.semester,
-  subjectName: group.subjectName,
-  year: group.year,
-  labGroup: group.labGroup,
-}))
+// Make formattedGroupData reactive
+const formattedGroupData = computed(() =>
+  groupStore.groupList.map((group) => ({
+    id: group.id, // Ensure ID is included for v-for
+    groupName: group.groupName,
+    semester: group.semester,
+    subjectName: group.subjectName,
+    year: group.year,
+    labGroup: group.labGroup,
+  })),
+)
 
-onMounted(groupStore.fetchAllGroups, console.log(groupStore.groupList))
+onMounted(async () => {
+  await groupStore.fetchAllGroups() // Wait for the data to be fetched
+  console.log('Groups fetched:', groupStore.groupList)
+})
 
 console.log(formattedGroupData)
 </script>
