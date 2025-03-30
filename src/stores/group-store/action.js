@@ -73,7 +73,7 @@ export default {
   },
 
   async fetchAllGroups() {
-    console.log('current user ', userStore.currentUser)
+    // console.log('current user ', userStore.currentUser)
 
     try {
       const querySnapshot = await getDocs(collection(db, 'group'))

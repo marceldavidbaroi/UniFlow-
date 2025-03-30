@@ -6,12 +6,13 @@ export const useAuthStore = defineStore('auth', {
     user: null,
     isAuthenticated: false,
   }),
+
   actions,
+
   persist: {
-    key: 'auth',
-    pick: ['user', 'isAuthenticated'],
-  },
-  created() {
-    this.initAuthState()
+    enabled: true, // ✅ Ensure persistence is enabled
+    key: 'auth', // ✅ Storage key
+    storage: localStorage, // ✅ Explicitly set storage type (or sessionStorage)
+    paths: ['user', 'isAuthenticated'], // ✅ Use `paths` instead of `pick`
   },
 })
