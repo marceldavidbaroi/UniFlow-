@@ -2,6 +2,7 @@
   <q-page padding>
     <!-- create session -->
     <section>
+      current user {{ userStore.currentUser }}
       this is the create session section
       <q-btn
         color="primary"
@@ -24,7 +25,9 @@
 </template>
 
 <script setup>
+import { useUserStore } from 'src/stores/user-store'
 import { useRouter } from 'vue-router'
+const userStore = useUserStore()
 
 const router = useRouter()
 

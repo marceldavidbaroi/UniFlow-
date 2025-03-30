@@ -5,4 +5,10 @@
 
 // const userStore = useUserStore()
 
-export default {}
+export default {
+  setUser(user) {
+    this.currentUser = user
+    // console.log('current user from', this.currentUser)
+    this.currentRole = user.role
+  },
+}

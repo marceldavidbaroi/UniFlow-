@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-md">
+    {{ userStore.currentRole }}
     <div class="row justify-center text-center q-ma-md">
       <div class="col q-pa-xl q-mx-xl my-card text-center">
         <div class="text-heading-solid text-h3">10</div>
@@ -19,6 +20,8 @@
 import { onMounted, ref, computed } from 'vue'
 import GroupListItems from '../components/GroupListItems.vue'
 import { useGroupStore } from 'src/stores/group-store'
+import { useUserStore } from 'src/stores/user-store'
+const userStore = useUserStore()
 
 const groupStore = useGroupStore()
 

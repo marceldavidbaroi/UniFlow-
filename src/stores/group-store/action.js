@@ -35,7 +35,6 @@ export default {
         // throw new Error('Passwords do not match.')
         return { success: false, message: 'Passwords do not match.' }
       }
-      console.log('current user ', userStore.currentUser)
       const groupQuery = query(collection(db, 'group'), where('groupName', '==', groupName))
       const existingGroups = await getDocs(groupQuery)
 
@@ -73,6 +72,8 @@ export default {
   },
 
   async fetchAllGroups() {
+    console.log('current user ', userStore.currentUser)
+
     try {
       const querySnapshot = await getDocs(collection(db, 'group'))
       const groups = querySnapshot.docs.map((doc) => ({

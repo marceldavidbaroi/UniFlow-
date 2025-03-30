@@ -79,8 +79,8 @@ export default {
         if (isPasswordCorrect) {
           console.log('Login successful for user:', user)
           this.user = user
-          userStore.currentUser = user
-          userStore.currentRole = user.role
+          userStore.setUser(user)
+          console.log(userStore.currentUser)
           return { success: true, message: `Login successful as ${userStore.currentRole}`, user }
         } else {
           console.error('Invalid password.')
