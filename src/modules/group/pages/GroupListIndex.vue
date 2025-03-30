@@ -5,7 +5,7 @@
     {{ groupStore.groupList }}
     <div class="row justify-center text-center q-ma-md">
       <div class="col q-pa-xl q-mx-xl my-card text-center">
-        <div class="text-heading-solid text-h3">10</div>
+        <div class="text-heading-solid text-h3">{{ groupStore.groupCount }}</div>
         <div class="caption">Groups</div>
       </div>
       <div class="col q-pa-xl q-mx-xl my-card">

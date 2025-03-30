@@ -5,6 +5,7 @@ export const useGroupStore = defineStore('group', {
   state: () => ({
     group: null,
     groupList: [],
+    groupCount: 0,
   }),
 
   actions,

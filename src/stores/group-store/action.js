@@ -85,6 +85,7 @@ export default {
         .filter((group) => group.owner?.id === userStore.currentUser?.id) // ✅ Filter groups by owner ID
 
       this.groupList = groups
+      this.groupCount = groups.length
       return { success: true, message: 'all data fetched', data: groups }
     } catch (error) {
       return { success: false, error: error.message }
