@@ -77,10 +77,13 @@ export default {
 
     try {
       const querySnapshot = await getDocs(collection(db, 'group'))
-      const groups = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
+      const groups = querySnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((group) => group.owner?.id === userStore.currentUser?.id) // ✅ Filter groups by owner ID
+
       this.groupList = groups
       return { success: true, message: 'all data fetched', data: groups }
     } catch (error) {

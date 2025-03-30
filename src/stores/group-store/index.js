@@ -6,12 +6,13 @@ export const useGroupStore = defineStore('group', {
     group: null,
     groupList: [],
   }),
+
   actions,
+
   persist: {
-    key: 'group',
-    pick: ['group', 'groupList'],
+    enabled: true, // ✅ Required to enable persistence
+    key: 'group', // ✅ Key for localStorage/sessionStorage
+    storage: localStorage, // ✅ Explicitly use localStorage (or change to sessionStorage if needed)
+    paths: ['group', 'groupList'], // ✅ Use `paths` instead of `pick`
   },
-  // created() {
-  //   this.initAuthState()
-  // },
 })

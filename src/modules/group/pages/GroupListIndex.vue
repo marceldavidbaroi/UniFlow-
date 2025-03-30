@@ -1,6 +1,8 @@
 <template>
   <q-page class="q-pa-md">
-    {{ userStore.currentRole }}
+    {{ userStore.currentUser.id }}
+
+    {{ groupStore.groupList }}
     <div class="row justify-center text-center q-ma-md">
       <div class="col q-pa-xl q-mx-xl my-card text-center">
         <div class="text-heading-solid text-h3">10</div>
