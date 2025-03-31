@@ -31,11 +31,8 @@
     >
       <div class="q-ma-xl description-bg">
         <div>
-          <div
-            class="text-h2 text-bold text-center q-pb-md"
-            style="font-family: 'Londrina Shadow', cursive"
-          >
-            Welcome to <span class="" style="font-family: 'Londrina Solid', cursive">UNIFLOW</span>
+          <div class="text-h2 text-bold text-center q-pb-md brand_bb">
+            Welcome to <span class="brand_sb">UNIFLOW</span>
           </div>
           A real-time collaborative learning hub designed for university students and educators.
           Built with Quasar and Firebase, our platform revolutionizes lab-based coding classes by
@@ -44,32 +41,32 @@
         <div class="key-features q-mt-lg text-h4">Key Features:</div>
         <div style="font-family: 'Londrina Solid', cursive" class="q-ml-lg q-pa-md">
           <div style="">
-            <i class="fa fa-check-circle"></i> Role-Based Authentication – Secure access for
+            <i class="fa-regular fa-square-check"></i> Role-Based Authentication – Secure access for
             students, teachers, and admins.
           </div>
           <div>
-            <i class="fa fa-check-circle"></i> Seamless Class Management – Easily create or join
-            class sessions using unique IDs.
+            <i class="fa-regular fa-square-check"></i> Seamless Class Management – Easily create or
+            join class sessions using unique IDs.
           </div>
           <div>
-            <i class="fa fa-check-circle"></i> Smart Task Assignment – Upload, submit, and evaluate
-            assignments effortlessly.
+            <i class="fa-regular fa-square-check"></i> Smart Task Assignment – Upload, submit, and
+            evaluate assignments effortlessly.
           </div>
           <div>
-            <i class="fa fa-check-circle"></i> Live Code Collaboration – Work together in real-time
-            with a shared online code editor.
+            <i class="fa-regular fa-square-check"></i> Live Code Collaboration – Work together in
+            real-time with a shared online code editor.
           </div>
           <div>
-            <i class="fa fa-check-circle"></i> Instant Chat & Feedback – Communicate and collaborate
-            seamlessly.
+            <i class="fa-regular fa-square-check"></i> Instant Chat & Feedback – Communicate and
+            collaborate seamlessly.
           </div>
           <div>
-            <i class="fa fa-check-circle"></i> Leaderboard & Performance Tracking – Stay motivated
-            with rankings and task scores.
+            <i class="fa-regular fa-square-check"></i> Leaderboard & Performance Tracking – Stay
+            motivated with rankings and task scores.
           </div>
           <div>
-            <i class="fa fa-check-circle"></i> Admin Control Panel – Manage users, sessions, and
-            activities efficiently.
+            <i class="fa-regular fa-square-check"></i> Admin Control Panel – Manage users, sessions,
+            and activities efficiently.
           </div>
         </div>
         <div>
@@ -95,14 +92,14 @@
 <style lang="scss" scoped>
 .brand {
   font-family: 'Londrina Shadow', cursive;
-  color: #d7d8d3;
+  color: #fff;
   transition:
     color 0.3s ease-in-out,
     transform 0.3s ease-in-out;
 }
 
 .brand:hover {
-  color: #308c8c;
+  color: #e97b2f;
   transform: scale(1.05); /* Increases size on hover */
 }
 
@@ -124,12 +121,12 @@
 }
 
 .description-layout {
-  background-color: #d7d8d3;
-  background-image: url('/public/images/home-description-banner.png');
-  background-size: cover;
-  width: 100%;
-  height: fit-content;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #c0ccd4;
+  // background-size: cover;
+  // width: 100%;
+  // height: fit-content;
+  // background-position: center;
+  // background-repeat: no-repeat;
+  border-radius: 8px;
 }
 </style>

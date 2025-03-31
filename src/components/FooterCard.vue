@@ -36,7 +36,7 @@
       <!-- tagline -->
       <div class="row brand-shadow text-h1 justify-center cursor-none q-py-xl">
         <div>
-          <span class="brand-shadow">Smart&nbsp;</span>
+          <span class="brand">Smart&nbsp;</span>
           <span class="brand">Coding<span class="text-primary">,&nbsp;</span></span>
           <span class="brand"> Smarter&nbsp;</span>
           <span class="brand">Learning&nbsp;</span>
