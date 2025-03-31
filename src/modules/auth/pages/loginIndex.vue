@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <q-card class="my-card q-pa-lg" style="max-width: 600px; width: 420px; border-radius: 8%">
+    <q-card class="my-card q-pa-lg" style="max-width: 600px; width: 520px; border-radius: 8%">
       <q-card-section class="q-pt-md q-pb-xl">
         <div class="text-h2 text-bold brand_bb text-center">LOGIN</div>
       </q-card-section>
@@ -12,9 +12,10 @@
             fill
             v-model="email"
             type="email"
+            label="Email"
             placeholder="Email"
             :dense="dense"
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[
@@ -42,10 +43,11 @@
             fill
             v-model="password"
             type="password"
+            label="Password"
             placeholder="Password"
             :dense="dense"
             class=""
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[
@@ -73,7 +75,7 @@
               label="Login"
               type="submit"
               color="primary"
-              class="full-width text-heading-solid text-h6"
+              class="full-width brand_sw text-h6"
               dense
               padding="xs"
               no-caps
@@ -141,13 +143,4 @@ const onSubmit = () => {
 }
 </script>
 
-<style lang="scss" scoped>
-.text-heading-shadow {
-  font-family: 'Londrina Shadow', cursive;
-  color: #c29d48;
-}
-.text-heading-solid {
-  font-family: 'Londrina Solid', cursive;
-  color: #c29d48;
-}
-</style>
+<style lang="scss" scoped></style>

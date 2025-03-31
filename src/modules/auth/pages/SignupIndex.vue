@@ -6,7 +6,7 @@
     >
       <q-card-section class="q-pt-md q-pb-sm">
         <div
-          class="cursor-pointer text-h2 text-heading-shadow text-center"
+          class="cursor-pointer text-h2 text-bold brand_bb text-center"
           @click="router.push('/home')"
         >
           SIGNUP
@@ -22,7 +22,7 @@
             placeholder="Full Name"
             label="Full Name"
             :dense="dense"
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[(val) => !!val || 'Full Name is required']"
@@ -49,7 +49,7 @@
             label="Email"
             placeholder="Email"
             :dense="dense"
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[
@@ -79,7 +79,7 @@
             label="ID Ex: XXX-XXX-XXXX"
             placeholder="ID Ex: XXX-XXX-XXXX"
             :dense="dense"
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[(val) => !!val || 'ID is required']"
@@ -106,7 +106,7 @@
             label="Role"
             placeholder="Role"
             :dense="dense"
-            color="primary"
+            color="secondary"
             class="text-primary"
             label-color="dark"
             input-style="color: #272727;"
@@ -139,7 +139,7 @@
             placeholder="Admin Passwpord (Teacher)"
             :dense="dense"
             class=""
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[
@@ -198,7 +198,7 @@
             label="Faculty"
             placeholder="Select Faculty"
             :dense="dense"
-            color="primary"
+            color="secondary"
             class="text-primary"
             label-color="dark"
             input-style="color: #272727;"
@@ -229,7 +229,7 @@
             label="Deparment"
             placeholder="Select Deparment"
             :dense="dense"
-            color="primary"
+            color="secondary"
             class="text-primary"
             label-color="dark"
             input-style="color: #272727;"
@@ -262,7 +262,7 @@
             placeholder="Password"
             :dense="dense"
             class=""
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[
@@ -294,7 +294,7 @@
             placeholder="Confirm Password"
             :dense="dense"
             class=""
-            color="primary"
+            color="secondary"
             input-style="color: #272727;"
             placeholder-style="color: #272727;"
             :rules="[
@@ -322,7 +322,7 @@
               label="Sign Up"
               type="submit"
               color="primary"
-              class="full-width text-heading-solid text-h6"
+              class="full-width brand_sw text-h6"
               dense
               padding="xs"
               no-caps
@@ -333,9 +333,7 @@
 
       <q-card-section class="q-pt-lg text-body2 text-center text-dark">
         Have Account??
-        <span class="cursor-pointer hover-transform text-h6" @click="router.push('login')"
-          >Login</span
-        >
+        <span class="cursor-pointer brand_sb text-h6" @click="router.push('login')">Login</span>
       </q-card-section>
     </q-card>
   </q-page>
@@ -352,9 +350,9 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const userName = ref('')
-const email = ref('d@gmail.com')
-const batch = ref('44')
-const id = ref('44')
+const email = ref('')
+const batch = ref('')
+const id = ref('')
 const role = ref('')
 const department = ref('')
 const faculty = ref('')
@@ -447,37 +445,4 @@ const onSubmit = () => {
 }
 </script>
 
-<style lang="scss" scoped>
-.my-card {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.164);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
-}
-
-.text-heading-shadow {
-  font-family: 'Londrina Shadow', cursive;
-  color: #c29d48;
-  transition: transform 0.3s ease-in-out;
-}
-.text-heading-shadow:hover {
-  transform: scale(1.2);
-}
-
-.text-heading-solid {
-  font-family: 'Londrina Solid', cursive;
-  color: #c29d48;
-}
-
-.hover-transform {
-  font-family: 'Londrina Solid', cursive;
-  color: #c29d48;
-  display: inline-block;
-  transition: transform 0.3s ease-in-out;
-}
-.hover-transform:hover {
-  transform: scale(1.2);
-}
-</style>
+<style lang="scss" scoped></style>
