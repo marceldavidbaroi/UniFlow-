@@ -97,33 +97,26 @@ const socialLinks = [
 
 .footer-layout {
   background-color: #d7d8d3;
-  background-image: url('/public//images/auth-bg-3-light.png');
+  background-image: url('/public//images/auth-bg-blue-light.png');
   background-size: cover;
-  width: 100%; /* Adjust as needed */
-  height: fit-content; /* Adjust as needed */
+  width: 100%;
+  height: fit-content;
   background-position: center;
   background-repeat: no-repeat;
-  // border-top: 3px dashed #272727;
 }
 
 .brand-shadow {
   font-family: 'Londrina Shadow', cursive;
-  // color: #c29d48;
 }
 .brand {
   color: #272727;
-  display: inline-block; /* Ensures transform works properly */
+  display: inline-block;
   transition:
     color 0.3s ease-in-out,
-    transform 0.3s ease-in-out; /* Smooth transition */
+    transform 0.3s ease-in-out;
 }
 .brand:hover {
-  color: #c29d48;
-  transform: scale(1.1); /* Slightly enlarge the text */
-}
-
-.brand-solid {
-  font-family: 'Londrina Solid', cursive;
-  color: #c29d48;
+  color: #e97b2f;
+  transform: scale(1.1);
 }
 </style>
