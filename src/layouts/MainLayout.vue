@@ -15,9 +15,21 @@
       <HeaderCard @toggle-drawer="toggleDrawer" />
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above elevated class="bg-accent">
+    <q-drawer
+      v-model="leftDrawerOpen"
+      :mini="miniState"
+      @mouseenter="miniState = false"
+      @mouseleave="miniState = true"
+      show-if-above
+      elevated
+      class="bg-accent"
+    >
       <q-scroll-area
-        style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd"
+        :style="
+          miniState
+            ? 'height: calc(100% - 50px); margin-top: 50px; border-right: 1px solid #ddd'
+            : 'height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd'
+        "
       >
         <q-list>
           <!-- <q-item-label> Essential Links </q-item-label>
@@ -28,15 +40,20 @@
       <q-img
         class="absolute-top"
         src="/public//images//auth-bg-white-150.png"
-        style="height: 150px"
+        :style="miniState ? 'height: 50px' : 'height: 150px'"
       >
         <div
           class="absolute-bottom bg-transparent"
-          style="height: 150px; background: rgba(255, 255, 255, 0.164); backdrop-filter: blur(5px)"
+          style="background: rgba(255, 255, 255, 0.164); backdrop-filter: blur(5px)"
+          :style="miniState ? 'height: 50px' : 'height: 150px'"
         >
-          <q-avatar size="56px" class="q-mb-sm">
+          <q-avatar :size="miniState ? '30px' : '56px'" class="q-mb-sm">
             <!-- <img src="https://cdn.quasar.dev/img/boy-avatar.png" /> -->
-            <q-icon name="account_circle" size="56px" class="q-mb-sm text-secondary" />
+            <q-icon
+              name="account_circle"
+              :size="miniState ? '30px' : '56px'"
+              class="q-mb-sm text-secondary"
+            />
           </q-avatar>
           <div class="text-bold text-secondary text-h6 brand_sb">
             {{ userStore.currentUser.name }}
@@ -75,6 +92,8 @@ import HeaderCard from 'src/components/HeaderCard.vue'
 const authStore = useAuthStore()
 const userStore = useUserStore()
 
+const leftDrawerOpen = ref(false)
+const miniState = ref(true)
 // links
 const visitorLinks = [
   { title: 'Home', icon: 'fa-solid fa-house', link: '/home' },
@@ -125,8 +144,6 @@ const linksList = authStore.isAuthenticated
       ? studentLinks
       : visitorLinks
   : visitorLinks
-
-const leftDrawerOpen = ref(false)
 
 function toggleDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
