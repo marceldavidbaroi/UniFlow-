@@ -1,17 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header class="q-py-none" style="background: rgba(255, 255, 255, 0)">
-      <!-- <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title>
-          <q-img src="/public//images/Logo-nav.svg" height="50px" width="150px" />
-        </q-toolbar-title>
-
-        <div>
-          <ClockCard />
-        </div>
-      </q-toolbar> -->
       <HeaderCard @toggle-drawer="toggleDrawer" />
     </q-header>
 
@@ -21,8 +10,7 @@
       @mouseenter="miniState = false"
       @mouseleave="miniState = true"
       show-if-above
-      elevated
-      class="bg-accent"
+      class="bg-white"
     >
       <q-scroll-area
         :style="
@@ -32,8 +20,6 @@
         "
       >
         <q-list>
-          <!-- <q-item-label> Essential Links </q-item-label>
-        <q-item-label header> Essential Links </q-item-label> -->
           <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
         </q-list>
       </q-scroll-area>
@@ -48,7 +34,6 @@
           :style="miniState ? 'height: 50px' : 'height: 150px'"
         >
           <q-avatar :size="miniState ? '30px' : '56px'" class="q-mb-sm">
-            <!-- <img src="https://cdn.quasar.dev/img/boy-avatar.png" /> -->
             <q-icon
               name="account_circle"
               :size="miniState ? '30px' : '56px'"
