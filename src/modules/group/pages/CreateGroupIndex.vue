@@ -45,7 +45,15 @@
         class="q-mb-sm"
       />
       <q-input v-model="description" label="Description" type="textarea" outlined class="q-mb-sm" />
-      <q-input v-model="groupRules" label="Group Rules" type="textarea" outlined class="q-mb-sm" />
+      <q-toggle v-model="addRules" label="Add Group Rules" class="q-mb-sm" />
+      <q-editor
+        v-if="addRules"
+        v-model="groupRules"
+        label="Group Rules"
+        outlined
+        class="q-mb-sm"
+        :toolbar="toolbarItems"
+      />
 
       <!-- Group Settings -->
       <q-input
@@ -90,6 +98,9 @@
 import { ref } from 'vue'
 // import { useQuasar } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
 
 import { Notify } from 'quasar'
 
@@ -106,6 +117,7 @@ const password = ref('')
 const confirmPassword = ref('')
 const maxMembers = ref('')
 const labGroup = ref(false)
+const addRules = ref(false)
 
 const submitForm = () => {
   groupStore
@@ -148,6 +160,35 @@ const submitForm = () => {
       }
     })
 }
+
+const toolbarItems = [
+  [
+    'left',
+    'center',
+    'right',
+    'justify',
+    'bold',
+    'italic',
+    'strike',
+    'underline',
+    'subscript',
+    'superscript',
+  ],
+
+  [
+    {
+      label: $q.lang.editor.fontSize,
+      icon: $q.iconSet.editor.fontSize,
+      fixedLabel: true,
+      fixedIcon: true,
+      list: 'no-icons',
+      options: ['size-1', 'size-2', 'size-3', 'size-4', 'size-5', 'size-6', 'size-7'],
+    },
+  ],
+  ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
+
+  ['undo', 'redo'],
+]
 </script>
 
 <style scoped>
