@@ -1,44 +1,61 @@
 <template>
-  <q-item
-    clickable
-    tag="a"
-    target="_blank"
-    :href="props.link"
-  >
-    <q-item-section
-      v-if="props.icon"
-      avatar
-    >
-      <q-icon :name="props.icon" />
-    </q-item-section>
+  <div class="q-pa-sm" style="max-width: 350px">
+    <q-list class="rounded-borders">
+      <q-expansion-item
+        v-if="props.subMenu.length"
+        :icon="props.icon"
+        :label="props.title"
+        class="text-secondary text-bold text-body1"
+      >
+        <q-list style="min-width: 200px">
+          <q-item
+            v-for="subItem in props.subMenu"
+            :key="subItem.link"
+            clickable
+            tag="a"
+            @click="router.push(subItem.link)"
+          >
+            <q-item-section v-if="subItem.icon" avatar>
+              <q-icon :name="subItem.icon" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ subItem.title }}</q-item-label>
+              <q-item-label caption>{{ subItem.caption }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-expansion-item>
 
-    <q-item-section>
-      <q-item-label>{{ props.title }}</q-item-label>
-      <q-item-label caption>{{ props.caption }}</q-item-label>
-    </q-item-section>
-  </q-item>
+      <q-item clickable v-ripple v-else>
+        <q-item-section avatar>
+          <q-icon color="secondary" :name="props.icon" />
+        </q-item-section>
+
+        <q-item-section class="text-secondary text-bold text-body1">{{
+          props.title
+        }}</q-item-section>
+      </q-item>
+    </q-list>
+  </div>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 const props = defineProps({
-  title: {
-    type: String,
-    required: true
+  link: String,
+  icon: String,
+  title: String,
+  caption: String,
+  subMenu: {
+    type: Array,
+    default: () => [],
   },
-
-  caption: {
-    type: String,
-    default: ''
-  },
-
-  link: {
-    type: String,
-    default: '#'
-  },
-
-  icon: {
-    type: String,
-    default: ''
-  }
 })
 </script>
+<style scoped>
+.q-expansion-item :deep(.q-icon) {
+  color: #134f7b;
+}
+</style>

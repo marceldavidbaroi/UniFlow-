@@ -44,6 +44,9 @@ const linksList = [
     caption: 'quasar.dev',
     icon: 'school',
     link: '/home',
+    subMenu: [
+      { title: 'Home', caption: 'quasar.dev', icon: 'school', link: '/home' }, // Corrected syntax
+    ],
   },
   {
     title: 'teacher',

@@ -1,8 +1,10 @@
 <template>
   <q-page class="flex flex-center">
-    <q-card class="my-card q-pa-lg" style="max-width: 600px; width: 520px; border-radius: 8%">
+    <q-card class="my-card q-pa-lg" style="max-width: 600px; width: 420px; border-radius: 8%">
       <q-card-section class="q-pt-md q-pb-xl">
-        <div class="text-h2 text-bold brand_bb text-center">LOGIN</div>
+        <div class="text-h2 text-bold brand_bb text-center" @click="router.push('/home')">
+          LOGIN
+        </div>
       </q-card-section>
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sm">

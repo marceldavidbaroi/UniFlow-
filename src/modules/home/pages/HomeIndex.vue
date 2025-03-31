@@ -7,19 +7,19 @@
     >
       <div class="row">
         <div class="col-12 brand">
-          <span class="text-dark">Code.</span><span>&nbsp;With Joy</span>
+          <span class="text-secondary">Code.</span><span>&nbsp;With Joy</span>
         </div>
         <div class="col-12 brand">
-          <span class="text-dark">Share.</span><span>&nbsp;Anytime</span>
+          <span class="text-secondary">Share.</span><span>&nbsp;Anytime</span>
         </div>
         <div class="col-12 brand">
-          <span class="text-dark">Collaborate.</span><span>&nbsp;With Friends</span>
+          <span class="text-secondary">Collaborate.</span><span>&nbsp;With Friends</span>
         </div>
         <div class="col-12 brand">
-          <span class="text-dark">A Lab Experience</span><span>&nbsp;Won't Bore You</span>
+          <span class="text-secondary">A Lab Experience</span><span>&nbsp;Won't Bore You</span>
         </div>
         <div class="col-12 brand">
-          <span class="text-dark">Like Never Before!</span><span>&nbsp;With Fun & Joy!!!</span>
+          <span class="text-secondary">Like Never Before!</span><span>&nbsp;With Fun & Joy!!!</span>
         </div>
       </div>
     </section>
@@ -27,7 +27,7 @@
     <!-- description section  -->
     <section
       class="row justify-center items-center q-pa-md text-dark text-body1 description-layout"
-      style="height: 100vh"
+      style="height: 80vh"
     >
       <div class="q-ma-xl description-bg">
         <div>
@@ -127,6 +127,6 @@
   // height: fit-content;
   // background-position: center;
   // background-repeat: no-repeat;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 </style>

@@ -28,7 +28,11 @@
             />
           </div>
         </div>
-        <div class="col brand-shadow text-dark text-h3 text-dark text-bold" align="right">
+        <div
+          class="col brand-shadow text-dark text-h3 text-dark text-bold"
+          align="right"
+          @click="router.push('/home')"
+        >
           UNIFLOW
         </div>
       </div>
@@ -75,6 +79,10 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 const socialLinks = [
   { icon: 'fa-brands fa-facebook-f', url: 'https://facebook.com', color: 'primary' },
   { icon: 'fa-brands fa-instagram', url: 'https://instagram.com', color: 'pink' },
