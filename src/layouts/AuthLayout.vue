@@ -11,7 +11,7 @@
 <style scoped lang="scss">
 .auth-layout {
   background-color: #d7d8d3;
-  background-image: url('/public//images/auth-bg-3-light.png');
+  background-image: url('/public//images/auth-bg-blue-light.png');
   background-size: cover;
   background-position: center;
   height: 100%;

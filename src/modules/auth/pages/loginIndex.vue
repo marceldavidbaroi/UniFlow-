@@ -2,7 +2,7 @@
   <q-page class="flex flex-center">
     <q-card class="my-card q-pa-lg" style="max-width: 600px; width: 420px; border-radius: 8%">
       <q-card-section class="q-pt-md q-pb-xl">
-        <div class="text-h2 text-heading-shadow text-center">LOGIN</div>
+        <div class="text-h2 text-bold brand_bb text-center">LOGIN</div>
       </q-card-section>
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sm">
@@ -84,7 +84,7 @@
 
       <q-card-section class="q-pt-lg text-body2 text-center text-dark">
         Don't have Account??
-        <span class="cursor-pointer text-heading-solid text-h6" @click="router.push('signup')"
+        <span class="cursor-pointer brand_sb text-h6" @click="router.push('signup')"
           >Register Now</span
         >
       </q-card-section>
@@ -142,15 +142,6 @@ const onSubmit = () => {
 </script>
 
 <style lang="scss" scoped>
-.my-card {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.164);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
 .text-heading-shadow {
   font-family: 'Londrina Shadow', cursive;
   color: #c29d48;
