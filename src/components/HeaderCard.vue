@@ -2,7 +2,7 @@
   <q-toolbar
     class=""
     style="
-      background: rgba(255, 255, 255, 0);
+      background: rgba(19, 79, 123, 0.3);
       backdrop-filter: blur(8px);
       width: 98%;
       border-radius: 8px;
@@ -13,7 +13,15 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     "
   >
-    <q-btn flat dense round icon="menu" aria-label="Menu" color="dark" @click="toggleLeftDrawer" />
+    <q-btn
+      flat
+      dense
+      round
+      icon="menu"
+      aria-label="Menu"
+      color="primary"
+      @click="toggleLeftDrawer"
+    />
 
     <q-toolbar-title class="brand text-h3 q-pa-sm">
       UNIFLOW
@@ -40,7 +48,7 @@ function toggleLeftDrawer() {
 <style lang="scss" scoped>
 .brand {
   font-family: 'Londrina solid', cursive;
-  color: #c29d48;
+  color: #e97b2f;
 
   display: inline-block; /* Ensures transform works properly */
   transition: color 0.3s ease-in-out;
