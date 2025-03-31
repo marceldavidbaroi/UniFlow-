@@ -1,11 +1,11 @@
 <template>
   <q-card
     flat
-    class="q-py-none q-pr-sm q-ma-none flex flex-center text-heading-shadow cursor-none"
+    class="q-py-none q-pr-sm q-ma-none flex flex-center brand_sb cursor-none"
     style="background: rgba(255, 255, 255, 0)"
   >
     <q-card-section class="q-pa-none">
-      <div class="text-h6 text-primary">{{ time }}</div>
+      <div class="text-h6 text-info">{{ time }}</div>
     </q-card-section>
   </q-card>
 </template>
@@ -46,14 +46,5 @@ onBeforeUnmount(() => {
   background-color: #1e1e1e;
   color: white;
   border-radius: 10px;
-}
-
-.text-heading-shadow {
-  font-family: 'Londrina Solid', cursive;
-  color: #c29d48;
-}
-.text-heading-shadow:hover {
-  font-family: 'Londrina Shadow', cursive;
-  color: #c29d48;
 }
 </style>

@@ -18,15 +18,13 @@
       dense
       round
       icon="menu"
+      size="md"
       aria-label="Menu"
-      color="primary"
+      color="info"
       @click="toggleLeftDrawer"
     />
 
-    <q-toolbar-title class="brand text-h3 q-pa-sm">
-      UNIFLOW
-      <!-- <q-img src="/public/images/Logo-nav.svg" height="50px" width="170px" /> -->
-    </q-toolbar-title>
+    <q-toolbar-title class="brand_sb text-h3 q-pa-sm"> UNIFLOW </q-toolbar-title>
 
     <div>
       <ClockCard />
