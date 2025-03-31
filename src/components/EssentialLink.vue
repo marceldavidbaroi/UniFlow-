@@ -5,7 +5,7 @@
         v-if="props.subMenu.length"
         :icon="props.icon"
         :label="props.title"
-        class="text-secondary text-bold text-body1"
+        class="text-secondary text-body1 text-bold"
       >
         <q-list style="min-width: 200px">
           <q-item
@@ -15,7 +15,7 @@
             tag="a"
             @click="router.push(subItem.link)"
           >
-            <q-item-section v-if="subItem.icon" avatar>
+            <q-item-section v-if="subItem.icon" avatar class="q-pl-sm">
               <q-icon :name="subItem.icon" />
             </q-item-section>
             <q-item-section>
@@ -26,7 +26,7 @@
         </q-list>
       </q-expansion-item>
 
-      <q-item clickable v-ripple v-else>
+      <q-item clickable v-ripple v-else @click="router.push(props.link)">
         <q-item-section avatar>
           <q-icon color="secondary" :name="props.icon" />
         </q-item-section>

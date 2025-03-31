@@ -74,6 +74,7 @@ export default {
 
         if (isPasswordCorrect) {
           this.user = user
+          this.isAuthenticated = true
           userStore.setUser(user)
           return { success: true, message: `Login successful as ${userStore.currentRole}`, user }
         } else {
