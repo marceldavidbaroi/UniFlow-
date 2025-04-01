@@ -4,7 +4,7 @@ export default [
     component: () => import('src/layouts/MainLayout.vue'),
     children: [
       { path: 'create', component: () => import('./pages/CreateSessionIndex.vue') },
-
+      { path: 'list', component: () => import('./pages/SessionList.vue') },
     ],
   },
 ]

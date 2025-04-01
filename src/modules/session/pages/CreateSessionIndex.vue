@@ -167,7 +167,9 @@
       </div>
 
       <!-- Submit Button -->
-      <q-btn label="Create Session" color="primary" type="submit" />
+      <div class="flex justify-center">
+        <q-btn label="Create Session" color="primary" type="submit" class="q-px-xl q-my-lg" />
+      </div>
     </q-form>
   </q-page>
 </template>
