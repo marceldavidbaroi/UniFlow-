@@ -34,16 +34,6 @@
           />
         </div>
         <div>
-          <!-- <q-toggle
-            dense
-            v-model="isDiscussion"
-            label="Discussion"
-            checked-icon="check"
-            color="green"
-            unchecked-icon="clear"
-            class="q-mx-sm text-secondary"
-            @click="toggleDiscussion(session.id, session.discussionOption)"
-          /> -->
           <q-btn
             dense
             size="sm"

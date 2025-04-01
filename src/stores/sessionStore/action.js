@@ -7,6 +7,7 @@ import {
   updateDoc,
   arrayUnion,
   getDocs,
+  getDoc,
 } from 'firebase/firestore'
 import { useUserStore } from '../user-store'
 
@@ -84,6 +85,22 @@ export default {
       console.log('Session data updated successfully!')
     } catch (error) {
       console.error('Error updating session: ', error)
+    }
+  },
+
+  async searchSessionById(sessionId) {
+    const sessionDocRef = doc(db, 'sessions', sessionId)
+
+    try {
+      const sessionDocSnap = await getDoc(sessionDocRef)
+      if (!sessionDocSnap.exists()) {
+        throw new Error('Session not found')
+      }
+      console.log('API', sessionDocSnap.data())
+      return sessionDocSnap.data()
+    } catch (error) {
+      console.error('Error fetching session: ', error.message)
+      return null // Or return error.message or re-throw if needed
     }
   },
 }
