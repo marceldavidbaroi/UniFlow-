@@ -174,6 +174,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useSessionStore } from 'src/stores/sessionStore'
+import { useUserStore } from 'src/stores/user-store'
+
+const sesstionStore = useSessionStore()
+const userStore = useUserStore()
 
 // Form data
 const sessionName = ref('')
@@ -241,8 +246,7 @@ const removeLink = (arrayName, index) => {
 
 // Handle form submission
 const handleSubmit = () => {
-  // You can handle the form submission logic here.
-  console.log({
+  const payload = {
     sessionName: sessionName.value,
     sessionLength: sessionLength.value,
     sessionDescription: sessionDescription.value,
@@ -253,7 +257,9 @@ const handleSubmit = () => {
     materialLinks: materialLinks.value,
     codingPlatformLinks: codingPlatformLinks.value,
     tasks: tasks.value,
-  })
+  }
+
+  sesstionStore.createSession(userStore.currentUser.id, payload)
 }
 </script>
 

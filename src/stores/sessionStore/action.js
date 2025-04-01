@@ -1,15 +1,15 @@
-import { db } from '@/firebase' // Your Firebase config file
+import { db } from 'boot/firebase'
 import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 'firebase/firestore'
 
 export default {
-  async createSession(userId, sessionName) {
+  async createSession(userId, payload) {
     try {
       const docRef = await addDoc(collection(db, 'sessions'), {
-        name: sessionName,
         createdBy: userId,
         createdAt: serverTimestamp(),
         participants: [userId],
         isActive: true,
+        ...payload,
       })
       console.log('Session created with ID: ', docRef.id)
       return docRef.id

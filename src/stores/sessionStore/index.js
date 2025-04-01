@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import actions from './action'
 
-export const useGroupStore = defineStore('session', {
+export const useSessionStore = defineStore('session', {
   state: () => ({
     currentSession: [],
   }),
@@ -10,8 +10,8 @@ export const useGroupStore = defineStore('session', {
 
   persist: {
     enabled: true,
-    key: 'group',
+    key: 'session',
     storage: localStorage,
-    paths: ['group', 'groupList'],
+    paths: ['currentSession'],
   },
 })
