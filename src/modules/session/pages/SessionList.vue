@@ -10,11 +10,16 @@
         <div class="caption">Students</div>
       </div>
     </div> -->
-    <div class="text-h4 q-pa-md text-center brand_sb">All Sesstions</div>
+    <div class="text-h4 q-pt-md text-center brand_sb">All Sesstions</div>
+    <div class="text-body1 q-pb-md text-center text-secondary text-bold">
+      Total Session:
+      {{ sessionStore.sessionCount }}
+    </div>
     <SessionListItems
       v-for="session in formattedSessionData"
       :key="session.id"
       :session="session"
+      @updateSessionStatus="handleStatusChange"
     />
   </q-page>
 </template>
@@ -42,7 +47,11 @@ onMounted(async () => {
   await sessionStore.fetchAllSession()
 })
 
-console.log('this is the session', formattedSessionData)
+const handleStatusChange = async () => {
+  await sessionStore.fetchAllSession()
+}
+
+// console.log('this is the session', formattedSessionData)
 </script>
 
 <style scoped>

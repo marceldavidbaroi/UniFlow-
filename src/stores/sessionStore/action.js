@@ -72,4 +72,18 @@ export default {
       return { success: false, error: error.message }
     }
   },
+
+  async updateSessionData(sessionId, newData) {
+    try {
+      // Reference to the session document
+      const sessionDocRef = doc(db, 'sessions', sessionId)
+
+      // Update specific fields in the document
+      await updateDoc(sessionDocRef, newData)
+
+      console.log('Session data updated successfully!')
+    } catch (error) {
+      console.error('Error updating session: ', error)
+    }
+  },
 }
