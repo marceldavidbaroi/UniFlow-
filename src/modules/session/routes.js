@@ -5,6 +5,7 @@ export default [
     children: [
       { path: 'create', component: () => import('./pages/CreateSessionIndex.vue') },
       { path: 'list', component: () => import('./pages/SessionList.vue') },
+      { path: ':id', component: () => import('./pages/SessionDetails.vue') },
     ],
   },
 ]

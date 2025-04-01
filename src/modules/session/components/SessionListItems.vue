@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="session-wrapper" @mouseover="isHovered = true" @mouseleave="isHovered = false">
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple @click="showDetails(session.id)">
         <q-item-section>
           <q-item-label>{{ session.sessionName }}</q-item-label>
           <div class="row justify-between">
@@ -72,14 +72,15 @@
 <script setup>
 import { useSessionStore } from 'src/stores/sessionStore'
 import { ref, defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 const sessionStore = useSessionStore()
+const router = useRouter()
 defineProps({
   session: Object,
 })
 const emit = defineEmits(['updateSessionStatus'])
 
 const isHovered = ref(false)
-const isDiscussion = ref(false)
 
 const toggleActive = (id, isActive) => {
   sessionStore.updateSessionData(id, { isActive: !isActive })
@@ -88,6 +89,10 @@ const toggleActive = (id, isActive) => {
 const toggleDiscussion = (id, discussionOption) => {
   sessionStore.updateSessionData(id, { discussionOption: !discussionOption })
   emit('updateSessionStatus')
+}
+
+const showDetails = (id) => {
+  router.push(`/session/${id}`)
 }
 </script>
 
