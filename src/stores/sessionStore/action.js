@@ -10,13 +10,17 @@ import {
   getDoc,
 } from 'firebase/firestore'
 import { useUserStore } from '../user-store'
+import { getNextSessionNumber } from 'src/services/firebaseService'
 
 const userStore = useUserStore()
 
 export default {
   async createSession(userId, payload) {
+    const sessionNumber = await getNextSessionNumber()
+    if (!sessionNumber) return // Prevent session creation if there's an error
     try {
       await addDoc(collection(db, 'sessions'), {
+        sessionID: sessionNumber,
         createdBy: userId,
         createdAt: serverTimestamp(),
         participants: [userId],
