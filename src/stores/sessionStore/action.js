@@ -1,5 +1,16 @@
 import { db } from 'boot/firebase'
-import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 'firebase/firestore'
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDocs,
+} from 'firebase/firestore'
+import { useUserStore } from '../user-store'
+
+const userStore = useUserStore()
 
 export default {
   async createSession(userId, payload) {
@@ -40,6 +51,25 @@ export default {
       console.log('Session ended.')
     } catch (error) {
       console.error('Error ending session: ', error)
+    }
+  },
+
+  // get all session data by user
+  async fetchAllSession() {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'sessions'))
+      const sessions = querySnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((session) => session.createdBy === userStore.currentUser?.id)
+
+      this.sessionList = sessions
+      this.sessionCount = sessions.length
+      return { success: true, message: 'all data fetched', data: sessions }
+    } catch (error) {
+      return { success: false, error: error.message }
     }
   },
 }

@@ -4,14 +4,15 @@ import actions from './action'
 export const useSessionStore = defineStore('session', {
   state: () => ({
     currentSession: [],
+    sessionList: [],
+    sessionCount: 0,
   }),
 
   actions,
 
   persist: {
-    enabled: true,
     key: 'session',
-    storage: localStorage,
-    paths: ['currentSession'],
+    storage: localStorage, // ✅ Correct usage
+    paths: ['currentSession', 'sessionList', 'sessionCount'],
   },
 })

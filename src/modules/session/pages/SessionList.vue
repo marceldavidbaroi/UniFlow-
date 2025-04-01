@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="row justify-center text-center q-ma-md">
+    <!-- <div class="row justify-center text-center q-ma-md">
       <div class="col q-pa-xl q-mx-xl my-card text-center">
         <div class="text-heading-solid text-h3">{{ groupStore.groupCount }}</div>
         <div class="caption">Groups</div>
@@ -9,35 +9,40 @@
         <div class="text-heading-solid text-h3">10</div>
         <div class="caption">Students</div>
       </div>
-    </div>
-    <GroupListItems v-for="group in formattedGroupData" :key="group.id" :group="group" />
+    </div> -->
+    <div class="text-h4 q-pa-md text-center brand_sb">All Sesstions</div>
+    <SessionListItems
+      v-for="session in formattedSessionData"
+      :key="session.id"
+      :session="session"
+    />
   </q-page>
 </template>
 
 <script setup>
 import { onMounted, computed } from 'vue'
-import GroupListItems from '../components/SessionListItems.vue'
-import { useGroupStore } from 'src/stores/group-store'
+import SessionListItems from '../components/SessionListItems.vue'
+import { useSessionStore } from 'src/stores/sessionStore'
+useSessionStore
 
-const groupStore = useGroupStore()
+const sessionStore = useSessionStore()
 
 // Make formattedGroupData reactive
-const formattedGroupData = computed(() =>
-  groupStore.groupList.map((group) => ({
-    id: group.id,
-    groupName: group.groupName,
-    semester: group.semester,
-    subjectName: group.subjectName,
-    year: group.year,
-    labGroup: group.labGroup,
+const formattedSessionData = computed(() =>
+  sessionStore.sessionList.map((session) => ({
+    id: session.id,
+    sessionName: session.sessionName,
+    sessionLength: session.sessionLength,
+    discussionOption: session.discussionOption,
+    isActive: session.isActive,
   })),
 )
 
 onMounted(async () => {
-  await groupStore.fetchAllGroups()
+  await sessionStore.fetchAllSession()
 })
 
-console.log(formattedGroupData)
+console.log('this is the session', formattedSessionData)
 </script>
 
 <style scoped>

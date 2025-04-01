@@ -2,15 +2,16 @@
   <div class="container">
     <q-item clickable v-ripple>
       <q-item-section>
-        <q-item-label>{{ group.groupName }}</q-item-label>
-        <div class="row">
-          <div class="">Subject: {{ group.subjectName }}</div>
-          <div class="col text-right text-dark">
-            <span class="">&nbsp;{{ group.semester }}</span>
-            <span>&nbsp;||&nbsp;{{ group.year }} </span>
-            <span v-if="group.labGroup" class="text-bold text-primary"
-              >&nbsp;<span class="text-black">||</span>&nbsp;Lab Group</span
-            >
+        <q-item-label>{{ session.sessionName }}</q-item-label>
+        <div class="row justify-between">
+          <div>{{ session.sessionLength }}</div>
+          <div>
+            <span>
+              <q-icon name="question_answer" :color="session.isActive ? 'green' : 'red'" />
+            </span>
+            <span>
+              <q-icon name="fiber_manual_record" :color="session.isActive ? 'green' : 'red'" />
+            </span>
           </div>
         </div>
       </q-item-section>
@@ -22,7 +23,7 @@
 import { defineProps } from 'vue'
 
 defineProps({
-  group: Object,
+  session: Object,
 })
 </script>
 
@@ -46,6 +47,6 @@ defineProps({
 }
 
 .q-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--brand-bl);
 }
 </style>
