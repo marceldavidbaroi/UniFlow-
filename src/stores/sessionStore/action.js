@@ -4,17 +4,18 @@ import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 
 export default {
   async createSession(userId, payload) {
     try {
-      const docRef = await addDoc(collection(db, 'sessions'), {
+      await addDoc(collection(db, 'sessions'), {
         createdBy: userId,
         createdAt: serverTimestamp(),
         participants: [userId],
         isActive: true,
         ...payload,
       })
-      console.log('Session created with ID: ', docRef.id)
-      return docRef.id
+      // console.log('Session created with ID: ', docRef.id)
+      return { success: true, message: 'Session Successfully Created' }
     } catch (error) {
-      console.error('Error creating session: ', error)
+      return { success: false, message: 'Error creating session', error }
+      // console.error('Error creating session: ', error)
     }
   },
 

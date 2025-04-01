@@ -177,6 +177,8 @@ import { ref } from 'vue'
 import { useSessionStore } from 'src/stores/sessionStore'
 import { useUserStore } from 'src/stores/user-store'
 
+import { Notify } from 'quasar'
+
 const sesstionStore = useSessionStore()
 const userStore = useUserStore()
 
@@ -259,7 +261,28 @@ const handleSubmit = () => {
     tasks: tasks.value,
   }
 
-  sesstionStore.createSession(userStore.currentUser.id, payload)
+  sesstionStore
+    .createSession(userStore.currentUser.id, payload)
+    .then((result) => {
+      Notify.create({
+        message: result.message,
+        color: result.success ? 'green' : 'red',
+        position: 'top',
+        icon: 'warning',
+        timeout: 5000,
+        actions: [{ icon: 'close', color: 'white', handler: () => {} }],
+      })
+    })
+    .catch(() => {
+      Notify.create({
+        message: 'Something went wrong!',
+        color: 'red',
+        position: 'top',
+        icon: 'warning',
+        timeout: 5000,
+        actions: [{ icon: 'close', color: 'white', handler: () => {} }],
+      })
+    })
 }
 </script>
 
