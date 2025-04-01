@@ -51,7 +51,6 @@
           <q-tab-panel name="info">
             <div class="text-h5 brand_sb q-mb-md">Session Information</div>
             <div class="text-body1">
-              <div>Total Participants: {{ data.participants.length }}</div>
               <div>Session Length {{ data.sessionLength }}</div>
               <div>Total Participants: {{ data.participants.length }}</div>
               <div>Total Material Links: {{ data.materialLinks.length }}</div>
@@ -77,11 +76,49 @@
           <!-- Material Links -->
           <q-tab-panel name="materials">
             <div class="text-h6">Material Links</div>
-            <ul>
-              <li v-for="(link, index) in data.materialLinks" :key="index">
-                <a :href="link" target="_blank">{{ link }}</a>
-              </li>
-            </ul>
+
+            <q-splitter v-model="splitterModel" unit="px">
+              <!-- Left Panel: Material Links -->
+              <template v-slot:before>
+                <div class="q-pa-md">
+                  <div
+                    v-for="(link, index) in data.materialLinks"
+                    :key="index"
+                    class="q-ma-sm row items-center"
+                  >
+                    <div class="col-auto q-gutter-sm">
+                      <q-btn
+                        color="primary"
+                        :label="`Preview ${index + 1}`"
+                        @click="selectedMaterial = link"
+                      />
+                      <q-btn
+                        color="secondary"
+                        :label="`Open ${index + 1}`"
+                        @click="openLink(link)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Splitter Handle -->
+              <template v-slot:separator>
+                <q-separator vertical />
+              </template>
+
+              <!-- Right Panel: Iframe -->
+              <template v-slot:after>
+                <q-responsive :ratio="16 / 9">
+                  <iframe
+                    :src="selectedMaterial"
+                    frameborder="0"
+                    allowfullscreen
+                    style="width: 100%; height: 100%"
+                  ></iframe>
+                </q-responsive>
+              </template>
+            </q-splitter>
           </q-tab-panel>
           <!-- Participants -->
           <q-tab-panel name="participants">
@@ -105,11 +142,49 @@
           <!-- coding platform -->
           <q-tab-panel name="coding">
             <div class="text-h6">Coding Challenges</div>
-            <ul>
-              <li v-for="(c, index) in data.codingPlatformLinks" :key="index">
-                {{ c }}
-              </li>
-            </ul>
+
+            <q-splitter v-model="splitterModel" unit="px">
+              <!-- Left Panel: Material Links -->
+              <template v-slot:before>
+                <div class="q-pa-md">
+                  <div
+                    v-for="(link, index) in data.codingPlatformLinks"
+                    :key="index"
+                    class="q-ma-sm row items-center"
+                  >
+                    <div class="col-auto q-gutter-sm">
+                      <q-btn
+                        color="primary"
+                        :label="`Preview ${index + 1}`"
+                        @click="selectedCodingPlatform = link"
+                      />
+                      <q-btn
+                        color="secondary"
+                        :label="`Open ${index + 1}`"
+                        @click="openLink(link)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Splitter Handle -->
+              <template v-slot:separator>
+                <q-separator vertical />
+              </template>
+
+              <!-- Right Panel: Iframe -->
+              <template v-slot:after>
+                <q-responsive :ratio="16 / 9">
+                  <iframe
+                    :src="selectedCodingPlatform"
+                    frameborder="0"
+                    allowfullscreen
+                    style="width: 100%; height: 100%"
+                  ></iframe>
+                </q-responsive>
+              </template>
+            </q-splitter>
           </q-tab-panel>
         </q-tab-panels>
       </q-card>
@@ -130,6 +205,9 @@ const sessionStore = useSessionStore()
 const data = ref(null)
 const sessionID = window.location.pathname.split('/')[2]
 const tab = ref('info') // Default tab
+const splitterModel = ref(300) // Initial width of left panel
+const selectedMaterial = ref()
+const selectedCodingPlatform = ref()
 
 const toggleActive = async (id, isActive) => {
   await sessionStore.updateSessionData(id, { isActive: !isActive })
@@ -140,11 +218,19 @@ const toggleDiscussion = async (id, discussionOption) => {
   await sessionStore.updateSessionData(id, { discussionOption: !discussionOption })
   data.value = await sessionStore.searchSessionById(sessionID)
 }
-
+const openLink = (link) => {
+  window.open(link, '_blank')
+}
 onMounted(async () => {
   try {
     data.value = await sessionStore.searchSessionById(sessionID)
     console.log('Fetched session data:', data.value)
+
+    // Set default material link if available
+    if (data.value.materialLinks.length > 0) {
+      selectedMaterial.value = data.value.materialLinks[0]
+      selectedCodingPlatform.value = data.value.codingPlatformLinks[0]
+    }
   } catch (error) {
     console.error('Error loading session:', error)
   }
