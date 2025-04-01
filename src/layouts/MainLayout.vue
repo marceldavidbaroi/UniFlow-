@@ -43,7 +43,7 @@
           <div class="text-bold text-secondary text-h6 brand_sb">
             {{ userStore.currentUser.name }}
             <span
-              v-if="userStore.currentUser.faculty.label"
+              v-if="userStore.currentRole === 'teacher'"
               class="text-secondary text-caption brand_sb"
             >
               [{{ userStore.currentUser.faculty.label }}]

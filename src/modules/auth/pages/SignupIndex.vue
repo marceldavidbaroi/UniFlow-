@@ -326,6 +326,7 @@
               dense
               padding="xs"
               no-caps
+              :loading="isLoading"
             />
           </div>
         </q-form>
@@ -359,6 +360,8 @@ const faculty = ref('')
 const adminAccessPassword = ref('')
 const password = ref('123123')
 const confirmPassword = ref('123123')
+
+const isLoading = ref()
 
 const departmentOptions = ref([
   { label: 'Computer Science & Engineering', value: 'CSE' },
@@ -404,7 +407,8 @@ const facultyOptions = ref([
 ])
 
 const onSubmit = () => {
-  console.log('the role is ', role.value)
+  isLoading.value = true // Start loading spinner
+
   authStore
     .registerUser(
       userName.value,
@@ -426,6 +430,7 @@ const onSubmit = () => {
         timeout: 5000,
         actions: [{ icon: 'close', color: 'white', handler: () => {} }],
       })
+
       if (result.success) {
         setTimeout(() => {
           router.push('/auth/login')
@@ -441,6 +446,9 @@ const onSubmit = () => {
         timeout: 5000,
         actions: [{ icon: 'close', color: 'white', handler: () => {} }],
       })
+    })
+    .finally(() => {
+      isLoading.value = false // Stop loading spinner
     })
 }
 </script>

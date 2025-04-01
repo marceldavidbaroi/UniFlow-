@@ -192,7 +192,7 @@
 
     <!-- Loading State -->
     <div v-else class="text-center q-mt-md">
-      <q-spinner color="primary" size="2em" /> Loading session details...
+      <q-spinner-pie color="secondary" size="2em" /> Loading session details...
     </div>
   </q-page>
 </template>
