@@ -1,6 +1,6 @@
 import { db } from 'boot/firebase'
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
-import bcrypt from 'bcryptjs'
+// import bcrypt from 'bcryptjs'
 import { useUserStore } from '../user-store'
 
 const userStore = useUserStore()
@@ -45,7 +45,7 @@ export default {
         }
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10)
+      // const hashedPassword = await bcrypt.hash(password, 10)
 
       const newGroup = {
         groupName,
@@ -55,7 +55,7 @@ export default {
         subjectName,
         description,
         groupRules,
-        password: hashedPassword,
+        password: password,
         maxMembers: maxMembers ? parseInt(maxMembers, 10) : null,
         labGroup: Boolean(labGroup),
         createdAt: new Date(),

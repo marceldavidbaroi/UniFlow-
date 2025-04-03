@@ -1,17 +1,19 @@
 <template>
   <q-page class="flex flex-center">
     <q-form @submit="submitForm" class="q-gutter-md" style="max-width: 600px; width: 100%">
-      <!-- Title -->
-      <div class="text-h6 text-center q-mb-md">Create a Group</div>
+      <div class="text-h4 text-center q-mb-md brand_sb">Create a Group</div>
 
-      <!-- Group Information -->
       <q-input
         v-model="groupName"
         label="Group Name"
         outlined
         :rules="[(val) => !!val || 'Group Name is required']"
         class="q-mb-sm"
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="group" />
+        </template>
+      </q-input>
 
       <q-input
         v-model="batch"
@@ -19,14 +21,22 @@
         outlined
         :rules="[(val) => !!val || 'Batch is required']"
         class="q-mb-sm"
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="calendar_today" />
+        </template>
+      </q-input>
       <q-input
         v-model="semester"
         label="Semester"
         outlined
         :rules="[(val) => !!val || 'Semester is required']"
         class="q-mb-sm"
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="school" />
+        </template>
+      </q-input>
       <q-input
         v-model="year"
         label="Year"
@@ -34,17 +44,28 @@
         outlined
         :rules="[(val) => val > 2000 || 'Enter a valid year (greater than 2000)']"
         class="q-mb-sm"
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="event" />
+        </template>
+      </q-input>
 
-      <!-- Subject Information -->
       <q-input
         v-model="subjectName"
         label="Subject Name"
         outlined
         :rules="[(val) => !!val || 'Subject Name is required']"
         class="q-mb-sm"
-      />
-      <q-input v-model="description" label="Description" type="textarea" outlined class="q-mb-sm" />
+      >
+        <template v-slot:prepend>
+          <q-icon name="subject" />
+        </template>
+      </q-input>
+      <q-input v-model="description" label="Description" type="textarea" outlined class="q-mb-sm">
+        <template v-slot:prepend>
+          <q-icon name="description" />
+        </template>
+      </q-input>
       <q-toggle v-model="addRules" label="Add Group Rules" class="q-mb-sm" />
       <q-editor
         v-if="addRules"
@@ -55,23 +76,44 @@
         :toolbar="toolbarItems"
       />
 
-      <!-- Group Settings -->
       <q-input
         v-model="password"
         label="Password"
-        type="password"
+        :type="passwordVisible ? 'text' : 'password'"
         outlined
         :rules="[(val) => val.length >= 6 || 'Password must be at least 6 characters']"
         class="q-mb-sm"
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="lock" />
+        </template>
+        <template v-slot:append>
+          <q-icon
+            :name="passwordVisible ? 'visibility_off' : 'visibility'"
+            @click="passwordVisible = !passwordVisible"
+            class="cursor-pointer"
+          />
+        </template>
+      </q-input>
       <q-input
         v-model="confirmPassword"
         label="Confirm Password"
-        type="password"
+        :type="confirmPasswordVisible ? 'text' : 'password'"
         outlined
         :rules="[(val) => val === password || 'Passwords do not match']"
         class="q-mb-sm"
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="lock_open" />
+        </template>
+        <template v-slot:append>
+          <q-icon
+            :name="confirmPasswordVisible ? 'visibility_off' : 'visibility'"
+            @click="confirmPasswordVisible = !confirmPasswordVisible"
+            class="cursor-pointer"
+          />
+        </template>
+      </q-input>
       <q-input
         v-model="maxMembers"
         label="Max Members"
@@ -79,16 +121,19 @@
         outlined
         :rules="[(val) => val > 0 || 'Enter a valid number of members']"
         class="q-mb-sm"
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="people" />
+        </template>
+      </q-input>
       <q-toggle v-model="labGroup" label="Lab Group" class="q-mb-sm" />
 
-      <!-- Submit Button -->
       <q-btn
         label="Create Group"
         type="submit"
         color="primary"
         class="full-width q-mt-md"
-        rounded
+        :loading="isLoading"
       />
     </q-form>
   </q-page>
@@ -103,8 +148,10 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar()
 
 import { Notify } from 'quasar'
+import { useRouter } from 'vue-router'
 
 const groupStore = useGroupStore()
+const router = useRouter()
 
 const groupName = ref('')
 const batch = ref('')
@@ -119,7 +166,13 @@ const maxMembers = ref('')
 const labGroup = ref(false)
 const addRules = ref(false)
 
+const isLoading = ref(false)
+const passwordVisible = ref(false)
+const confirmPasswordVisible = ref(false)
+
 const submitForm = () => {
+  isLoading.value = true
+
   groupStore
     .createGroup(
       groupName.value,
@@ -144,8 +197,8 @@ const submitForm = () => {
         actions: [{ icon: 'close', color: 'white', handler: () => {} }],
       })
 
-      // Reset form fields if successful
       if (result.success) {
+        // Reset form fields
         groupName.value = ''
         batch.value = ''
         semester.value = ''
@@ -157,7 +210,24 @@ const submitForm = () => {
         confirmPassword.value = ''
         maxMembers.value = ''
         labGroup.value = false
+
+        setTimeout(() => {
+          router.push('/group/list')
+        }, 2000)
       }
+    })
+    .catch((error) => {
+      console.error('Error creating group:', error)
+      Notify.create({
+        message: 'An error occurred while creating the group.',
+        color: 'red',
+        position: 'top',
+        icon: 'error',
+        timeout: 5000,
+      })
+    })
+    .finally(() => {
+      isLoading.value = false
     })
 }
 
@@ -199,10 +269,6 @@ const toolbarItems = [
 .q-btn {
   padding: 10px;
   font-size: 16px;
-  border-radius: 10px;
-}
-
-.full-width {
-  width: 100%;
+  border-radius: 8px;
 }
 </style>
