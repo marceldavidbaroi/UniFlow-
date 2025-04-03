@@ -41,16 +41,16 @@
             />
           </q-avatar>
           <div class="text-bold text-secondary text-h6 brand_sb">
-            {{ userStore.currentUser.name }}
+            {{ userStore.currentUser?.name }}
             <span
               v-if="userStore.currentRole === 'teacher'"
               class="text-secondary text-caption brand_sb"
             >
-              [{{ userStore.currentUser.faculty.label }}]
+              [{{ userStore.currentUser?.faculty.label }}]
             </span>
           </div>
           <div class="text-secondary text-caption brand_sb">
-            {{ userStore.currentUser.email }}
+            {{ userStore.currentUser?.email }}
           </div>
         </div>
       </q-img>
