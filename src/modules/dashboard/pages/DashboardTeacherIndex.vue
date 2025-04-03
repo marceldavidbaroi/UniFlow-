@@ -80,13 +80,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useUserStore } from 'src/stores/user-store'
+// import { useUserStore } from 'src/stores/user-store'
 import { useRouter } from 'vue-router'
 import { Chart, registerables } from 'chart.js'
 
 Chart.register(...registerables)
 
-const userStore = useUserStore()
+// const userStore = useUserStore()
 const router = useRouter()
 
 const showCalendar = ref(false)
@@ -201,12 +201,12 @@ const tasks = ref([
   { title: 'Review Assignments', description: 'From Week 2', completed: false },
 ])
 
-const totalGroups = ref(3)
-const totalSessions = ref(15)
+// const totalGroups = ref(3)
+// const totalSessions = ref(15)
 
-const createGroup = () => {
-  router.push('/group/create')
-}
+// const createGroup = () => {
+//   router.push('/group/create')
+// }
 </script>
 
 <style lang="scss" scoped></style>

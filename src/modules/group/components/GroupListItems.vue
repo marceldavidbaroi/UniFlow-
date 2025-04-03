@@ -15,15 +15,77 @@
         </div>
       </q-item-section>
     </q-item>
+    <q-btn flat dense size="sm" color="secondary" icon="share" @click="showSharePopup = true" />
+
+    <q-dialog v-model="showSharePopup">
+      <q-card style="border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
+        <q-card-section class="q-pa-lg">
+          <div class="text-h6 text-primary text-center q-mb-md">Share Group</div>
+          <p class="text-grey-8 text-center q-mb-md">
+            Share this group with others using the link below:
+          </p>
+          <q-input
+            v-model="shareLink"
+            readonly
+            outlined
+            dense
+            input-class="text-grey-9"
+            color="primary"
+            style="border-radius: 8px"
+          >
+            <template v-slot:append>
+              <q-btn
+                flat
+                icon="content_copy"
+                @click="copyLink"
+                color="primary"
+                style="border-radius: 50%"
+              />
+            </template>
+          </q-input>
+        </q-card-section>
+
+        <q-card-actions align="center" class="q-pa-md">
+          <q-btn
+            flat
+            label="Close"
+            v-close-popup
+            color="grey-8"
+            style="border-radius: 8px; padding: 10px 16px"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { ref, defineProps, onMounted } from 'vue'
 
-defineProps({
+const props = defineProps({
   group: Object,
 })
+
+const baseUrl = ref()
+
+const showSharePopup = ref(false)
+const shareLink = ref()
+
+onMounted(() => {
+  baseUrl.value = window.location.origin
+
+  if (props.group && props.group.id) {
+    shareLink.value = `${baseUrl.value}/group/join/${props.group.id}`
+  } else {
+    console.error('Group ID is missing.')
+    shareLink.value = 'invalid link'
+  }
+})
+
+const copyLink = () => {
+  navigator.clipboard.writeText(shareLink.value)
+  // Optionally, show a notification that the link has been copied
+}
 </script>
 
 <style scoped>
