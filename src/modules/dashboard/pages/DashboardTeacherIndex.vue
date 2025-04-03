@@ -1,74 +1,34 @@
 <template>
   <q-page padding>
-    <div class="row q-gutter-md">
-      <div class="col-12 col-md-3">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">Actions</div>
-            <q-btn
-              color="primary"
-              icon="add"
-              label="New Session"
-              @click="router.push('/group/create')"
-              class="full-width q-mt-md"
-            />
-            <q-btn
-              color="secondary"
-              icon="groups"
-              label="Create Group"
-              @click="createGroup"
-              class="full-width q-mt-sm"
-            />
-            <q-btn
-              color="accent"
-              icon="event"
-              label="View Calendar"
-              @click="showCalendar = true"
-              class="full-width q-mt-sm"
-            />
-            <q-dialog v-model="showCalendar">
-              <q-card>
-                <q-card-section>
-                  <q-date v-model="selectedDate" />
-                </q-card-section>
-                <q-card-actions align="right">
-                  <q-btn flat label="Close" v-close-popup />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-          </q-card-section>
-        </q-card>
+    <div class="text-h4 brand_sb text-center">Dashboard</div>
+    <!-- action button -->
+    <div class="row justify-between">
+      <div class="text-bold">Total Gorups 3 Total session 10</div>
+      <div class="q-gutter-sm text-right">
+        <q-btn flat color="primary" icon="groups" @click="router.push('/group/create')" class="">
+          <q-tooltip>Create a Group</q-tooltip>
+        </q-btn>
 
-        <q-card class="q-mt-md">
-          <q-card-section>
-            <div class="text-h6">Quick Stats</div>
-            <div class="row q-col-gutter-md q-mt-md">
-              <div class="col-6">
-                <q-card flat bordered>
-                  <q-card-section class="text-center">
-                    <div class="text-h5">{{ totalGroups }}</div>
-                    <div class="text-caption">Total Groups</div>
-                  </q-card-section>
-                </q-card>
-              </div>
-              <div class="col-6">
-                <q-card flat bordered>
-                  <q-card-section class="text-center">
-                    <div class="text-h5">{{ totalSessions }}</div>
-                    <div class="text-caption">Total Sessions</div>
-                  </q-card-section>
-                </q-card>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
+        <q-btn flat color="primary" icon="event" @click="router.push('/session/create')" class="">
+          <q-tooltip>Create a Session</q-tooltip>
+        </q-btn>
+        <q-btn flat color="primary" icon="calendar_today" @click="showCalendar = true" class="">
+          <q-tooltip>Calender</q-tooltip>
+        </q-btn>
+        <q-dialog v-model="showCalendar">
+          <q-date v-model="selectedDate" color="secondary">
+            <div class="row items-center justify-end q-gutter-sm">
+              <q-btn label="Cancel" color="secodary" flat v-close-popup /></div
+          ></q-date>
+        </q-dialog>
       </div>
-
+    </div>
+    <div class="row q-gutter-md justify-center q-mt-md">
       <div class="col-12 col-md-9">
         <q-card>
           <q-card-section>
             <div class="text-h6">Session Overview</div>
-            <div class="row q-gutter-md q-mt-md">
+            <div class="row q-gutter-md q-mt-md justify-center">
               <div class="col-auto">
                 <div style="width: 100%; height: 300px">
                   <canvas ref="groupStudentChart"></canvas>
