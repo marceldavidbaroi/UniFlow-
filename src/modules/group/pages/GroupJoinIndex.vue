@@ -13,17 +13,17 @@
 
         <div class="q-mb-md">
           <div class="text-subtitle1 text-grey-8">Group Name</div>
-          <div class="text-body1 brand_sb">{{ groupName }}</div>
+          <div class="text-body1 brand_sb">{{ response?.data?.groupName }}</div>
         </div>
 
         <div class="q-mb-md">
           <div class="text-subtitle1 text-grey-8">Owner</div>
-          <div class="text-body1 brand_sb">{{ ownerName }}</div>
+          <div class="text-body1 brand_sb">{{ response?.data?.owner?.name }}</div>
         </div>
 
         <div class="q-mb-md">
           <div class="text-subtitle1 text-grey-8">Total Members</div>
-          <div class="text-body1 brand_sb">{{ totalMembers }}</div>
+          <div class="text-body1 brand_sb">{{ response?.data?.members?.length }}</div>
         </div>
 
         <q-input
@@ -64,22 +64,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { Notify } from 'quasar'
+import { useGroupStore } from 'src/stores/group-store'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+const groupStore = useGroupStore()
+const route = useRoute()
 
-const groupName = 'Study Group A'
-const ownerName = 'John Doe'
-const totalMembers = 25
+const id = route.params.id
+
 const password = ref('')
 const loading = ref(false)
 const showPassword = ref(false)
+const response = ref()
 
 const joinGroup = () => {
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-    console.log('Joining group with password:', password.value)
-  }, 1000)
+  groupStore.addMemberToGroup('yARjne3TOlxHyksbxtxc', password.value).then((result) => {
+    if (result.success) {
+      Notify.create({
+        message: result.message, // Use the message from the result
+        color: 'positive', // Green color for success
+        position: 'top',
+        timeout: 2500,
+      })
+    } else {
+      Notify.create({
+        message: result.message || 'An error occurred.', // Use message or generic error
+        color: 'negative', // Red color for error
+        position: 'top',
+        timeout: 2500,
+      })
+    }
+  })
 }
+
+onMounted(async () => {
+  await groupStore.searchGroupById(id).then((result) => {
+    response.value = result
+  })
+})
 </script>
 
 <style lang="scss" scoped>

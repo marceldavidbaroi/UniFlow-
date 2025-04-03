@@ -1,6 +1,15 @@
 import { db } from 'boot/firebase'
-import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
-// import bcrypt from 'bcryptjs'
+import {
+  collection,
+  addDoc,
+  getDocs,
+  where,
+  query,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+} from 'firebase/firestore'
 import { useUserStore } from '../user-store'
 
 const userStore = useUserStore()
@@ -60,6 +69,7 @@ export default {
         labGroup: Boolean(labGroup),
         createdAt: new Date(),
         owner: userStore.currentUser,
+        members: [userStore.currentUser],
       }
 
       const docRef = await addDoc(collection(db, 'group'), newGroup)
@@ -85,6 +95,55 @@ export default {
       this.groupList = groups
       this.groupCount = groups.length
       return { success: true, message: 'all data fetched', data: groups }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  },
+
+  // Function to add a member to a group
+  async addMemberToGroup(groupId, password) {
+    try {
+      const groupDocRef = doc(db, 'group', groupId)
+      const groupSnapshot = await getDocs(
+        query(collection(db, 'group'), where('__name__', '==', groupId)),
+      )
+      if (groupSnapshot.empty) {
+        return { success: false, message: 'Group not found' }
+      }
+      const groupData = groupSnapshot.docs[0].data()
+
+      if (groupData.password !== password) {
+        return { success: false, message: 'Incorrect password.' }
+      }
+
+      if (groupData.maxMembers && groupData.members.length >= groupData.maxMembers) {
+        return { success: false, message: 'Group is full.' }
+      }
+
+      if (groupData.members.some((member) => member.id === userStore.currentUser.id)) {
+        return { success: false, message: 'You are already a member of this group.' }
+      }
+
+      await updateDoc(groupDocRef, {
+        members: arrayUnion(userStore.currentUser),
+      })
+
+      return { success: true, message: 'Member added to group.' }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  },
+
+  async searchGroupById(groupId) {
+    try {
+      const groupDocRef = doc(db, 'group', groupId)
+      const groupSnapshot = await getDoc(groupDocRef)
+
+      if (groupSnapshot.exists()) {
+        return { success: true, data: { id: groupSnapshot.id, ...groupSnapshot.data() } }
+      } else {
+        return { success: false, message: 'Group not found.' }
+      }
     } catch (error) {
       return { success: false, error: error.message }
     }
