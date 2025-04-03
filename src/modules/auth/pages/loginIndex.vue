@@ -40,7 +40,7 @@
           <q-input
             outlined
             v-model="password"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             label="Password"
             placeholder="Password"
             color="secondary"
@@ -57,6 +57,12 @@
                 v-if="password !== ''"
                 name="fa-solid fa-xmark"
                 @click="password = ''"
+                class="cursor-pointer q-mr-sm"
+                color="dark"
+              />
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                @click="showPassword = !showPassword"
                 class="cursor-pointer"
                 color="dark"
               />
@@ -74,6 +80,7 @@
               padding="xs"
               no-caps
               :loading="isLoading"
+              style="border-radius: 8px"
             >
               <template v-slot:loading>
                 <q-spinner color="white" />
@@ -107,6 +114,7 @@ const router = useRouter()
 const email = ref('d@gmail.com')
 const password = ref('123123')
 const isLoading = ref(false) // Loading state
+const showPassword = ref(false)
 
 const onSubmit = async () => {
   isLoading.value = true // Start loading

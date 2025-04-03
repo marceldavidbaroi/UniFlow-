@@ -257,7 +257,7 @@
             v-if="role.value"
             outlined
             v-model="password"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
             label="Password"
             placeholder="Password"
             :dense="dense"
@@ -278,6 +278,12 @@
                 v-if="password !== ''"
                 name="fa-solid fa-xmark"
                 @click="password = ''"
+                class="cursor-pointer q-mr-sm"
+                color="dark"
+              />
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                @click="showPassword = !showPassword"
                 class="cursor-pointer"
                 color="dark"
               />
@@ -289,7 +295,7 @@
             v-if="role.value"
             outlined
             v-model="confirmPassword"
-            type="password"
+            :type="showCPassword ? 'text' : 'password'"
             label="Confirm Password"
             placeholder="Confirm Password"
             :dense="dense"
@@ -313,6 +319,12 @@
                 class="cursor-pointer"
                 color="dark"
               />
+              <q-icon
+                :name="showCPassword ? 'visibility_off' : 'visibility'"
+                @click="showCPassword = !showCPassword"
+                class="cursor-pointer"
+                color="dark"
+              />
             </template>
           </q-input>
 
@@ -327,6 +339,7 @@
               padding="xs"
               no-caps
               :loading="isLoading"
+              style="border-radius: 8px"
             />
           </div>
         </q-form>
@@ -362,6 +375,8 @@ const password = ref('123123')
 const confirmPassword = ref('123123')
 
 const isLoading = ref()
+const showPassword = ref(false)
+const showCPassword = ref(false)
 
 const departmentOptions = ref([
   { label: 'Computer Science & Engineering', value: 'CSE' },
