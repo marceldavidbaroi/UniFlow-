@@ -48,7 +48,7 @@
 
         <q-tab-panels v-model="tab">
           <!-- Basic Info -->
-          <q-tab-panel name="info">
+          <!-- <q-tab-panel name="info">
             <div class="text-h5 brand_sb q-mb-md">Session Information</div>
             <div class="text-body1">
               <div>Session Length {{ data.sessionLength }}</div>
@@ -60,6 +60,61 @@
                 <a :href="data.playgroundLink" target="_blank">{{ data.playgroundLink }}</a>
               </div>
               <div>Description: {{ data.sessionDescription }}</div>
+            </div>
+          </q-tab-panel> -->
+
+          <q-tab-panel name="info">
+            <!-- <div class="text-h5 brand_sb q-mb-md">Session Information</div> -->
+
+            <div class="flex flex-center q-mt-lg" style="width: 100%">
+              <q-table
+                :rows="[
+                  { label: 'Session Length', value: data.sessionLength },
+                  {
+                    label: 'Total Participants',
+                    value: data.participants ? data.participants.length : 0,
+                  },
+                  {
+                    label: 'Total Material Links',
+                    value: data.materialLinks ? data.materialLinks.length : 0,
+                  },
+                  { label: 'Total Questions', value: data.questions ? data.questions.length : 0 },
+                  { label: 'Playground', value: data.playgroundLink || 'N/A' },
+                  { label: 'Description', value: data.sessionDescription || 'N/A' },
+                ]"
+                :columns="[
+                  {
+                    name: 'label',
+                    label: 'Item',
+                    field: 'label',
+                    align: 'left',
+                    style: 'font-weight: 500;',
+                  },
+                  { name: 'value', label: 'Value', field: 'value', align: 'left' },
+                ]"
+                row-key="label"
+                bordered
+                flat
+                hide-bottom
+                class="text-body1"
+                style="width: 800px"
+                :pagination="{ rowsPerPage: 0 }"
+                :style="{ 'word-break': 'break-word', 'border-radius': '8px', overflow: 'hidden' }"
+              >
+                <!-- Playground Link Fix (Prevents Raw HTML Injection) -->
+                <template v-slot:body-cell-value="{ row }">
+                  <q-td>
+                    <template v-if="row.label === 'Playground' && data.playgroundLink">
+                      <a :href="data.playgroundLink" target="_blank" class="text-primary">
+                        {{ data.playgroundLink }}
+                      </a>
+                    </template>
+                    <template v-else>
+                      {{ row.value }}
+                    </template>
+                  </q-td>
+                </template>
+              </q-table>
             </div>
           </q-tab-panel>
 
@@ -191,8 +246,11 @@
     </div>
 
     <!-- Loading State -->
-    <div v-else class="text-center q-mt-md">
-      <q-spinner-pie color="secondary" size="2em" /> Loading session details...
+    <div v-else class="flex flex-center q-mt-md" style="height: 100vh">
+      <div class="text-center">
+        <q-spinner-pie color="secondary" size="2em" />
+        <div>Loading session details...</div>
+      </div>
     </div>
   </q-page>
 </template>
