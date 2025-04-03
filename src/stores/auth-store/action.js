@@ -90,4 +90,25 @@ export default {
       throw error
     }
   },
+
+  // Verify user password
+  async verifyUserPassword(password) {
+    try {
+      if (!userStore.currentUser || !userStore.currentUser.password) {
+        return { success: false, message: 'User not authenticated or password not found.' }
+      }
+
+      const isPasswordCorrect = await bcrypt.compare(password, userStore.currentUser.password)
+      console.log('password', password, 'result', isPasswordCorrect)
+
+      if (typeof isPasswordCorrect === 'boolean' && isPasswordCorrect) {
+        return { success: true, message: 'Password verified successfully.' }
+      } else {
+        return { success: false, message: 'Invalid password.' }
+      }
+    } catch (error) {
+      console.error('Password verification error:', error.message)
+      return { success: false, message: 'Password verification failed. Please try again.' }
+    }
+  },
 }
