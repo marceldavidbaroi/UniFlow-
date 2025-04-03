@@ -78,11 +78,9 @@ export default {
           userStore.setUser(user)
           return { success: true, message: `Login successful as ${userStore.currentRole}`, user }
         } else {
-          console.error('Invalid password.')
           return { success: false, message: 'Invalid password' }
         }
       } else {
-        console.error('Invalid email or password.')
         return { success: false, message: 'Invalid email ' }
       }
     } catch (error) {
@@ -99,7 +97,6 @@ export default {
       }
 
       const isPasswordCorrect = await bcrypt.compare(password, userStore.currentUser.password)
-      console.log('password', password, 'result', isPasswordCorrect)
 
       if (typeof isPasswordCorrect === 'boolean' && isPasswordCorrect) {
         return { success: true, message: 'Password verified successfully.' }
@@ -107,8 +104,11 @@ export default {
         return { success: false, message: 'Invalid password.' }
       }
     } catch (error) {
-      console.error('Password verification error:', error.message)
-      return { success: false, message: 'Password verification failed. Please try again.' }
+      return {
+        success: false,
+        message: 'Password verification failed. Please try again.',
+        error: error,
+      }
     }
   },
 }

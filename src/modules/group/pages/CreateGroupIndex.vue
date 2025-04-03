@@ -216,8 +216,7 @@ const submitForm = () => {
         }, 2000)
       }
     })
-    .catch((error) => {
-      console.error('Error creating group:', error)
+    .catch(() => {
       Notify.create({
         message: 'An error occurred while creating the group.',
         color: 'red',

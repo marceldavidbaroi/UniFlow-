@@ -60,10 +60,8 @@ const formattedGroupData = computed(() =>
     labGroup: group.labGroup,
   })),
 )
-console.log(groupStore.searchGroupById('Ooi9QVjfWBiZLFtDYcIi'))
 onMounted(async () => {
   await groupStore.fetchAllGroups()
-  console.log(groupStore.groupList)
 })
 </script>
 

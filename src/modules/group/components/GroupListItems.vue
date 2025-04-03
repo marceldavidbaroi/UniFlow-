@@ -131,7 +131,6 @@ onMounted(() => {
   if (props.group && props.group.id) {
     shareLink.value = `${baseUrl.value}/group/join/${props.group.id}`
   } else {
-    console.error('Group ID is missing.')
     shareLink.value = 'invalid link'
   }
 })
