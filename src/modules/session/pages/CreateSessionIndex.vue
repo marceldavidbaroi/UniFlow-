@@ -213,7 +213,13 @@
 
       <!-- Submit -->
       <div class="flex justify-center">
-        <q-btn label="Create Session" color="primary" type="submit" class="q-px-xl q-my-lg" />
+        <q-btn
+          label="Create Session"
+          color="primary"
+          type="submit"
+          class="q-px-xl q-my-lg"
+          :loading="isLoading"
+        />
       </div>
     </q-form>
   </q-page>
@@ -225,8 +231,9 @@ import { useSessionStore } from 'src/stores/sessionStore'
 import { useUserStore } from 'src/stores/user-store'
 
 import { Notify } from 'quasar'
-import router from 'src/router'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const sesstionStore = useSessionStore()
 const userStore = useUserStore()
 
@@ -337,9 +344,10 @@ const handleSubmit = () => {
         actions: [{ icon: 'close', color: 'white', handler: () => {} }],
       })
     })
-
-  isLoading.value = false
-  router.push('/session/list')
+    .finally(() => {
+      isLoading.value = false
+      router.push('/session/list')
+    })
 }
 </script>
 
