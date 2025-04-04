@@ -24,7 +24,7 @@ export default {
         createdBy: userId,
         createdAt: serverTimestamp(),
         participants: [userId],
-        isActive: true,
+        isActive: false,
         ...payload,
       })
       // console.log('Session created with ID: ', docRef.id)
