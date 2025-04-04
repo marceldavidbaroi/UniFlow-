@@ -92,8 +92,15 @@ export default {
         }))
         .filter((group) => group.owner?.id === userStore.currentUser?.id)
 
+      // total member count
+      const totalMember = groups.reduce((total, group) => {
+        const memberCount = Array.isArray(group.members) ? group.members.length : 0
+        return total + memberCount
+      }, 0)
+
       this.groupList = groups
       this.groupCount = groups.length
+      this.totalMemberCount = totalMember
       return { success: true, message: 'all data fetched', data: groups }
     } catch (error) {
       return { success: false, error: error.message }

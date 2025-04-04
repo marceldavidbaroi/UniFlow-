@@ -13,8 +13,10 @@
       <div class="col-auto q-pa-sm">
         <q-card class="flip-clock-card q-pa-md rounded-borders shadow-3">
           <q-card-section class="text-center flex flex-center column">
-            <div class="text-h6 text-primary font-weight-bold">10</div>
-            <div class="text-caption text-grey-7">Students</div>
+            <div class="text-h6 text-primary font-weight-bold">
+              {{ groupStore.totalMemberCount }}
+            </div>
+            <div class="text-caption text-grey-7">Members</div>
           </q-card-section>
         </q-card>
       </div>
