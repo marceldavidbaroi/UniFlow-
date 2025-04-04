@@ -1,7 +1,6 @@
 <template>
   <q-page>
     <div v-if="data">
-      {{ data }}
       <!-- Session Name -->
       <div class="brand_sb text-center text-h2 q-my-lg">
         #<span class="text-5 text-bold">{{ data.sessionID }}</span> - {{ data.sessionName }}
@@ -10,14 +9,54 @@
       <!-- Buttons to Toggle Status -->
       <div class="row justify-center q-my-md">
         <div>
+          <!-- button to end session -->
+          <q-btn
+            dense
+            outline
+            size="md"
+            color="dark"
+            :label="data.isEnded ? 'Session Ended' : 'End Session'"
+            class="q-px-xs q-px-md"
+            @click="openConfirmEnd"
+            :disable="data.isEnded"
+          />
+
+          <q-dialog v-model="showEndDialog" persistent>
+            <q-card class="q-pa-md" style="min-width: 400px; border-radius: 8px">
+              <q-card-section>
+                <div class="text-h6">Confirm Session End</div>
+                <div class="text-subtitle2 q-mt-sm">
+                  Enter the session name
+                  <span class="text-red text-bold">"{{ data.sessionName }}"</span> to confirm:
+                </div>
+              </q-card-section>
+
+              <q-card-section>
+                <q-input
+                  v-model="confirmSessionName"
+                  label="Session Name"
+                  filled
+                  color="secondary"
+                  autofocus
+                  :rules="[(val) => !!val || 'Session name is required']"
+                />
+              </q-card-section>
+
+              <q-card-actions align="right">
+                <q-btn flat label="Cancel" color="secondary" v-close-popup />
+                <q-btn label="Confirm" color="negative" @click="confirmEndSession" />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
           <q-btn
             dense
             outline
             size="md"
             :color="data.isActive ? 'green' : 'red'"
             :label="data.isActive ? 'Active' : 'Inactive'"
-            class="q-px-xs q-px-md"
+            class="q-px-xs q-mx-sm q-px-md"
             @click="toggleActive(sessionID, data.isActive)"
+            :disable="data.isEnded"
           />
         </div>
         <div>
@@ -29,6 +68,7 @@
             :label="data.discussionOption ? 'Discussion' : 'No Discussion'"
             class="q-px-xs q-mx-sm q-px-md"
             @click="toggleDiscussion(sessionID, data.discussionOption)"
+            :disable="data.isEnded"
           />
         </div>
         <div>
@@ -48,22 +88,6 @@
         </q-tabs>
 
         <q-tab-panels v-model="tab">
-          <!-- Basic Info -->
-          <!-- <q-tab-panel name="info">
-            <div class="text-h5 brand_sb q-mb-md">Session Information</div>
-            <div class="text-body1">
-              <div>Session Length {{ data.sessionLength }}</div>
-              <div>Total Participants: {{ data.participants.length }}</div>
-              <div>Total Material Links: {{ data.materialLinks.length }}</div>
-              <div>Total Questions: {{ data.questions.length }}</div>
-              <div>
-                Playgronud:
-                <a :href="data.playgroundLink" target="_blank">{{ data.playgroundLink }}</a>
-              </div>
-              <div>Description: {{ data.sessionDescription }}</div>
-            </div>
-          </q-tab-panel> -->
-
           <q-tab-panel name="info">
             <!-- <div class="text-h5 brand_sb q-mb-md">Session Information</div> -->
 
@@ -82,6 +106,10 @@
                   { label: 'Total Questions', value: data.questions ? data.questions.length : 0 },
                   { label: 'Playground', value: data.playgroundLink || 'N/A' },
                   { label: 'Description', value: data.sessionDescription || 'N/A' },
+                  { label: 'Start Date', value: startDate(data.sessionDate) || 'N/A' },
+                  ...(data?.endedAt
+                    ? [{ label: 'End Date', value: formatTimestamp(data.endedAt) }]
+                    : []),
                 ]"
                 :columns="[
                   {
@@ -257,10 +285,15 @@
 </template>
 
 <script setup>
+import { Notify } from 'quasar'
 import { useSessionStore } from 'src/stores/sessionStore'
+import { useUserStore } from 'src/stores/user-store'
 import { ref, onMounted } from 'vue'
+import { date } from 'quasar'
 
 const sessionStore = useSessionStore()
+const userStore = useUserStore()
+
 const data = ref(null)
 const sessionID = window.location.pathname.split('/')[2]
 const tab = ref('info') // Default tab
@@ -268,6 +301,30 @@ const splitterModel = ref(300) // Initial width of left panel
 const selectedMaterial = ref()
 const selectedCodingPlatform = ref()
 
+const formatTimestamp = (ts) => {
+  if (!ts?.seconds) return 'N/A'
+
+  const dt = new Date(ts.seconds * 1000)
+  return date.formatDate(dt, 'MMMM D, YYYY [at] h:mm A')
+}
+
+function startDate(input) {
+  if (!input) return 'N/A'
+
+  if (input?.seconds) {
+    input = new Date(input.seconds * 1000)
+  }
+
+  const dt = new Date(input)
+  if (isNaN(dt)) return 'Invalid date'
+
+  return date.formatDate(dt, 'MMMM D, YYYY [at] h:mm A')
+}
+
+const toggleEnded = async (id) => {
+  await sessionStore.endSession(id)
+  data.value = await sessionStore.searchSessionById(sessionID)
+}
 const toggleActive = async (id, isActive) => {
   await sessionStore.updateSessionData(id, { isActive: !isActive })
   data.value = await sessionStore.searchSessionById(sessionID)
@@ -294,6 +351,38 @@ onMounted(async () => {
     console.error('Error loading session:', error)
   }
 })
+
+const showEndDialog = ref(false)
+const confirmSessionName = ref('')
+
+const openConfirmEnd = () => {
+  confirmSessionName.value = ''
+  showEndDialog.value = true
+}
+
+const confirmEndSession = () => {
+  const isOwner = data.value.createdBy === userStore.currentUser?.id
+  const nameMatches = confirmSessionName.value === data.value.sessionName
+
+  if (!isOwner) {
+    Notify.create({
+      type: 'negative',
+      message: 'Only the session owner can end the session.',
+    })
+    return
+  }
+
+  if (!nameMatches) {
+    Notify.create({
+      type: 'negative',
+      message: 'Session name does not match.',
+    })
+    return
+  }
+
+  toggleEnded(sessionID)
+  showEndDialog.value = false
+}
 </script>
 
 <style scoped>

@@ -3,19 +3,25 @@
     <div class="session-wrapper" @mouseover="isHovered = true" @mouseleave="isHovered = false">
       <q-item clickable v-ripple @click="showDetails(session.id)">
         <q-item-section>
-          <q-item-label>{{ session.sessionName }}</q-item-label>
-          <div class="row justify-between">
-            <div>{{ session.sessionLength }}</div>
-            <div>
-              <span>
-                <q-icon
-                  name="question_answer"
-                  :color="session.discussionOption ? 'green' : 'red'"
-                />
-              </span>
-              <span>
-                <q-icon name="fiber_manual_record" :color="session.isActive ? 'green' : 'red'" />
-              </span>
+          <q-item-label class="text-bold text-h6">{{ session.sessionName }}</q-item-label>
+          <div class="row items-center q-mt-sm q-px-sm">
+            <!-- Info section: takes 100% minus icon space -->
+            <div class="row col" style="gap: 8px">
+              <div class="col-4"><b>Start:</b> {{ startDate(session.startDate) }}</div>
+              <div class="col"><b>Duration:</b> {{ session.sessionLength }} Min</div>
+              <div class="col" v-if="session.isEnded">
+                <b class="text-red">Ended:</b> {{ formatTimestamp(session.endedAt) }}
+              </div>
+            </div>
+
+            <!-- Icon section: takes minimum space, sticks to right -->
+            <div class="col-auto">
+              <q-icon
+                name="question_answer"
+                :color="session.discussionOption ? 'green' : 'red'"
+                class="q-mr-sm"
+              />
+              <q-icon name="fiber_manual_record" :color="session.isActive ? 'green' : 'red'" />
             </div>
           </div>
         </q-item-section>
@@ -27,10 +33,20 @@
           <q-btn
             dense
             size="sm"
+            color="dark"
+            :label="session.isEnded ? 'Session Ended' : 'End Session'"
+            class="q-px-xs"
+            @click="showDetails(session.id)"
+            :disable="session.isEnded"
+          />
+          <q-btn
+            dense
+            size="sm"
             :color="session.isActive ? 'green' : 'red'"
             :label="session.isActive ? 'Active' : 'Inactive'"
-            class="q-px-xs"
+            class="q-px-xs q-mx-sm"
             @click="toggleActive(session.id, session.isActive)"
+            :disable="session.isEnded"
           />
         </div>
         <div>
@@ -41,6 +57,7 @@
             :label="session.discussionOption ? 'Discussion' : 'No Discussion'"
             class="q-px-xs q-mx-sm"
             @click="toggleDiscussion(session.id, session.discussionOption)"
+            :disable="session.isEnded"
           />
         </div>
         <div>
@@ -63,6 +80,8 @@
 import { useSessionStore } from 'src/stores/sessionStore'
 import { ref, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
+import { date } from 'quasar'
+
 const sessionStore = useSessionStore()
 const router = useRouter()
 defineProps({
@@ -71,7 +90,25 @@ defineProps({
 const emit = defineEmits(['updateSessionStatus'])
 
 const isHovered = ref(false)
+const formatTimestamp = (ts) => {
+  if (!ts?.seconds) return 'N/A'
 
+  const dt = new Date(ts.seconds * 1000)
+  return date.formatDate(dt, 'MMMM D, YYYY [at] h:mm A')
+}
+
+function startDate(input) {
+  if (!input) return 'N/A'
+
+  if (input?.seconds) {
+    input = new Date(input.seconds * 1000)
+  }
+
+  const dt = new Date(input)
+  if (isNaN(dt)) return 'Invalid date'
+
+  return date.formatDate(dt, 'MMMM D, YYYY [at] h:mm A')
+}
 const toggleActive = (id, isActive) => {
   sessionStore.updateSessionData(id, { isActive: !isActive })
   emit('updateSessionStatus')

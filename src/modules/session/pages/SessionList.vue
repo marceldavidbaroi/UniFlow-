@@ -11,16 +11,39 @@
       </div>
     </div> -->
     <div class="text-h4 q-pt-md text-center brand_sb">All Sesstions</div>
+
     <div class="text-body1 q-pb-md text-center text-secondary text-bold">
       Total Session:
       {{ sessionStore.sessionCount }}
     </div>
-    <SessionListItems
-      v-for="session in formattedSessionData"
-      :key="session.id"
-      :session="session"
-      @updateSessionStatus="handleStatusChange"
-    />
+
+    <div class="row justify-center q-ma-md">
+      <div class="col-12 flex justify-center">
+        <q-btn
+          label="Create Session"
+          color="secondary"
+          @click="router.push('/session/create')"
+          unelevated
+          class="q-mb-lg"
+          style="border-radius: 8px"
+        />
+      </div>
+    </div>
+    <div v-if="formattedSessionData">
+      <SessionListItems
+        v-for="session in formattedSessionData"
+        :key="session.id"
+        :session="session"
+        @updateSessionStatus="handleStatusChange"
+      />
+    </div>
+
+    <div v-else class="flex flex-center q-mt-md" style="height: 100vh">
+      <div class="text-center">
+        <q-spinner-pie color="secondary" size="2em" />
+        <div>Loading session details...</div>
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -28,8 +51,9 @@
 import { onMounted, computed } from 'vue'
 import SessionListItems from '../components/SessionListItems.vue'
 import { useSessionStore } from 'src/stores/sessionStore'
-useSessionStore
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const sessionStore = useSessionStore()
 
 // Make formattedGroupData reactive
@@ -40,6 +64,9 @@ const formattedSessionData = computed(() =>
     sessionLength: session.sessionLength,
     discussionOption: session.discussionOption,
     isActive: session.isActive,
+    isEnded: session.isEnded,
+    startDate: session.sessionDate,
+    endedAt: session.endedAt,
   })),
 )
 

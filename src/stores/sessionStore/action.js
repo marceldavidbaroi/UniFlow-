@@ -54,6 +54,7 @@ export default {
       await updateDoc(sessionRef, {
         isActive: false,
         isEnded: true,
+        discussionOption: false,
         endedAt: serverTimestamp(),
       })
       console.log('Session ended.')
