@@ -1,6 +1,7 @@
 <template>
   <q-page>
     <div v-if="data">
+      {{ data }}
       <!-- Session Name -->
       <div class="brand_sb text-center text-h2 q-my-lg">
         #<span class="text-5 text-bold">{{ data.sessionID }}</span> - {{ data.sessionName }}

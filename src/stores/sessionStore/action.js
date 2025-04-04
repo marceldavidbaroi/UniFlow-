@@ -25,6 +25,7 @@ export default {
         createdAt: serverTimestamp(),
         participants: [userId],
         isActive: false,
+        isEnded: false,
         ...payload,
       })
       // console.log('Session created with ID: ', docRef.id)
@@ -52,6 +53,8 @@ export default {
       const sessionRef = doc(db, 'sessions', sessionId)
       await updateDoc(sessionRef, {
         isActive: false,
+        isEnded: true,
+        endedAt: serverTimestamp(),
       })
       console.log('Session ended.')
     } catch (error) {
@@ -69,6 +72,12 @@ export default {
           ...doc.data(),
         }))
         .filter((session) => session.createdBy === userStore.currentUser?.id)
+        .sort((a, b) => {
+          // Handle Firebase Timestamp comparison
+          const aTime = a.createdAt?.seconds || 0
+          const bTime = b.createdAt?.seconds || 0
+          return bTime - aTime // Newest first
+        })
 
       this.sessionList = sessions
       this.sessionCount = sessions.length

@@ -248,12 +248,12 @@ const sessionDate = ref('')
 const discussionOption = ref(true) // default to true (allow discussion)
 
 // Links arrays
-const materialLinks = ref([''])
-const codingPlatformLinks = ref([''])
-const videoLink = ref([''])
+const materialLinks = ref([])
+const codingPlatformLinks = ref([])
+const videoLink = ref([])
 
 // Questions Array
-const questions = ref([{ text: '' }])
+const questions = ref([])
 
 // Tasks Array
 const tasks = ref([])
