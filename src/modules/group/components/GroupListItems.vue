@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <q-item clickable v-ripple>
+    <q-item clickable v-ripple @click="router.push(`/group/${group.id}`)">
       <q-item-section>
         <q-item-label>{{ group.groupName }}</q-item-label>
         <div class="row">
@@ -109,8 +109,10 @@
 import { Notify } from 'quasar'
 import { useAuthStore } from 'src/stores/auth-store'
 import { ref, defineProps, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 const props = defineProps({
   group: Object,
