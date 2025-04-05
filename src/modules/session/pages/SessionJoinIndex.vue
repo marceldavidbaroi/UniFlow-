@@ -54,9 +54,11 @@
 import { Notify } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
 import { useSessionStore } from 'src/stores/sessionStore'
+import { useUserStore } from 'src/stores/user-store'
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const groupStore = useGroupStore()
+const userStore = useUserStore()
 const router = useRouter()
 const sessionStore = useSessionStore()
 const route = useRoute()
@@ -77,7 +79,7 @@ const joinSession = () => {
         position: 'top',
         timeout: 2500,
       })
-      // router.push('/session')
+      router.push(`/session/${userStore.currentRole}/${id}`)
     } else {
       Notify.create({
         message: result.message || 'An error occurred.', // Use message or generic error
