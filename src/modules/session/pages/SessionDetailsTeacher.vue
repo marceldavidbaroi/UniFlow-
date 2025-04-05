@@ -16,7 +16,7 @@
             size="md"
             color="dark"
             :label="data.isEnded ? 'Session Ended' : 'End Session'"
-            class="q-px-xs q-px-md"
+            class="q-px-xs q-px-md q-mx-sm"
             @click="openConfirmEnd"
             :disable="data.isEnded"
           />
@@ -72,7 +72,106 @@
           />
         </div>
         <div>
-          <q-btn dense flat color="primary" size="md" icon="share" class="q-px-xs" />
+          <q-btn
+            dense
+            flat
+            color="primary"
+            size="md"
+            icon="share"
+            class="q-px-xs"
+            @click="showSharePopup = true"
+          />
+
+          <!-- share popup -->
+          <q-dialog v-model="showSharePopup">
+            <q-card
+              style="border-radius: 12px; width: 400px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)"
+            >
+              <q-card-section class="q-pa-lg">
+                <div class="text-h6 text-primary text-center q-mb-md">Share Session Join Link</div>
+                <!-- <q-toggle v-model="shareWithPassword" label="Share with Password" class="q-mb-md" /> -->
+
+                <!-- <div v-if="shareWithPassword">
+            <div class="h6 text-grey-8 q-mb-md">Share with Group Link and Password</div>
+            <span>"Let's confirm it's really you."</span>
+            <q-input
+              v-model="passwordInput"
+              label="User Password"
+              outlined
+              dense
+              type="password"
+              class="q-mb-md"
+              :rules="[
+                (val) => !!val || 'Password is required',
+                (val) => val.length >= 6 || 'Password must be at least 6 characters',
+              ]"
+            />
+
+            <q-btn
+              @click="generateShareText"
+              label="Generate Share Text"
+              color="primary"
+              class="full-width q-mb-md"
+              style="border-radius: 8px"
+              :disable="isDisible"
+            /> -->
+
+                <!-- <div v-if="shareText">
+              <q-input
+                v-model="shareText"
+                readonly
+                outlined
+                dense
+                type="textarea"
+                input-class="text-grey-9"
+                color="primary"
+                style="border-radius: 8px"
+              >
+                <template v-slot:append>
+                  <q-btn flat icon="content_copy" @click="copyShareText" color="primary" />
+                </template>
+              </q-input>
+            </div>
+          </div> -->
+
+                <div>
+                  <p class="text-grey-8 q-mb-md">
+                    Share this group with others using the link below:
+                  </p>
+                  <q-input
+                    v-model="shareLink"
+                    readonly
+                    outlined
+                    type="textarea"
+                    dense
+                    input-class="text-grey-9"
+                    color="primary"
+                    style="border-radius: 8px"
+                  >
+                    <template v-slot:append>
+                      <q-btn
+                        flat
+                        icon="content_copy"
+                        @click="copyLink"
+                        color="primary"
+                        style="border-radius: 50%"
+                      />
+                    </template>
+                  </q-input>
+                </div>
+              </q-card-section>
+
+              <q-card-actions align="center" class="q-pa-md">
+                <q-btn
+                  flat
+                  label="Close"
+                  v-close-popup
+                  color="grey-8"
+                  style="border-radius: 8px; padding: 10px 16px"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
         </div>
       </div>
 
@@ -164,7 +263,7 @@
             <q-splitter v-model="splitterModel" unit="px">
               <!-- Left Panel: Material Links -->
               <template v-slot:before>
-                <div class="q-pa-md">
+                <div class="q-pa-md" v-if="data.materialLinks.length > 0">
                   <div
                     v-for="(link, index) in data.materialLinks"
                     :key="index"
@@ -183,6 +282,9 @@
                       />
                     </div>
                   </div>
+                </div>
+                <div v-else class="text-grey-6 text-bod-1 q-mt-md">
+                  There is no taks for this session
                 </div>
               </template>
 
@@ -205,13 +307,33 @@
             </q-splitter>
           </q-tab-panel>
           <!-- Participants -->
-          <q-tab-panel name="participants">
-            <div class="text-h6">Participants</div>
-            <ul>
-              <li v-for="(participant, index) in data.participants" :key="index">
-                {{ participant }}
-              </li>
-            </ul>
+          <q-tab-panel name="participants" class="q-pa-md">
+            <div class="text-h5 text-weight-bold text-primary q-mb-md">Participants</div>
+            <q-list bordered separator>
+              <q-item
+                v-for="(participant, index) in data.participants"
+                :key="index"
+                clickable
+                v-ripple
+              >
+                <q-item-section>
+                  <q-item-label
+                    >{{ getUserName(participant).personId }} -
+                    {{ getUserName(participant).name }}&nbsp;[{{
+                      getUserName(participant).faculty?.label
+                    }}]</q-item-label
+                  >
+                </q-item-section>
+                <q-item-section side>
+                  <q-icon name="person" color="grey-5" size="sm" />
+                </q-item-section>
+              </q-item>
+              <q-item v-if="!data.participants || data.participants.length === 0">
+                <q-item-section class="text-grey-6 text-italic">
+                  No participants yet.
+                </q-item-section>
+              </q-item>
+            </q-list>
           </q-tab-panel>
 
           <!-- Questions -->
@@ -294,6 +416,10 @@ import { date } from 'quasar'
 const sessionStore = useSessionStore()
 const userStore = useUserStore()
 
+const showSharePopup = ref(false)
+const shareLink = ref('')
+const baseUrl = ref('')
+
 const data = ref(null)
 const sessionID = window.location.pathname.split('/')[2]
 const tab = ref('info') // Default tab
@@ -340,7 +466,6 @@ const openLink = (link) => {
 onMounted(async () => {
   try {
     data.value = await sessionStore.searchSessionById(sessionID)
-    console.log('Fetched session data:', data.value)
 
     // Set default material link if available
     if (data.value.materialLinks.length > 0) {
@@ -350,7 +475,26 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error loading session:', error)
   }
+  console.log(data.value)
+  baseUrl.value = window.location.origin
+
+  if (sessionID) {
+    shareLink.value = `Join #${data.value.sessionID} session on '${data.value.sessionName}'\n\n${baseUrl.value}/session/join/${sessionID}`
+  } else {
+    shareLink.value = 'invalid link'
+  }
 })
+
+const copyLink = () => {
+  navigator.clipboard.writeText(shareLink.value).then(() => {
+    Notify.create({
+      message: 'Link copied to clipboard',
+      color: 'positive',
+      position: 'top',
+      timeout: 1000,
+    })
+  })
+}
 
 const showEndDialog = ref(false)
 const confirmSessionName = ref('')
@@ -382,6 +526,23 @@ const confirmEndSession = () => {
 
   toggleEnded(sessionID)
   showEndDialog.value = false
+}
+
+const userDetails = ref({})
+
+const getUserName = (id) => {
+  if (!userDetails.value[id]) {
+    userStore
+      .getUserDetails(id)
+      .then((user) => {
+        userDetails.value[id] = user
+      })
+      .catch(() => {
+        userDetails.value[id] = 'Unknown'
+      })
+    return 'Loading...'
+  }
+  return userDetails.value[id]
 }
 </script>
 
