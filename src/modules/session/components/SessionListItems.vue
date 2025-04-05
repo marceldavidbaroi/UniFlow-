@@ -81,8 +81,11 @@ import { useSessionStore } from 'src/stores/sessionStore'
 import { ref, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
+import { useUserStore } from 'src/stores/user-store'
 
 const sessionStore = useSessionStore()
+const userStore = useUserStore()
+console.log(userStore.currentRole)
 const router = useRouter()
 defineProps({
   session: Object,
@@ -119,7 +122,7 @@ const toggleDiscussion = (id, discussionOption) => {
 }
 
 const showDetails = (id) => {
-  router.push(`/session/${id}`)
+  router.push(`/session/${userStore.currentRole}/${id}`)
 }
 </script>
 

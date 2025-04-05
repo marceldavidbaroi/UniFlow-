@@ -39,15 +39,50 @@ export default {
   async joinSession(sessionId, userId) {
     try {
       const sessionRef = doc(db, 'sessions', sessionId)
+      const sessionSnap = await getDoc(sessionRef)
+
+      if (!sessionSnap.exists()) {
+        return {
+          success: false,
+          message: 'Session does not exist.',
+        }
+      }
+
+      const sessionData = sessionSnap.data()
+
+      // Check if session is ended
+      if (sessionData.isEnded === true) {
+        return {
+          success: false,
+          message: 'The session has already ended.',
+        }
+      }
+
+      // Check if user is already a participant
+      if (sessionData.participants?.includes(userId)) {
+        return {
+          success: true,
+          message: 'You are already a participant.',
+        }
+      }
+
+      // Add user to participants
       await updateDoc(sessionRef, {
         participants: arrayUnion(userId),
       })
-      console.log('User joined the session!')
+
+      return {
+        success: true,
+        message: 'Successfully joined the session.',
+      }
     } catch (error) {
-      console.error('Error joining session: ', error)
+      console.error('Error joining session:', error)
+      return {
+        success: false,
+        message: 'An error occurred while joining the session.',
+      }
     }
   },
-
   async endSession(sessionId) {
     try {
       const sessionRef = doc(db, 'sessions', sessionId)

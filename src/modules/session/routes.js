@@ -5,7 +5,8 @@ export default [
     children: [
       { path: 'create', component: () => import('./pages/CreateSessionIndex.vue') },
       { path: 'list', component: () => import('./pages/SessionList.vue') },
-      { path: ':id', component: () => import('./pages/SessionDetailsTeacher.vue') },
+      { path: 'teacher/:id', component: () => import('./pages/SessionDetailsTeacher.vue') },
+      { path: 'join/:id', component: () => import('./pages/SessionJoinIndex.vue') },
     ],
   },
 ]

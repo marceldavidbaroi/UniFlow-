@@ -421,7 +421,7 @@ const shareLink = ref('')
 const baseUrl = ref('')
 
 const data = ref(null)
-const sessionID = window.location.pathname.split('/')[2]
+const sessionID = window.location.pathname.split('/')[3]
 const tab = ref('info') // Default tab
 const splitterModel = ref(300) // Initial width of left panel
 const selectedMaterial = ref()

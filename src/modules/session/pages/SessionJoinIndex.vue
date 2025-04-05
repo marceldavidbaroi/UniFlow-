@@ -9,52 +9,39 @@
       "
     >
       <q-card-section class="q-pa-lg">
-        <div class="text-h5 text-center q-mb-lg brand_bb text-bold">Join Group</div>
+        <div class="row justify-end">
+          <q-icon name="fiber_manual_record" :color="response?.isActive ? 'green' : 'red'" />
+        </div>
+
+        <div class="text-h5 text-center q-mb-lg brand_bb text-bold">Join Session</div>
 
         <div class="q-mb-md">
-          <div class="text-subtitle1 text-grey-8">Group Name</div>
-          <div class="text-body1 brand_sb">{{ response?.data?.groupName }}</div>
+          <div class="text-subtitle1 text-grey-8">Session</div>
+          <div class="text-body1 brand_sb">
+            {{ response?.sessionID }} - {{ response?.sessionName }}
+          </div>
         </div>
 
         <div class="q-mb-md">
-          <div class="text-subtitle1 text-grey-8">Owner</div>
-          <div class="text-body1 brand_sb">{{ response?.data?.owner?.name }}</div>
+          <div class="text-subtitle1 text-grey-8">Date</div>
+          <div class="text-body1 brand_sb">{{ response?.sessionDate }}</div>
         </div>
 
         <div class="q-mb-md">
-          <div class="text-subtitle1 text-grey-8">Total Members</div>
-          <div class="text-body1 brand_sb">{{ response?.data?.members?.length }}</div>
+          <div class="text-subtitle1 text-grey-8">Host</div>
+          <div class="text-body1 brand_sb">{{ response?.createdBy }}</div>
         </div>
 
-        <q-input
-          v-model="password"
-          :type="showPassword ? 'text' : 'password'"
-          label="Password"
-          outlined
-          dense
-          class="q-mt-md"
-          input-class="text-grey-9"
-          color="secondary"
-          style="border-radius: 8px"
-          :rules="[
-            (val) => !!val || 'Password is required',
-            (val) => val.length >= 6 || 'Password must be at least 6 characters',
-          ]"
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="showPassword ? 'visibility_off' : 'visibility'"
-              @click="showPassword = !showPassword"
-              class="cursor-pointer"
-            />
-          </template>
-        </q-input>
+        <div class="q-mb-md">
+          <div class="text-subtitle1 text-grey-8">Current participants</div>
+          <div class="text-body1 brand_sb">{{ response?.participants.length }}</div>
+        </div>
 
         <q-btn
           color="secondary"
-          label="Join Group"
+          label="Join Session"
           class="full-width q-mt-lg"
-          @click="joinGroup"
+          @click="joinSession"
           :loading="loading"
           style="border-radius: 8px; padding: 12px 16px"
         />
@@ -66,9 +53,12 @@
 <script setup>
 import { Notify } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
+import { useSessionStore } from 'src/stores/sessionStore'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 const groupStore = useGroupStore()
+const router = useRouter()
+const sessionStore = useSessionStore()
 const route = useRoute()
 
 const id = route.params.id
@@ -78,8 +68,8 @@ const loading = ref(false)
 const showPassword = ref(false)
 const response = ref()
 
-const joinGroup = () => {
-  groupStore.addMemberToGroup(id, password.value).then((result) => {
+const joinSession = () => {
+  sessionStore.joinSession(id, password.value).then((result) => {
     if (result.success) {
       Notify.create({
         message: result.message, // Use the message from the result
@@ -87,6 +77,7 @@ const joinGroup = () => {
         position: 'top',
         timeout: 2500,
       })
+      // router.push('/session')
     } else {
       Notify.create({
         message: result.message || 'An error occurred.', // Use message or generic error
@@ -99,8 +90,9 @@ const joinGroup = () => {
 }
 
 onMounted(async () => {
-  await groupStore.searchGroupById(id).then((result) => {
+  await sessionStore.searchSessionById(id).then((result) => {
     response.value = result
+    console.log(response.value)
   })
 })
 </script>
