@@ -111,4 +111,16 @@ export default {
       }
     }
   },
+
+  async logoutUser() {
+    try {
+      this.user = null
+      this.isAuthenticated = false
+      userStore.clearUser() // Assuming you have a clearUser() method in user-store
+      return { success: true, message: 'Logout successful' }
+    } catch (error) {
+      console.error('Logout error:', error.message)
+      return { success: false, message: 'Logout failed', error }
+    }
+  },
 }

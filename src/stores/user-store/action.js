@@ -13,6 +13,12 @@ export default {
     this.currentUser = user
     this.currentRole = user.role
   },
+
+  clearUser() {
+    this.currentUser = null
+    this.currentRole = null
+  },
+
   async getUserDetails(userId) {
     try {
       if (!userId || typeof userId !== 'string' || userId.trim() === '') {
