@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    {{ group }}
     <q-item clickable v-ripple @click="router.push(`/group/${group.id}`)">
       <q-item-section>
         <q-item-label>{{ group.groupName }}</q-item-label>

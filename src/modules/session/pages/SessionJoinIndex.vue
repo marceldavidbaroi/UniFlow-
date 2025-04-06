@@ -52,12 +52,12 @@
 
 <script setup>
 import { Notify } from 'quasar'
-import { useGroupStore } from 'src/stores/group-store'
+// import { useGroupStore } from 'src/stores/group-store'
 import { useSessionStore } from 'src/stores/sessionStore'
 import { useUserStore } from 'src/stores/user-store'
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-const groupStore = useGroupStore()
+// const groupStore = useGroupStore()
 const userStore = useUserStore()
 const router = useRouter()
 const sessionStore = useSessionStore()
@@ -67,7 +67,7 @@ const id = route.params.id
 
 const password = ref('')
 const loading = ref(false)
-const showPassword = ref(false)
+// const showPassword = ref(false)
 const response = ref()
 
 const joinSession = () => {

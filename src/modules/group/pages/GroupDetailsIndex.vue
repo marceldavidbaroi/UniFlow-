@@ -32,7 +32,7 @@
 
     <div class="group-section">
       <div class="section-title">Group Rules</div>
-      <div class="section-content">{{ group?.groupRules }}</div>
+      <div class="section-content" v-html="group?.groupRules"></div>
     </div>
 
     <div class="member-table">
@@ -162,5 +162,14 @@ const copyToClipboard = (text) => {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
+}
+
+.section-content ol {
+  padding-left: 1.2rem;
+}
+
+.section-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
 }
 </style>

@@ -67,7 +67,8 @@
 import { Notify } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+const router = useRouter()
 const groupStore = useGroupStore()
 const route = useRoute()
 
@@ -87,6 +88,8 @@ const joinGroup = () => {
         position: 'top',
         timeout: 2500,
       })
+
+      router.push(`/group/${id}`)
     } else {
       Notify.create({
         message: result.message || 'An error occurred.', // Use message or generic error

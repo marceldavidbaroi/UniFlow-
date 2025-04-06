@@ -128,7 +128,7 @@ export default {
       }
 
       if (groupData.members.some((member) => member.id === userStore.currentUser.id)) {
-        return { success: false, message: 'You are already a member of this group.' }
+        return { success: true, message: 'You are already a member of this group.' }
       }
 
       await updateDoc(groupDocRef, {
