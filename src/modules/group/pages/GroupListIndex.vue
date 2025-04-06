@@ -10,7 +10,7 @@
         </q-card>
       </div>
 
-      <div class="col-auto q-pa-sm">
+      <div v-if="userStore.currentRole === 'teacher'" class="col-auto q-pa-sm">
         <q-card class="flip-clock-card q-pa-md rounded-borders shadow-3">
           <q-card-section class="text-center flex flex-center column">
             <div class="text-h6 text-primary font-weight-bold">
@@ -25,6 +25,7 @@
     <div class="row justify-center q-ma-md">
       <div class="col-12 flex justify-center">
         <q-btn
+          v-if="userStore.currentRole === 'teacher'"
           label="Create Group"
           color="secondary"
           @click="router.push('/group/create')"
@@ -48,7 +49,8 @@ import { onMounted, computed } from 'vue'
 import GroupListItems from '../components/GroupListItems.vue'
 import { useGroupStore } from 'src/stores/group-store'
 import router from 'src/router'
-
+import { useUserStore } from 'src/stores/user-store'
+const userStore = useUserStore()
 const groupStore = useGroupStore()
 
 // Make formattedGroupData reactive
@@ -60,6 +62,7 @@ const formattedGroupData = computed(() =>
     subjectName: group.subjectName,
     year: group.year,
     labGroup: group.labGroup,
+    password: group.password,
   })),
 )
 onMounted(async () => {

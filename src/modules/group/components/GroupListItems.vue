@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    {{ group }}
     <q-item clickable v-ripple @click="router.push(`/group/${group.id}`)">
       <q-item-section>
         <q-item-label>{{ group.groupName }}</q-item-label>
@@ -41,7 +42,7 @@
             />
 
             <q-btn
-              @click="generateShareText"
+              @click="generateShareText(group?.password)"
               label="Generate Share Text"
               color="primary"
               class="full-width q-mb-md"
@@ -160,13 +161,13 @@ const copyShareText = () => {
 }
 
 const isDisible = ref(false)
-const generateShareText = async () => {
+const generateShareText = async (password) => {
   await authStore.verifyUserPassword(passwordInput.value).then((result) => {
     if (result.success) {
       shareText.value = [
         `Join ${props.group.groupName} group using this link:`,
         shareLink.value,
-        passwordInput.value ? `\nPassword: ${passwordInput.value}` : '',
+        passwordInput.value ? `\nPassword: ${password}` : '',
       ].join('\n')
       isDisible.value = true
     } else {
