@@ -155,4 +155,36 @@ export default {
       return { success: false, error: error.message }
     }
   },
+
+  // Function to fetch all groups the student is a member of
+  async fetchGroupsByStudent() {
+    try {
+      // Fetch all groups from the 'group' collection
+      const querySnapshot = await getDocs(collection(db, 'group'))
+
+      // Filter groups where the current student is a member
+      const groups = querySnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((group) =>
+          group.members.some((member) => member.id === userStore.currentUser.id)
+        )
+
+      // Set the group data to store variables
+      this.groupList = groups
+      this.groupCount = groups.length
+      this.totalMemberCount = groups.reduce((total, group) => {
+        const memberCount = Array.isArray(group.members) ? group.members.length : 0
+        return total + memberCount
+      }, 0)
+
+      // Return success with the filtered groups
+      return { success: true, message: 'Groups fetched successfully', data: groups }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  }
+
 }

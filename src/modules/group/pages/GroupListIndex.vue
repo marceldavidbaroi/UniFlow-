@@ -66,7 +66,14 @@ const formattedGroupData = computed(() =>
   })),
 )
 onMounted(async () => {
-  await groupStore.fetchAllGroups()
+  if (userStore.currentRole === 'teacher') {
+    await groupStore.fetchAllGroups()
+  }
+
+  if (userStore.currentRole === 'student') {
+    const response = await groupStore.fetchGroupsByStudent()
+    console.log(response)
+  }
 })
 </script>
 
