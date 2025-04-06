@@ -8,8 +8,6 @@
         icon="add"
         label="Create"
         size="sm"
-        square
-        unelevated
         class="toolbar-btn"
         @click="onCreate"
       />
@@ -20,9 +18,7 @@
         :label="sortLabel"
         icon="sort"
         size="sm"
-        square
         dropdown-icon="expand_more"
-        unelevated
         class="toolbar-btn"
       >
         <q-list>
@@ -44,9 +40,7 @@
         :label="filterLabel"
         icon="filter_list"
         size="sm"
-        square
         dropdown-icon="expand_more"
-        unelevated
         class="toolbar-btn"
       >
         <q-list>
@@ -65,14 +59,13 @@
 
     <!-- Search Icon + Input -->
     <div class="search-wrapper row items-center q-gutter-sm">
-      <q-btn icon="search" size="sm" flat dense square color="secondary" @click="toggleSearch" />
+      <q-btn icon="search" size="sm" flat dense color="secondary" @click="toggleSearch" />
       <q-input
         v-if="showSearch"
         v-model="searchText"
         dense
-        standout="secondary"
-        rounded
-        placeholder="Search..."
+        outlined
+        placeholder="Search by session ID"
         class="search-input"
         debounce="300"
         size="sm"
@@ -86,7 +79,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { useSessionStore } from 'src/stores/sessionStore'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const sessionStore = useSessionStore()
 
 const selectedSort = ref(null)
 const selectedFilter = ref(null)
@@ -94,9 +92,15 @@ const showSearch = ref(false)
 const searchText = ref('')
 
 const sortOptions = [
-  { label: 'Newest', value: 'createdAt_desc' },
-  { label: 'Oldest', value: 'createdAt_asc' },
-  { label: 'Session ID', value: 'sessionID' },
+  { label: 'Newest', value: { field: 'createdAt', order: 'desc' } },
+  { label: 'Oldest', value: { field: 'createdAt', order: 'asc' } },
+  { label: 'Session ID (Asc)', value: { field: 'sessionID', order: 'asc' } },
+  { label: 'Session ID (Desc)', value: { field: 'sessionID', order: 'desc' } },
+  { label: 'Upcoming', value: { field: 'sessionDate', order: 'asc' } }, // Assuming "upcoming" means by start time
+  { label: 'Ended (Asc)', value: { field: 'endedAt', order: 'asc' } }, // You can change this logic based on your implementation
+  { label: 'Ended (desc)', value: { field: 'endedAt', order: 'desc' } }, // You can change this logic based on your implementation
+  { label: 'Session Length (Asc)', value: { field: 'sessionLength', order: 'asc' } }, // You can change this logic based on your implementation
+  { label: 'Session Length (Desc)', value: { field: 'sessionLength', order: 'desc' } }, // You can change this logic based on your implementation
 ]
 
 const filterOptions = [
@@ -110,6 +114,8 @@ const filterLabel = computed(() => selectedFilter.value?.label || 'Filter')
 
 const selectSort = (option) => {
   selectedSort.value = option
+  console.log(option.value.field)
+  sessionStore.sortSessionsBy(option.value.field, option.value.order)
 }
 
 const selectFilter = (option) => {
@@ -126,8 +132,14 @@ const clearSearch = () => {
 }
 
 const onCreate = () => {
-  console.log('Create clicked')
+  // console.log('Create clicked')
+  router.push('/session/create')
 }
+
+onMounted(async () => {
+  sessionStore.fetchAllSession()
+  console.log(sessionStore.sessionList)
+})
 </script>
 
 <style scoped lang="scss">
@@ -146,6 +158,6 @@ const onCreate = () => {
 }
 
 .search-input {
-  max-width: 180px;
+  width: 480px;
 }
 </style>

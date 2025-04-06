@@ -153,7 +153,7 @@ export default {
     }
   },
 
-  sortSessionsBy(field, order = 'desc') {
+  sortSessionsBy(field, order ) {
     if (!this.sessionList || !Array.isArray(this.sessionList)) return
 
     this.sessionList.sort((a, b) => {
