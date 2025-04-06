@@ -12,11 +12,21 @@ export default [
       { path: 'list', component: () => import('./pages/SessionList.vue') ,
         meta: {
           requiresAuth: true,
-          roles: ['teacher']
+          roles: ['teacher','student']
         }
       },
-      { path: 'teacher/:id', component: () => import('./pages/SessionDetailsTeacher.vue') },
-      { path: 'join/:id', component: () => import('./pages/SessionJoinIndex.vue') },
+      { path: 'teacher/:id', component: () => import('./pages/SessionDetailsTeacher.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['teacher']
+        }
+       },
+      { path: 'join/:id', component: () => import('./pages/SessionJoinIndex.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['teacher','student']
+        }
+       },
     ],
   },
 ]
