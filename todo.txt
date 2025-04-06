@@ -1,3 +1,2 @@
-update the session create form with tabs 
 add edit option to the session details 
 add search in the session list 

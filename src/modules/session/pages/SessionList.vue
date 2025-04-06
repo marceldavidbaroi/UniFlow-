@@ -17,7 +17,7 @@
       {{ sessionStore.sessionCount }}
     </div>
 
-    <div class="row justify-center q-ma-md">
+    <!-- <div class="row justify-center q-ma-md">
       <div class="col-12 flex justify-center">
         <q-btn
           label="Create Session"
@@ -28,7 +28,9 @@
           style="border-radius: 8px"
         />
       </div>
-    </div>
+    </div> -->
+
+    <SessionActionButtons />
     <div v-if="formattedSessionData">
       <SessionListItems
         v-for="session in formattedSessionData"
@@ -52,6 +54,7 @@ import { onMounted, computed } from 'vue'
 import SessionListItems from '../components/SessionListItems.vue'
 import { useSessionStore } from 'src/stores/sessionStore'
 import { useRouter } from 'vue-router'
+import SessionActionButtons from '../components/SessionActionButtons.vue'
 
 const router = useRouter()
 const sessionStore = useSessionStore()

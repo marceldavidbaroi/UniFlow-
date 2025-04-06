@@ -152,4 +152,25 @@ export default {
       return null // Or return error.message or re-throw if needed
     }
   },
+
+  sortSessionsBy(field, order = 'desc') {
+    if (!this.sessionList || !Array.isArray(this.sessionList)) return
+
+    this.sessionList.sort((a, b) => {
+      const aValue = a[field]
+      const bValue = b[field]
+
+      if (!aValue || !bValue) return 0
+
+      // If the value is a Firestore Timestamp, sort by seconds
+      const aComparable = aValue?.seconds || aValue
+      const bComparable = bValue?.seconds || bValue
+
+      if (order === 'asc') {
+        return aComparable > bComparable ? 1 : -1
+      } else {
+        return aComparable < bComparable ? 1 : -1
+      }
+    })
+  },
 }
