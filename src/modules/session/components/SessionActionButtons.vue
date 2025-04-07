@@ -58,30 +58,74 @@
     </template>
 
     <!-- Search Icon + Input -->
-    <div class="search-wrapper row items-center q-gutter-sm">
-      <q-btn icon="search" size="sm" flat dense color="secondary" @click="toggleSearch" />
-      <q-input
-        v-if="showSearch"
-        v-model="searchText"
-        dense
-        outlined
-        placeholder="Search by session ID"
-        class="search-input"
-        debounce="300"
-        size="sm"
-      >
-        <template #append>
-          <q-icon name="close" class="cursor-pointer" @click="clearSearch" />
-        </template>
-      </q-input>
+    <div class="search-wrapper column">
+      <div class="row items-center q-gutter-sm">
+        <q-btn
+          v-if="!showSearch"
+          icon="search"
+          size="sm"
+          flat
+          dense
+          color="secondary"
+          @click="toggleSearch"
+        />
+
+        <q-input
+          v-if="showSearch"
+          v-model="searchText"
+          dense
+          outlined
+          placeholder="Search by session ID"
+          class="search-input"
+          size="sm"
+        >
+          <template #append>
+            <q-icon name="close" class="cursor-pointer" @click="clearSearch" />
+          </template>
+        </q-input>
+      </div>
+
+      <q-list v-if="showSearch" class="q-mt-sm bg-white shadow-2 rounded-borders full-width">
+        <!-- Loading spinner -->
+        <q-item v-if="isLoading">
+          <q-item-section class="text-center full-width">
+            <q-spinner-dots color="primary" size="24px" />
+          </q-item-section>
+        </q-item>
+
+        <!-- Results -->
+        <q-item
+          v-else-if="searchResults.success && searchResultsArr.length"
+          v-for="(item, index) in searchResultsArr"
+          :key="index"
+          clickable
+          @click="router.push(`/session/${userStore.currentRole}/${item.id}`)"
+        >
+          <q-item-section> {{ item.sessionID }} - {{ item.sessionName }} </q-item-section>
+        </q-item>
+
+        <!-- Error message -->
+        <q-item v-else-if="!isLoading && !searchResults.success && searchText">
+          <q-item-section class="text-negative">
+            {{ searchResults.message }}
+          </q-item-section>
+        </q-item>
+
+        <!-- Default instruction -->
+        <q-item v-else-if="!isLoading && !searchText">
+          <q-item-section class="text-grey"> Search by session ID </q-item-section>
+        </q-item>
+      </q-list>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useSessionStore } from 'src/stores/sessionStore'
-import { ref, computed, onMounted } from 'vue'
+import { useUserStore } from 'src/stores/user-store'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+const userStore = useUserStore()
 
 const router = useRouter()
 const sessionStore = useSessionStore()
@@ -139,6 +183,40 @@ const onCreate = () => {
 onMounted(async () => {
   sessionStore.fetchAllSession()
   console.log(sessionStore.sessionList)
+})
+
+let timeout = null
+const searchResultsArr = ref([])
+const searchResults = ref({}) // holds the full response with success, message, data
+const isLoading = ref(false)
+
+watch(searchText, (newVal) => {
+  if (timeout) clearTimeout(timeout)
+
+  timeout = setTimeout(async () => {
+    const id = parseInt(newVal)
+
+    if (!isNaN(id)) {
+      isLoading.value = true
+      searchResults.value = {}
+      try {
+        searchResults.value = await sessionStore.searchSessionByIdForSearchAction(id)
+
+        if (searchResults.value.success && searchResults.value.data) {
+          searchResultsArr.value = [searchResults.value.data]
+        } else {
+          searchResultsArr.value = []
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        isLoading.value = false
+      }
+    } else {
+      searchResultsArr.value = []
+      isLoading.value = false
+    }
+  }, 1000)
 })
 </script>
 

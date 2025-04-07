@@ -1,2 +1,3 @@
 add edit option to the session details 
 add search in the session list 
+session actions needs work

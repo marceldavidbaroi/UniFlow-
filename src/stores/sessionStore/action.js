@@ -8,6 +8,8 @@ import {
   arrayUnion,
   getDocs,
   getDoc,
+  query,
+  where
 } from 'firebase/firestore'
 import { useUserStore } from '../user-store'
 import { getNextSessionNumber } from 'src/services/firebaseService'
@@ -152,6 +154,47 @@ export default {
       return null // Or return error.message or re-throw if needed
     }
   },
+
+  async searchSessionByIdForSearchAction(sessionId) {
+    console.log('Searching by sessionID:', sessionId)
+
+    const sessionsRef = collection(db, 'sessions')
+    const q = query(sessionsRef, where('sessionID', '==', Number(sessionId)))
+
+    try {
+      const querySnapshot = await getDocs(q)
+
+      if (querySnapshot.empty) {
+        console.warn('No session found with sessionID:', sessionId)
+        return {
+          success: false,
+          message: 'No session found',
+          data: []
+        }
+      }
+
+      const sessions = []
+      querySnapshot.forEach((doc) => {
+        sessions.push({ id: doc.id, ...doc.data() })
+      })
+
+      console.log('Found session:', sessions[0])
+      return {
+        success: true,
+        message: 'Session found',
+        data: sessions[0] // or use data: sessions if returning multiple
+      }
+
+    } catch (error) {
+      console.error('Error searching session:', error.message)
+      return {
+        success: false,
+        message: `Error searching session: ${error.message}`,
+        data: []
+      }
+    }
+  },
+
 
   sortSessionsBy(field, order ) {
     if (!this.sessionList || !Array.isArray(this.sessionList)) return
