@@ -1,3 +1,6 @@
 add edit option to the session details 
-add search in the session list 
-session actions needs work
+add edit option to group details 
+add delete feature to the group and the session list 
+session list for student 
+separate the path of group
+separete the path of session 

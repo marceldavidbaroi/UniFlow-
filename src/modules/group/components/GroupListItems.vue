@@ -16,6 +16,14 @@
       </q-item-section>
     </q-item>
     <q-btn flat dense size="sm" color="secondary" icon="share" @click="showSharePopup = true" />
+    <q-btn flat dense size="sm" color="secondary" icon="delete" @click="showDeletePopup = true" />
+    <DeleteDialog
+      v-model="showDeletePopup"
+      cardTitle="Delete Group"
+      description="Confirm your group to delete"
+      inputField="true"
+      nameToMatch="text"
+    />
 
     <!-- share popup -->
     <q-dialog v-model="showSharePopup">
@@ -110,6 +118,7 @@ import { Notify } from 'quasar'
 import { useAuthStore } from 'src/stores/auth-store'
 import { ref, defineProps, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import DeleteDialog from 'src/components/DeleteDialog.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -122,6 +131,7 @@ const baseUrl = ref()
 
 const showSharePopup = ref(false)
 const shareLink = ref()
+const showDeletePopup = ref(false)
 
 const shareWithPassword = ref(false)
 const passwordInput = ref('')
