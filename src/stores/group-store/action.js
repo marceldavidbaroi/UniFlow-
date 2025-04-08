@@ -217,7 +217,44 @@ export default {
     } catch (error) {
       return { success: false, error: error.message }
     }
+  },
+  async removeMemberFromGroup(groupId, memberId) {
+    try {
+      const groupDocRef = doc(db, 'group', groupId)
+      const groupSnapshot = await getDoc(groupDocRef)
+
+      if (!groupSnapshot.exists()) {
+        return { success: false, message: 'Group not found.' }
+      }
+
+      const groupData = groupSnapshot.data()
+
+      // Prevent owner from being removed
+      if (groupData.owner?.id === memberId) {
+        return {
+          success: false,
+          message: 'Owner cannot be removed from the group.',
+        }
+      }
+
+      // Filter out the member to remove
+      const updatedMembers = (groupData.members || []).filter(
+        (member) => member.id !== memberId
+      )
+
+      await updateDoc(groupDocRef, {
+        members: updatedMembers,
+      })
+
+      return {
+        success: true,
+        message: 'Member successfully removed from group.',
+      }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
   }
+
 
 
 }

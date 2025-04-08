@@ -1,15 +1,8 @@
 <template>
   <q-page class="q-pa-md">
     <div class="group-header">
-      <div class="row justify-end q-pa-none">
-        <q-btn
-          flat
-          dense
-          size="sm"
-          color="white"
-          icon="delete"
-          @click="showDeletePopup = true"
-        ></q-btn>
+      <div class="row justify-end q-pa-none q-gutter-x-md">
+        <q-btn flat dense size="sm" color="white" icon="delete" @click="showDeletePopup = true" />
         <DeleteDialog
           v-model="showDeletePopup"
           cardTitle="Delete Group"
@@ -18,6 +11,9 @@
           :nameToMatch="group?.groupName"
           @confirm-delete="handleDelete"
         />
+        <q-btn flat dense size="sm" color="white" icon="edit" @click="showDeletePopup = true" />
+
+        <q-btn flat dense size="sm" color="white" icon="share" @click="showDeletePopup = true" />
       </div>
       <div class="group-title">{{ group?.groupName }}</div>
       <div class="group-details">
@@ -56,10 +52,25 @@
     <div class="member-table">
       <div class="table-title">Member Details</div>
       <q-table :rows="formattedMembers || []" :columns="columns" row-key="id" flat bordered>
-        <template v-slot:body-cell="props">
-          <q-td :props="props" @click="copyToClipboard(props.value)" class="clickable">
-            {{ props.value }}
-          </q-td>
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="name" :props="props">{{ props.row.name }}</q-td>
+            <q-td key="pId" :props="props">{{ props.row.pId }}</q-td>
+            <q-td key="email" :props="props">{{ props.row.email }}</q-td>
+            <q-td key="department" :props="props">{{ props.row.department }}</q-td>
+            <q-td key="actions" :props="props">
+              <q-btn
+                flat
+                dense
+                size="sm"
+                color="negative"
+                icon="delete"
+                @click="removeMember(props.row.id)"
+              >
+                <q-tooltip>Remove Member</q-tooltip>
+              </q-btn>
+            </q-td>
+          </q-tr>
         </template>
       </q-table>
     </div>
@@ -93,6 +104,14 @@ onMounted(async () => {
   }
 })
 
+const columns = [
+  { name: 'name', label: 'Name', field: 'name', align: 'left' },
+  { name: 'id', label: 'ID', field: 'id', align: 'left' },
+  { name: 'email', label: 'Email', field: 'email', align: 'left' },
+  { name: 'department', label: 'Department', field: 'department', align: 'left' },
+  { name: 'actions', label: '', field: 'actions', align: 'center' },
+]
+
 const formattedMembers = computed(() => {
   if (!group.value || !group.value.members) {
     return []
@@ -102,24 +121,25 @@ const formattedMembers = computed(() => {
     name: member.faculty?.label
       ? `${member.name || 'N/A'} (${member.faculty.label})`
       : member.name || 'N/A',
-    id: member.personId || 'N/A',
+    pId: member.personId || 'N/A',
     email: member.email || 'N/A',
     department: member.department.label || 'N/A',
+    id: member.id,
   }))
 })
 
-const copyToClipboard = (text) => {
-  if (!text) return
+// const copyToClipboard = (text) => {
+//   if (!text) return
 
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      Notify.create({ message: `Copied to clipboard: ${text}`, color: 'positive', position: 'top' })
-    })
-    .catch(() => {
-      Notify.create({ message: 'Copy failed!', color: 'negative', position: 'top' })
-    })
-}
+//   navigator.clipboard
+//     .writeText(text)
+//     .then(() => {
+//       Notify.create({ message: `Copied to clipboard: ${text}`, color: 'positive', position: 'top' })
+//     })
+//     .catch(() => {
+//       Notify.create({ message: 'Copy failed!', color: 'negative', position: 'top' })
+//     })
+// }
 
 const handleDelete = async () => {
   const response = await groupStore.deleteGroup(groupId)
@@ -138,6 +158,22 @@ const handleDelete = async () => {
       position: 'top',
       timeout: 3000,
     })
+  }
+}
+
+const removeMember = async (memberId) => {
+  try {
+    const response = await groupStore.removeMemberFromGroup(groupId.value, memberId)
+    if (response.success) {
+      Notify.create({ message: response.message, color: 'positive', position: 'top' })
+      // Reload group data
+      const result = await groupStore.searchGroupById(groupId.value)
+      group.value = result.data
+    } else {
+      Notify.create({ message: response.message, color: 'negative', position: 'top' })
+    }
+  } catch {
+    Notify.create({ message: 'Failed to remove member.', color: 'negative', position: 'top' })
   }
 }
 </script>
