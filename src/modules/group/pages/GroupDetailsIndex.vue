@@ -1,6 +1,24 @@
 <template>
   <q-page class="q-pa-md">
     <div class="group-header">
+      <div class="row justify-end q-pa-none">
+        <q-btn
+          flat
+          dense
+          size="sm"
+          color="white"
+          icon="delete"
+          @click="showDeletePopup = true"
+        ></q-btn>
+        <DeleteDialog
+          v-model="showDeletePopup"
+          cardTitle="Delete Group"
+          description="Confirm your group to delete"
+          inputField="true"
+          :nameToMatch="group?.groupName"
+          @confirm-delete="handleDelete"
+        />
+      </div>
       <div class="group-title">{{ group?.groupName }}</div>
       <div class="group-details">
         <div class="detail-item">
@@ -52,11 +70,13 @@
 import { Notify } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
 import { onMounted, ref, computed, nextTick } from 'vue'
+import DeleteDialog from 'src/components/DeleteDialog.vue'
 
 const groupStore = useGroupStore()
 
 const groupId = ref(null)
 const group = ref(null)
+const showDeletePopup = ref(false)
 
 onMounted(async () => {
   groupId.value = window.location.pathname.split('/group/')[1]
@@ -99,6 +119,26 @@ const copyToClipboard = (text) => {
     .catch(() => {
       Notify.create({ message: 'Copy failed!', color: 'negative', position: 'top' })
     })
+}
+
+const handleDelete = async () => {
+  const response = await groupStore.deleteGroup(groupId)
+
+  if (response.success) {
+    Notify.create({
+      type: 'positive',
+      message: response.message || 'Group deleted successfully.',
+      position: 'top',
+      timeout: 3000,
+    })
+  } else {
+    Notify.create({
+      type: 'negative',
+      message: response.message || response.error || 'Failed to delete the group.',
+      position: 'top',
+      timeout: 3000,
+    })
+  }
 }
 </script>
 
