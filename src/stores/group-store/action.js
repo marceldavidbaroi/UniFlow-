@@ -9,6 +9,7 @@ import {
   updateDoc,
   arrayUnion,
   getDoc,
+  deleteDoc
 } from 'firebase/firestore'
 import { useUserStore } from '../user-store'
 
@@ -185,6 +186,38 @@ export default {
     } catch (error) {
       return { success: false, error: error.message }
     }
+  },
+  async deleteGroup(groupId) {
+    try {
+      const groupDocRef = doc(db, 'group', groupId)
+      const groupSnapshot = await getDoc(groupDocRef)
+
+      if (!groupSnapshot.exists()) {
+        return { success: false, message: 'Group not found.' }
+      }
+
+      const groupData = groupSnapshot.data()
+
+      // Check ownership
+      if (groupData.owner?.id !== userStore.currentUser?.id) {
+        return { success: false, message: 'You are not authorized to delete this group.' }
+      }
+
+      // Delete the group
+      await deleteDoc(groupDocRef)
+
+      // Optionally update local store
+      this.groupList = this.groupList?.filter(group => group.id !== groupId) || []
+      this.groupCount = this.groupList.length
+      this.totalMemberCount = this.groupList.reduce((total, group) => {
+        return total + (Array.isArray(group.members) ? group.members.length : 0)
+      }, 0)
+
+      return { success: true, message: 'Group deleted successfully.' }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
   }
+
 
 }

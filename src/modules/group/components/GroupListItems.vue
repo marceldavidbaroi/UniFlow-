@@ -16,17 +16,18 @@
       </q-item-section>
     </q-item>
     <q-btn flat dense size="sm" color="secondary" icon="share" @click="showSharePopup = true" />
-    <q-btn flat dense size="sm" color="secondary" icon="delete" @click="showDeletePopup = true" />
+    <q-btn flat dense size="sm" color="red" icon="delete" @click="showDeletePopup = true" />
     <DeleteDialog
       v-model="showDeletePopup"
       cardTitle="Delete Group"
       description="Confirm your group to delete"
       inputField="true"
-      nameToMatch="text"
+      :nameToMatch="group.groupName"
+      @confirm-delete="handleDelete"
     />
 
     <!-- share popup -->
-    <q-dialog v-model="showSharePopup">
+    <q-dialog v-model="showSharePopup" transition-show="fade" transition-hide="fade">
       <q-card style="border-radius: 12px; width: 400px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
         <q-card-section class="q-pa-lg">
           <div class="text-h6 text-primary text-center q-mb-md">Share Group</div>
@@ -119,6 +120,7 @@ import { useAuthStore } from 'src/stores/auth-store'
 import { ref, defineProps, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
+import { useGroupStore } from 'src/stores/group-store'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -128,6 +130,7 @@ const props = defineProps({
 })
 
 const baseUrl = ref()
+const groupStore = useGroupStore()
 
 const showSharePopup = ref(false)
 const shareLink = ref()
@@ -188,6 +191,26 @@ const generateShareText = async (password) => {
       })
     }
   })
+}
+
+const handleDelete = async () => {
+  const response = await groupStore.deleteGroup(props.group.id)
+
+  if (response.success) {
+    Notify.create({
+      type: 'positive',
+      message: response.message || 'Group deleted successfully.',
+      position: 'top',
+      timeout: 3000,
+    })
+  } else {
+    Notify.create({
+      type: 'negative',
+      message: response.message || response.error || 'Failed to delete the group.',
+      position: 'top',
+      timeout: 3000,
+    })
+  }
 }
 </script>
 
