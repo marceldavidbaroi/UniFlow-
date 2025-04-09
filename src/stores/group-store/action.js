@@ -1,3 +1,16 @@
+/**
+ * Functions:
+ * - createGroup(groupName, batch, semester, year, subjectName, description, groupRules, password, confirmPassword, maxMembers, labGroup)
+ * - fetchAllGroups()
+ * - addMemberToGroup(groupId, password)
+ * - searchGroupById(groupId)
+ * - fetchGroupsByStudent()
+ * - deleteGroup(groupId)
+ * - removeMemberFromGroup(groupId, memberId)
+ * - editGroup(groupId, updatedData)
+ */
+
+
 import { db } from 'boot/firebase'
 import {
   collection,

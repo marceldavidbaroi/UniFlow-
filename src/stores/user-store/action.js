@@ -1,14 +1,15 @@
-// import { db } from 'boot/firebase' // Ensure you have proper Firestore import
-// import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
-// import bcrypt from 'bcryptjs' // Make sure to install bcryptjs for password hashing
-// import { useUserStore } from '../user-store'
+/**
+ * Functions:
+ * - setUser(user)
+ * - clearUser()
+ * - getUserDetails(userId)
+ */
 
-import { db } from 'boot/firebase' // Assuming you have Firebase setup in boot/firebase.js
+
+import { db } from 'boot/firebase'
 import { collection, doc, getDoc } from 'firebase/firestore'
-// const userStore = useUserStore()
 
 export default {
-  //set current user data
   setUser(user) {
     this.currentUser = user
     this.currentRole = user.role
@@ -23,7 +24,7 @@ export default {
     try {
       if (!userId || typeof userId !== 'string' || userId.trim() === '') {
         console.error('Invalid userId provided:', userId)
-        return null // Or throw an error if you prefer strict validation
+        return null
       }
 
       const usersCollection = collection(db, 'users')
@@ -38,7 +39,7 @@ export default {
       }
     } catch (error) {
       console.error('Error fetching user details:', error)
-      throw error // Re-throw the error for the calling function to handle
+      throw error
     }
   },
 }

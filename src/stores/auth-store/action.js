@@ -1,3 +1,11 @@
+/**
+ * Functions:
+ * - registerUser(name, email, batch, id, department, faculty, adminAccessPassword, role, password)
+ * - loginUser(email, password)
+ * - verifyUserPassword(password)
+ * - logoutUser()
+ */
+
 import { db } from 'boot/firebase'
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore'
 import bcrypt from 'bcryptjs'

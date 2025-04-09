@@ -1,3 +1,15 @@
+/**
+ * Functions:
+ * - createSession(userId, payload)
+ * - joinSession(sessionId, userId)
+ * - endSession(sessionId)
+ * - fetchAllSession()
+ * - updateSessionData(sessionId, newData)
+ * - searchSessionById(sessionId)
+ * - searchSessionByIdForSearchAction(sessionId)
+ * - sortSessionsBy(field, order)
+ */
+
 import { db } from 'boot/firebase'
 import {
   collection,
