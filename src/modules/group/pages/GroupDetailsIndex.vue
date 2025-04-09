@@ -1,78 +1,84 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="group-header">
-      <div class="row justify-end q-pa-none q-gutter-x-md">
-        <q-btn flat dense size="sm" color="white" icon="delete" @click="showDeletePopup = true" />
-        <DeleteDialog
-          v-model="showDeletePopup"
-          cardTitle="Delete Group"
-          description="Confirm your group to delete"
-          inputField="true"
-          :nameToMatch="group?.groupName"
-          @confirm-delete="handleDelete"
-        />
-        <q-btn flat dense size="sm" color="white" icon="edit" @click="showDeletePopup = true" />
-
-        <q-btn flat dense size="sm" color="white" icon="share" @click="showDeletePopup = true" />
+    <div v-if="group">
+      <div class="group-header">
+        <div class="row justify-end q-pa-none q-gutter-x-md">
+          <q-btn flat dense size="sm" color="white" icon="delete" @click="showDeletePopup = true" />
+          <DeleteDialog
+            v-model="showDeletePopup"
+            cardTitle="Delete Group"
+            description="Confirm your group to delete"
+            inputField="true"
+            :nameToMatch="group?.groupName"
+            @confirm-delete="handleDelete"
+          />
+          <q-btn flat dense size="sm" color="white" icon="edit" @click="showDeletePopup = true" />
+          <q-btn flat dense size="sm" color="white" icon="share" @click="showSharePopup = true" />
+          <ShareDialog v-model="showSharePopup" :group="group" />
+        </div>
+        <div class="group-title">{{ group?.groupName }}</div>
+        <div class="group-details">
+          <div class="detail-item">
+            <span class="detail-label">Instructor:</span>
+            {{ group?.owner?.name }}
+            <span v-if="group?.owner?.faculty?.label"> ({{ group?.owner?.faculty?.label }}) </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email:</span> {{ group?.owner?.email }}
+          </div>
+          <div class="detail-item"><span class="detail-label">Batch:</span> {{ group?.batch }}</div>
+          <div class="detail-item">
+            <span class="detail-label">Semester:</span> {{ group?.semester }}
+          </div>
+          <div class="detail-item"><span class="detail-label">Year:</span> {{ group?.year }}</div>
+          <div class="detail-item">
+            <span class="detail-label">Subject:</span> {{ group?.subjectName }}
+          </div>
+          <div class="detail-item" v-if="group?.labGroup">
+            <span class="detail-label">Lab Group:</span>
+          </div>
+        </div>
       </div>
-      <div class="group-title">{{ group?.groupName }}</div>
-      <div class="group-details">
-        <div class="detail-item">
-          <span class="detail-label">Instructor:</span>
-          {{ group?.owner?.name }}
-          <span v-if="group?.owner?.faculty?.label"> ({{ group?.owner?.faculty?.label }}) </span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Email:</span> {{ group?.owner?.email }}
-        </div>
-        <div class="detail-item"><span class="detail-label">Batch:</span> {{ group?.batch }}</div>
-        <div class="detail-item">
-          <span class="detail-label">Semester:</span> {{ group?.semester }}
-        </div>
-        <div class="detail-item"><span class="detail-label">Year:</span> {{ group?.year }}</div>
-        <div class="detail-item">
-          <span class="detail-label">Subject:</span> {{ group?.subjectName }}
-        </div>
-        <div class="detail-item" v-if="group?.labGroup">
-          <span class="detail-label">Lab Group:</span>
-        </div>
+      <div class="group-section">
+        <div class="section-title">Description</div>
+        <div class="section-content">{{ group?.description }}</div>
+      </div>
+      <div class="group-section">
+        <div class="section-title">Group Rules</div>
+        <div class="section-content" v-html="group?.groupRules"></div>
+      </div>
+      <div class="member-table">
+        <div class="table-title">Member Details</div>
+        <q-table :rows="formattedMembers || []" :columns="columns" row-key="id" flat bordered>
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td key="name" :props="props">{{ props.row.name }}</q-td>
+              <q-td key="pId" :props="props">{{ props.row.pId }}</q-td>
+              <q-td key="email" :props="props">{{ props.row.email }}</q-td>
+              <q-td key="department" :props="props">{{ props.row.department }}</q-td>
+              <q-td key="actions" :props="props">
+                <q-btn
+                  flat
+                  dense
+                  size="sm"
+                  color="negative"
+                  icon="delete"
+                  @click="removeMember(props.row.id)"
+                >
+                  <q-tooltip>Remove Member</q-tooltip>
+                </q-btn>
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
       </div>
     </div>
 
-    <div class="group-section">
-      <div class="section-title">Description</div>
-      <div class="section-content">{{ group?.description }}</div>
-    </div>
-
-    <div class="group-section">
-      <div class="section-title">Group Rules</div>
-      <div class="section-content" v-html="group?.groupRules"></div>
-    </div>
-
-    <div class="member-table">
-      <div class="table-title">Member Details</div>
-      <q-table :rows="formattedMembers || []" :columns="columns" row-key="id" flat bordered>
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="name" :props="props">{{ props.row.name }}</q-td>
-            <q-td key="pId" :props="props">{{ props.row.pId }}</q-td>
-            <q-td key="email" :props="props">{{ props.row.email }}</q-td>
-            <q-td key="department" :props="props">{{ props.row.department }}</q-td>
-            <q-td key="actions" :props="props">
-              <q-btn
-                flat
-                dense
-                size="sm"
-                color="negative"
-                icon="delete"
-                @click="removeMember(props.row.id)"
-              >
-                <q-tooltip>Remove Member</q-tooltip>
-              </q-btn>
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
+    <div v-else class="flex flex-center q-mt-md" style="height: 100vh">
+      <div class="text-center">
+        <q-spinner-pie color="secondary" size="2em" />
+        <div>Loading group details...</div>
+      </div>
     </div>
   </q-page>
 </template>
@@ -82,12 +88,14 @@ import { Notify } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
 import { onMounted, ref, computed, nextTick } from 'vue'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
+import ShareDialog from '../components/ShareDialog.vue'
 
 const groupStore = useGroupStore()
 
 const groupId = ref(null)
 const group = ref(null)
 const showDeletePopup = ref(false)
+const showSharePopup = ref(false)
 
 onMounted(async () => {
   groupId.value = window.location.pathname.split('/group/')[1]

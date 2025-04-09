@@ -112,7 +112,7 @@ const shareText = ref('')
 onMounted(() => {
   baseUrl.value = window.location.origin
 
-  if (props.group.id) {
+  if (props.group?.id) {
     shareLink.value = `${baseUrl.value}/group/join/${props.group.id}`
   } else {
     shareLink.value = 'invalid link'

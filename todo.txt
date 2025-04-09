@@ -4,3 +4,4 @@ add delete feature to the group and the session list
 session list for student 
 separate the path of group
 separete the path of session 
+add share in the group details

@@ -53,10 +53,10 @@
 import { onMounted, computed } from 'vue'
 import SessionListItems from '../components/SessionListItems.vue'
 import { useSessionStore } from 'src/stores/sessionStore'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 import SessionActionButtons from '../components/SessionActionButtons.vue'
 
-const router = useRouter()
+// const router = useRouter()
 const sessionStore = useSessionStore()
 
 // Make formattedGroupData reactive

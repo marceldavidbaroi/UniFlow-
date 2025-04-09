@@ -16,8 +16,8 @@
       </q-item-section>
     </q-item>
     <q-btn flat dense size="sm" color="secondary" icon="share" @click="showSharePopup = true" />
-
     <ShareDialog v-model="showSharePopup" :group="group" />
+
     <q-btn flat dense size="sm" color="red" icon="delete" @click="showDeletePopup = true" />
     <DeleteDialog
       v-model="showDeletePopup"
@@ -32,7 +32,7 @@
 
 <script setup>
 import { Notify } from 'quasar'
-import { ref, defineProps, onMounted } from 'vue'
+import { ref, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
@@ -45,22 +45,22 @@ const props = defineProps({
   group: Object,
 })
 
-const baseUrl = ref()
+// const baseUrl = ref()
 const groupStore = useGroupStore()
 
 const showSharePopup = ref(false)
-const shareLink = ref()
+// const shareLink = ref()
 const showDeletePopup = ref(false)
 
-onMounted(() => {
-  baseUrl.value = window.location.origin
+// onMounted(() => {
+//   baseUrl.value = window.location.origin
 
-  if (props.group && props.group.id) {
-    shareLink.value = `${baseUrl.value}/group/join/${props.group.id}`
-  } else {
-    shareLink.value = 'invalid link'
-  }
-})
+//   if (props.group && props.group.id) {
+//     shareLink.value = `${baseUrl.value}/group/join/${props.group.id}`
+//   } else {
+//     shareLink.value = 'invalid link'
+//   }
+// })
 
 const handleDelete = async () => {
   const response = await groupStore.deleteGroup(props.group.id)
