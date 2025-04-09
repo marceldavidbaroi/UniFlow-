@@ -12,7 +12,14 @@
             :nameToMatch="group?.groupName"
             @confirm-delete="handleDelete"
           />
-          <q-btn flat dense size="sm" color="white" icon="edit" @click="showDeletePopup = true" />
+          <q-btn
+            flat
+            dense
+            size="sm"
+            color="white"
+            icon="edit"
+            @click="router.push(`/group/edit/${groupId}`)"
+          />
           <q-btn flat dense size="sm" color="white" icon="share" @click="showSharePopup = true" />
           <ShareDialog v-model="showSharePopup" :group="group" />
         </div>
@@ -89,7 +96,9 @@ import { useGroupStore } from 'src/stores/group-store'
 import { onMounted, ref, computed, nextTick } from 'vue'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const groupStore = useGroupStore()
 
 const groupId = ref(null)

@@ -253,7 +253,56 @@ export default {
     } catch (error) {
       return { success: false, error: error.message }
     }
-  }
+  },
+  async editGroup(groupId, updatedData) {
+    try {
+      const groupDocRef = doc(db, 'group', groupId)
+      const groupSnapshot = await getDoc(groupDocRef)
+
+      if (!groupSnapshot.exists()) {
+        return { success: false, message: 'Group not found.' }
+      }
+
+      const groupData = groupSnapshot.data()
+
+      // Only the group owner can edit the group
+      if (groupData.owner?.id !== userStore.currentUser?.id) {
+        return { success: false, message: 'You are not authorized to edit this group.' }
+      }
+
+      const allowedFields = [
+        'groupName',
+        'batch',
+        'semester',
+        'year',
+        'subjectName',
+        'description',
+        'groupRules',
+        'password',
+        'maxMembers',
+        'labGroup'
+      ]
+
+      const updates = {}
+
+      allowedFields.forEach((field) => {
+        if (field in updatedData) {
+          updates[field] = field === 'maxMembers'
+            ? parseInt(updatedData[field], 10)
+            : field === 'labGroup'
+            ? Boolean(updatedData[field])
+            : updatedData[field]
+        }
+      })
+
+      await updateDoc(groupDocRef, updates)
+
+      return { success: true, message: 'Group successfully updated.' }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  },
+
 
 
 

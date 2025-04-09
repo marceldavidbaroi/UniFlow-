@@ -31,6 +31,12 @@ export default [
           roles: ['teacher','student']
         }
        },
+       { path: 'edit/:id', component: () => import('./pages/EditGroupDetails.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['teacher']
+        }
+       },
     ],
   },
 ]
