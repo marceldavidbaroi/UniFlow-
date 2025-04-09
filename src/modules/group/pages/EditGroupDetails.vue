@@ -141,17 +141,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-// import { useQuasar } from 'quasar'
 import { useGroupStore } from 'src/stores/group-store'
 import { useQuasar } from 'quasar'
-
-const $q = useQuasar()
-
 import { Notify } from 'quasar'
 import { useRouter } from 'vue-router'
 
 const groupStore = useGroupStore()
 const router = useRouter()
+const $q = useQuasar()
 
 const groupName = ref('')
 const batch = ref('')
@@ -193,8 +190,6 @@ onMounted(async () => {
         confirmPassword.value = group.value.confirmPassword
         maxMembers.value = group.value.maxMembers
         labGroup.value = group.value.labGroup
-
-        // await nextTick()
       }
     } catch (error) {
       console.error('Error fetching group data:', error)
@@ -231,19 +226,6 @@ const submitForm = () => {
       })
 
       if (result.success) {
-        // Reset form fields
-        // groupName.value = ''
-        // batch.value = ''
-        // semester.value = ''
-        // year.value = ''
-        // subjectName.value = ''
-        // description.value = ''
-        // groupRules.value = ''
-        // password.value = ''
-        // confirmPassword.value = ''
-        // maxMembers.value = ''
-        // labGroup.value = false
-
         setTimeout(() => {
           router.push('/group/list')
         }, 2000)

@@ -92,11 +92,11 @@
 
 <script setup>
 import { Notify } from 'quasar'
+import { useRouter } from 'vue-router'
 import { useGroupStore } from 'src/stores/group-store'
 import { onMounted, ref, computed, nextTick } from 'vue'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
-import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const groupStore = useGroupStore()
@@ -145,19 +145,6 @@ const formattedMembers = computed(() => {
   }))
 })
 
-// const copyToClipboard = (text) => {
-//   if (!text) return
-
-//   navigator.clipboard
-//     .writeText(text)
-//     .then(() => {
-//       Notify.create({ message: `Copied to clipboard: ${text}`, color: 'positive', position: 'top' })
-//     })
-//     .catch(() => {
-//       Notify.create({ message: 'Copy failed!', color: 'negative', position: 'top' })
-//     })
-// }
-
 const handleDelete = async () => {
   const response = await groupStore.deleteGroup(groupId)
 
@@ -183,7 +170,6 @@ const removeMember = async (memberId) => {
     const response = await groupStore.removeMemberFromGroup(groupId.value, memberId)
     if (response.success) {
       Notify.create({ message: response.message, color: 'positive', position: 'top' })
-      // Reload group data
       const result = await groupStore.searchGroupById(groupId.value)
       group.value = result.data
     } else {
