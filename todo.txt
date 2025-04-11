@@ -1,7 +1,89 @@
-add edit option to the session details 
-add edit option to group details 
-add delete feature to the group and the session list 
-session list for student 
-separate the path of group
-separete the path of session 
-add share in the group details
+FEATURE TASK LIST:
+
+1. Session Details:
+   - [ ] Add an "Edit" option to the Session Details view.
+   - [ ] Implement the functionality for editing session details (likely a form).
+   - [ ] Ensure data persistence for edited session details.
+
+2. Group Details:
+   - [ ] Add an "Edit" option to the Group Details view.
+   - [ ] Implement the functionality for editing group details (likely a form).
+   - [ ] Ensure data persistence for edited group details.
+
+3. Delete Functionality:
+   - [ ] Add a "Delete" button/option to the Group list.
+   - [ ] Implement the functionality to delete a group.
+   - [ ] Add a "Delete" button/option to the Session list.
+   - [ ] Implement the functionality to delete a session.
+
+4. Student Session List:
+   - [ ] Create a dedicated view/component to display the session list for students.
+   - [ ] Fetch and display relevant session information for students.
+
+5. Separate Paths (Group & Session):
+   - [ ] Update the routing configuration to have a separate base path for groups (e.g., `/groups`).
+   - [ ] Update all relevant links and navigation to reflect the new group path.
+   - [ ] Update the routing configuration to have a separate base path for sessions (e.g., `/sessions`).
+   - [ ] Update all relevant links and navigation to reflect the new session path.
+
+6. Share in Group Details:
+   - [ ] Add a "Share" button/option within the Group Details view.
+   - [ ] Implement the functionality for sharing group details (e.g., generating a shareable link, displaying sharing options).
+
+7. Teacher Dashboard:
+   - [ ] Create a dedicated dashboard view for teachers.
+   - [ ] Implement functional elements for the teacher dashboard (e.g., quick access to manage groups, sessions, etc.).
+
+8. Student Dashboard:
+   - [ ] Create a dedicated dashboard view for students.
+   - [ ] Implement functional elements for the student dashboard (e.g., overview of enrolled groups, upcoming sessions, etc.).
+
+9. Editable Sessions (Teacher):
+   - [ ] Ensure that teachers have the ability to edit session details from the Session Details view.
+   - [ ] Verify that students do not have editing capabilities for sessions.
+
+10. Group List Search:
+    - [ ] Add a search input field to the Group list view.
+    - [ ] Implement the functionality to filter the group list based on the search query.
+
+11. Confirm Delete Popup (Group Member):
+    - [ ] When a teacher attempts to delete a member from a group, display a confirmation popup.
+    - [ ] Ensure the delete action only proceeds after confirmation.
+
+12. Share Group Popup (Teacher Only):
+    - [ ] Ensure the "Share" button/option and any associated popup in the Group Details view are only visible to teacher users.
+    - [ ] Hide the "Share" functionality for student users.
+
+13. Leave Group Button (Student):
+    - [ ] In the student's view of the Group Details, replace the "Delete Group" button with a "Leave Group" button.
+    - [ ] Implement the functionality for a student to leave a group.
+
+14. Remove Edit Button (Student Group Details):
+    - [ ] In the student's view of the Group Details form, remove the "Edit" button/option.
+    - [ ] Ensure students cannot access the edit functionality for groups.
+
+15. Remove Delete Button (Student Group Members):
+    - [ ] In the student's view of the Group Members list within a group, remove any "Delete" buttons or options for members.
+    - [ ] Ensure students cannot remove members from a group.
+
+16. Student Session View:
+    - [ ] Create a dedicated view to display the details of a single session for students.
+    - [ ] Fetch and display all relevant information for a specific session.
+
+17. Todo List (All Users):
+    - [ ] Design and implement a "Todo List" feature accessible to all user roles (admin, teacher, student).
+    - [ ] Allow users to create, read, update, and delete their own todo items.
+
+18. Admin Dashboard:
+    - [ ] Create a dedicated dashboard view for administrators.
+    - [ ] Implement the display of the following statistics on the admin dashboard:
+        - [ ] Total number of students.
+        - [ ] Total number of teachers.
+        - [ ] Total number of groups.
+        - [ ] Total number of active sessions.
+        - [ ] Total number of sessions.
+
+19. Share Functionality (Session List):
+    - [ ] Add a "Share" button/option to each item in the Session list.
+    - [ ] Implement the functionality for sharing session details (e.g., generating a shareable link, displaying sharing options).
+    - [ ] Separate the share session functionality into a reusable component.
