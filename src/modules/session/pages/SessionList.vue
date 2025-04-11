@@ -46,6 +46,10 @@
         <div>Loading session details...</div>
       </div>
     </div>
+
+    <q-page-sticky position="bottom-right" :offset="[50, 50]" style="z-index: 1000">
+      <q-btn round icon="keyboard_arrow_up" color="secondary" @click="scrollToTop" />
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -80,6 +84,9 @@ onMounted(async () => {
 
 const handleStatusChange = async () => {
   await sessionStore.fetchAllSession()
+}
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 // console.log('this is the session', formattedSessionData)

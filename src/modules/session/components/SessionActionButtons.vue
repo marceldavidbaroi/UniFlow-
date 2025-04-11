@@ -222,9 +222,9 @@ watch(searchText, (newVal) => {
 
 <style scoped lang="scss">
 .toolbar {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  // background: #ffffff;
+  // border-radius: 12px;
+  // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .toolbar-btn {

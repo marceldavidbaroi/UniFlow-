@@ -72,7 +72,6 @@
         class="q-px-xs"
         @click="showSharePopup = true"
       />
-      {{ shareLink }}
 
       <ShareDialog v-model="showSharePopup" :link="shareLink" />
     </div>
@@ -89,7 +88,6 @@ import ShareDialog from '../components/ShareDialog.vue'
 
 const sessionStore = useSessionStore()
 const userStore = useUserStore()
-console.log(userStore.currentRole)
 const router = useRouter()
 const props = defineProps({
   session: Object,
@@ -106,7 +104,6 @@ onMounted(() => {
   } else {
     shareLink.value = 'invalid link'
   }
-  console.log(shareLink.value)
 })
 
 const isHovered = ref(false)

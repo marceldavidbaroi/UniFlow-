@@ -83,6 +83,5 @@ FEATURE TASK LIST:
         - [ ] Total number of active sessions.
         - [ ] Total number of sessions.
 
-19. Share Functionality (Session List):
-    - [ ] Add a "Share" button/option to each item in the Session list.
-    - [ ]  (e.g., generating a shareable link, displaying sharing options).
+
+
