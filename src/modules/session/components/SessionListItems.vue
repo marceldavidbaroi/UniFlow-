@@ -60,37 +60,54 @@
             :disable="session.isEnded"
           />
         </div>
-        <div>
-          <q-btn
-            dense
-            flat
-            color="primary"
-            size="sm"
-            icon="share"
-            class="q-px-xs"
-            @click="toggleActive"
-          />
-        </div>
       </div>
+    </div>
+    <div>
+      <q-btn
+        dense
+        flat
+        color="primary"
+        size="sm"
+        icon="share"
+        class="q-px-xs"
+        @click="showSharePopup = true"
+      />
+      {{ shareLink }}
+
+      <ShareDialog v-model="showSharePopup" :link="shareLink" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { useSessionStore } from 'src/stores/sessionStore'
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
 import { useUserStore } from 'src/stores/user-store'
+import ShareDialog from '../components/ShareDialog.vue'
 
 const sessionStore = useSessionStore()
 const userStore = useUserStore()
 console.log(userStore.currentRole)
 const router = useRouter()
-defineProps({
+const props = defineProps({
   session: Object,
 })
 const emit = defineEmits(['updateSessionStatus'])
+const showSharePopup = ref(false)
+const shareLink = ref('')
+const baseUrl = ref()
+onMounted(() => {
+  baseUrl.value = window.location.origin
+
+  if (props.session?.id) {
+    shareLink.value = `Join #${props.session.sessionID} session on '${props.session?.sessionName}'\n\n${baseUrl.value}/session/join/${props.session.id}`
+  } else {
+    shareLink.value = 'invalid link'
+  }
+  console.log(shareLink.value)
+})
 
 const isHovered = ref(false)
 const formatTimestamp = (ts) => {

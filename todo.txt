@@ -85,5 +85,4 @@ FEATURE TASK LIST:
 
 19. Share Functionality (Session List):
     - [ ] Add a "Share" button/option to each item in the Session list.
-    - [ ] Implement the functionality for sharing session details (e.g., generating a shareable link, displaying sharing options).
-    - [ ] Separate the share session functionality into a reusable component.
+    - [ ]  (e.g., generating a shareable link, displaying sharing options).

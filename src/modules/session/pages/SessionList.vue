@@ -70,6 +70,7 @@ const formattedSessionData = computed(() =>
     isEnded: session.isEnded,
     startDate: session.sessionDate,
     endedAt: session.endedAt,
+    sessionID: session.sessionID,
   })),
 )
 

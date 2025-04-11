@@ -82,7 +82,6 @@
             @click="showSharePopup = true"
           />
           <ShareDialog v-model="showSharePopup" :link="shareLink" />
-          here should be the share popup
         </div>
       </div>
 
