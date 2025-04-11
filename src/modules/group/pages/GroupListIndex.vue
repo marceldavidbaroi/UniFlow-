@@ -63,6 +63,7 @@ const formattedGroupData = computed(() =>
     year: group.year,
     labGroup: group.labGroup,
     password: group.password,
+    owner: group.owner,
   })),
 )
 onMounted(async () => {

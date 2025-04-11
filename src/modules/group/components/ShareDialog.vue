@@ -3,7 +3,12 @@
     <q-card style="border-radius: 12px; width: 400px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
       <q-card-section class="q-pa-lg">
         <div class="text-h6 text-primary text-center q-mb-md">Share Group</div>
-        <q-toggle v-model="shareWithPassword" label="Share with Password" class="q-mb-md" />
+        <q-toggle
+          v-model="shareWithPassword"
+          v-if="isOwner"
+          label="Share with Password"
+          class="q-mb-md"
+        />
 
         <div v-if="shareWithPassword">
           <div class="h6 text-grey-8 q-mb-md">Share with Group Link and Password</div>
@@ -22,7 +27,7 @@
           />
 
           <q-btn
-            @click="generateShareText(group?.password)"
+            @click="generateShareText(passwordInput)"
             label="Generate Share Text"
             color="primary"
             class="full-width q-mb-md"
@@ -88,7 +93,9 @@
 <script setup>
 import { Notify } from 'quasar'
 import { useAuthStore } from 'src/stores/auth-store'
+import { useUserStore } from 'src/stores/user-store'
 import { ref, defineProps, onMounted } from 'vue'
+const userStore = useUserStore()
 
 const authStore = useAuthStore()
 
@@ -108,8 +115,15 @@ const shareLink = ref()
 const shareWithPassword = ref(false)
 const passwordInput = ref('')
 const shareText = ref('')
-
+const isOwner = ref()
 onMounted(() => {
+  console.log(userStore.currentUser.id)
+  if (props.group.owner.id === userStore.currentUser.id) {
+    isOwner.value = true
+  } else {
+    isOwner.value = false
+  }
+
   baseUrl.value = window.location.origin
 
   if (props.group?.id) {

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="internalShowShare">
+  <q-dialog v-model="internalShowShare" transition-show="fade" transition-hide="fade">
     <q-card style="border-radius: 12px; width: 400px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)">
       <q-card-section class="q-pa-lg">
         <div class="text-h6 text-primary text-center q-mb-md">Share Session Join Link</div>

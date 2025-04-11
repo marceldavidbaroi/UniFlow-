@@ -5,10 +5,6 @@ FEATURE TASK LIST:
    - [ ] Implement the functionality for editing session details (likely a form).
    - [ ] Ensure data persistence for edited session details.
 
-2. Group Details:
-   - [ ] Add an "Edit" option to the Group Details view.
-   - [ ] Implement the functionality for editing group details (likely a form).
-   - [ ] Ensure data persistence for edited group details.
 
 3. Delete Functionality:
    - [ ] Add a "Delete" button/option to the Group list.
@@ -52,7 +48,6 @@ FEATURE TASK LIST:
 
 12. Share Group Popup (Teacher Only):
     - [ ] Ensure the "Share" button/option and any associated popup in the Group Details view are only visible to teacher users.
-    - [ ] Hide the "Share" functionality for student users.
 
 13. Leave Group Button (Student):
     - [ ] In the student's view of the Group Details, replace the "Delete Group" button with a "Leave Group" button.
