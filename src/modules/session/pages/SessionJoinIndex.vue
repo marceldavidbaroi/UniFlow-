@@ -71,7 +71,7 @@ const loading = ref(false)
 const response = ref()
 
 const joinSession = () => {
-  sessionStore.joinSession(id, password.value).then((result) => {
+  sessionStore.joinSession(id, userStore.currentUser.id).then((result) => {
     if (result.success) {
       Notify.create({
         message: result.message, // Use the message from the result

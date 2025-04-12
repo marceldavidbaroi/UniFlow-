@@ -8,9 +8,9 @@
     </div>
 
     <SessionActionButtons />
-    <div v-if="formattedSessionDataTeacher || formattedSessionDataStudent">
+    <div v-if="formattedSessionData">
       <SessionListItemsTeacher
-        v-for="session in formattedSessionDataTeacher"
+        v-for="session in formattedSessionData"
         :key="session.id"
         :session="session"
         @updateSessionStatus="handleStatusChange"
@@ -43,7 +43,7 @@ const sessionStore = useSessionStore()
 const userStore = useUserStore()
 
 // Make formattedGroupData reactive
-const formattedSessionDataTeacher = computed(() =>
+const formattedSessionData = computed(() =>
   sessionStore.sessionList.map((session) => ({
     id: session.id,
     sessionName: session.sessionName,
@@ -57,10 +57,17 @@ const formattedSessionDataTeacher = computed(() =>
   })),
 )
 
+console.log(sessionStore.sessionList)
+
 const formattedSessionDataStudent = ref(false)
 
 onMounted(async () => {
-  await sessionStore.fetchCreatedSessions()
+  if (userStore.currentRole === 'teacher') {
+    await sessionStore.fetchCreatedSessions()
+  }
+  if (userStore.currentRole === 'student') {
+    await sessionStore.fetchParticipatingSessions()
+  }
 })
 
 const handleStatusChange = async () => {
@@ -70,7 +77,7 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// console.log('this is the session', formattedSessionDataTeacher)
+// console.log('this is the session', formattedSessionData)
 </script>
 
 <style scoped>

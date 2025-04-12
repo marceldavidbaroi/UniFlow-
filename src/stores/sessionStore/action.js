@@ -157,6 +157,10 @@ export default {
           return bTime - aTime
         })
 
+      this.sessionList = sessions
+      this.sessionCount = sessions.length
+      console.log(sessions)
+
       return { success: true, message: 'Participating sessions fetched', data: sessions }
     } catch (error) {
       return { success: false, error: error.message }
