@@ -51,13 +51,7 @@ FEATURE TASK LIST:
     - [ ] In the student's view of the Group Details, replace the "Delete Group" button with a "Leave Group" button.
     - [ ] Implement the functionality for a student to leave a group.
 
-14. Remove Edit Button (Student Group Details):
-    - [ ] In the student's view of the Group Details form, remove the "Edit" button/option.
-    - [ ] Ensure students cannot access the edit functionality for groups.
 
-15. Remove Delete Button (Student Group Members):
-    - [ ] In the student's view of the Group Members list within a group, remove any "Delete" buttons or options for members.
-    - [ ] Ensure students cannot remove members from a group.
 
 16. Student Session View:
     - [ ] Create a dedicated view to display the details of a single session for students.

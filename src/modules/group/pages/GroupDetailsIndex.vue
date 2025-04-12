@@ -67,6 +67,7 @@
               <q-td key="actions" :props="props">
                 <q-btn
                   flat
+                  :disable="userStore.currentRole !== 'teacher'"
                   dense
                   size="sm"
                   color="negative"
