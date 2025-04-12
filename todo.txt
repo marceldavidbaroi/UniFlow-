@@ -16,9 +16,6 @@ FEATURE TASK LIST:
    - [ ] Create a dedicated dashboard view for students.
    - [ ] Implement functional elements for the student dashboard (e.g., overview of enrolled groups, upcoming sessions, etc.).
 
-9. Editable Sessions (Teacher):
-   - [ ] Ensure that teachers have the ability to edit session details from the Session Details view.
-   - [ ] Verify that students do not have editing capabilities for sessions.
 
 
 

@@ -4,6 +4,16 @@
       <!-- Session Name -->
       <div class="brand_sb text-center text-h2 q-my-lg">
         #<span class="text-5 text-bold">{{ data.sessionID }}</span> - {{ data.sessionName }}
+        <q-btn
+          dense
+          flat
+          rounded
+          size="md"
+          icon="edit"
+          color="primary"
+          class="q-ml-md"
+          @click="router.push(`/session/edit/${sessionID}`)"
+        />
       </div>
 
       <!-- Buttons to Toggle Status -->
@@ -323,6 +333,8 @@ import { useUserStore } from 'src/stores/user-store'
 import { ref, onMounted } from 'vue'
 import { date } from 'quasar'
 import ShareDialog from '../components/ShareDialog.vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const sessionStore = useSessionStore()
 const userStore = useUserStore()
