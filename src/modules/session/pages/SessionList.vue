@@ -8,9 +8,9 @@
     </div>
 
     <SessionActionButtons />
-    <div v-if="formattedSessionData">
+    <div v-if="formattedSessionDataTeacher || formattedSessionDataStudent">
       <SessionListItemsTeacher
-        v-for="session in formattedSessionData"
+        v-for="session in formattedSessionDataTeacher"
         :key="session.id"
         :session="session"
         @updateSessionStatus="handleStatusChange"
@@ -20,7 +20,7 @@
     <div v-else class="flex flex-center q-mt-md" style="height: 100vh">
       <div class="text-center">
         <q-spinner-pie color="secondary" size="2em" />
-        <div>Loading session details...</div>
+        <div>Loading session list...</div>
       </div>
     </div>
 
@@ -31,17 +31,19 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import SessionListItemsTeacher from '../components/SessionListItemsTeacher.vue'
 import { useSessionStore } from 'src/stores/sessionStore'
 // import { useRouter } from 'vue-router'
 import SessionActionButtons from '../components/SessionActionButtons.vue'
+import { useUserStore } from 'src/stores/user-store'
 
 // const router = useRouter()
 const sessionStore = useSessionStore()
+const userStore = useUserStore()
 
 // Make formattedGroupData reactive
-const formattedSessionData = computed(() =>
+const formattedSessionDataTeacher = computed(() =>
   sessionStore.sessionList.map((session) => ({
     id: session.id,
     sessionName: session.sessionName,
@@ -55,18 +57,20 @@ const formattedSessionData = computed(() =>
   })),
 )
 
+const formattedSessionDataStudent = ref(false)
+
 onMounted(async () => {
-  await sessionStore.fetchAllSession()
+  await sessionStore.fetchCreatedSessions()
 })
 
 const handleStatusChange = async () => {
-  await sessionStore.fetchAllSession()
+  await sessionStore.fetchCreatedSessions()
 }
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// console.log('this is the session', formattedSessionData)
+// console.log('this is the session', formattedSessionDataTeacher)
 </script>
 
 <style scoped>

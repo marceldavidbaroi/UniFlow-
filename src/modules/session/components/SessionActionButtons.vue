@@ -181,7 +181,7 @@ const onCreate = () => {
 }
 
 onMounted(async () => {
-  sessionStore.fetchAllSession()
+  sessionStore.fetchCreatedSessions()
   console.log(sessionStore.sessionList)
 })
 

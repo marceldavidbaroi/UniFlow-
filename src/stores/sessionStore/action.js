@@ -3,7 +3,8 @@
  * - createSession(userId, payload)
  * - joinSession(sessionId, userId)
  * - endSession(sessionId)
- * - fetchAllSession()
+ * - fetchCreatedSessions()
+ * - fetchParticipatingSessions()
  * - updateSessionData(sessionId, newData)
  * - searchSessionById(sessionId)
  * - searchSessionByIdForSearchAction(sessionId)
@@ -21,7 +22,7 @@ import {
   getDocs,
   getDoc,
   query,
-  where
+  where,
 } from 'firebase/firestore'
 import { useUserStore } from '../user-store'
 import { getNextSessionNumber } from 'src/services/firebaseService'
@@ -112,8 +113,7 @@ export default {
     }
   },
 
-  // get all session data by user
-  async fetchAllSession() {
+  async fetchCreatedSessions() {
     try {
       const querySnapshot = await getDocs(collection(db, 'sessions'))
       const sessions = querySnapshot.docs
@@ -132,6 +132,32 @@ export default {
       this.sessionList = sessions
       this.sessionCount = sessions.length
       return { success: true, message: 'all data fetched', data: sessions }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  },
+
+  async fetchParticipatingSessions() {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'sessions'))
+
+      const sessions = querySnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter(
+          (session) =>
+            Array.isArray(session.participants) &&
+            session.participants.includes(userStore.currentUser?.id),
+        )
+        .sort((a, b) => {
+          const aTime = a.createdAt?.seconds || 0
+          const bTime = b.createdAt?.seconds || 0
+          return bTime - aTime
+        })
+
+      return { success: true, message: 'Participating sessions fetched', data: sessions }
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -181,7 +207,7 @@ export default {
         return {
           success: false,
           message: 'No session found',
-          data: []
+          data: [],
         }
       }
 
@@ -194,21 +220,19 @@ export default {
       return {
         success: true,
         message: 'Session found',
-        data: sessions[0] // or use data: sessions if returning multiple
+        data: sessions[0], // or use data: sessions if returning multiple
       }
-
     } catch (error) {
       console.error('Error searching session:', error.message)
       return {
         success: false,
         message: `Error searching session: ${error.message}`,
-        data: []
+        data: [],
       }
     }
   },
 
-
-  sortSessionsBy(field, order ) {
+  sortSessionsBy(field, order) {
     if (!this.sessionList || !Array.isArray(this.sessionList)) return
 
     this.sessionList.sort((a, b) => {

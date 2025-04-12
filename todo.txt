@@ -12,10 +12,7 @@ FEATURE TASK LIST:
    - [ ] Fetch and display relevant session information for students.
 
 5. Role-Based Sessions:
-    - [ ] Update the routing configuration for sessions to have role-based paths:
-        - [ ] Use `/teacher/sessions` for teacher sessions.
-        - [ ] Use `/student/sessions` for student sessions.
-    - [ ] Update all relevant links and navigation to reflect the new session paths based on the user's role.
+    - [ ] condition based on user role to the list 
     - [ ] Create a separate component for the student's session view.
 
 6. Share in Group Details:
