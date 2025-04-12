@@ -13,6 +13,7 @@
             @confirm-delete="handleDelete"
           />
           <q-btn
+            v-if="userStore.currentRole === 'teacher'"
             flat
             dense
             size="sm"
@@ -94,12 +95,14 @@
 import { Notify } from 'quasar'
 import { useRouter } from 'vue-router'
 import { useGroupStore } from 'src/stores/group-store'
+import { useUserStore } from 'src/stores/user-store'
 import { onMounted, ref, computed, nextTick } from 'vue'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
 
 const router = useRouter()
 const groupStore = useGroupStore()
+const userStore = useUserStore()
 
 const groupId = ref(null)
 const group = ref(null)

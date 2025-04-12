@@ -46,9 +46,7 @@ FEATURE TASK LIST:
     - [ ] When a teacher attempts to delete a member from a group, display a confirmation popup.
     - [ ] Ensure the delete action only proceeds after confirmation.
 
-12. Share Group Popup (Teacher Only):
-    - [ ] Ensure the "Share" button/option and any associated popup in the Group Details view are only visible to teacher users.
-
+ 
 13. Leave Group Button (Student):
     - [ ] In the student's view of the Group Details, replace the "Delete Group" button with a "Leave Group" button.
     - [ ] Implement the functionality for a student to leave a group.
