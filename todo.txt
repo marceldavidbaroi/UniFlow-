@@ -20,9 +20,6 @@ FEATURE TASK LIST:
    - [ ] Ensure that teachers have the ability to edit session details from the Session Details view.
    - [ ] Verify that students do not have editing capabilities for sessions.
 
-10. Group List Search:
-    - [ ] Implement the functionality to filter the group list based on the search query.
-    - [ ] filter based on the requirement .
 
 
 

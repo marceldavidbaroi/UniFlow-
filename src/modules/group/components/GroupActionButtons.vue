@@ -2,6 +2,7 @@
   <div class="toolbar row justify-center items-center q-gutter-md q-pa-lg">
     <!-- Create Button -->
     <q-btn
+      v-if="!showSearch"
       color="primary"
       icon="add"
       label="Create"
@@ -12,6 +13,7 @@
 
     <!-- Lab Group Filter -->
     <q-btn-dropdown
+      v-if="!showSearch"
       color="secondary"
       :label="labGroupLabel"
       icon="filter_alt"
@@ -32,7 +34,14 @@
     </q-btn-dropdown>
 
     <!-- Semester Dropdown -->
-    <q-btn-dropdown color="info" :label="semesterLabel" icon="event" size="sm" class="toolbar-btn">
+    <q-btn-dropdown
+      v-if="!showSearch"
+      color="info"
+      :label="semesterLabel"
+      icon="event"
+      size="sm"
+      class="toolbar-btn"
+    >
       <q-list>
         <q-item
           v-for="option in semesterOptions"
@@ -45,18 +54,6 @@
         </q-item>
       </q-list>
     </q-btn-dropdown>
-
-    <!-- Year Input -->
-    <q-input
-      v-model="year"
-      type="number"
-      outlined
-      dense
-      placeholder="Year"
-      class="year-input"
-      :rules="[(val) => (val && val > 2000) || 'Enter valid year']"
-      style="width: 120px"
-    />
 
     <!-- Search Group Name -->
     <div class="search-wrapper column">
@@ -116,12 +113,12 @@
 </template>
 
 <script setup>
+import { useGroupStore } from 'src/stores/group-store'
 import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+const groupStore = useGroupStore()
 
 const router = useRouter()
-
-const emit = defineEmits(['filter-labgroup'])
 
 // --- Reactive State
 const showSearch = ref(false)
@@ -139,8 +136,16 @@ const semesterOptions = [
 ]
 const selectedSemester = ref(null)
 const semesterLabel = computed(() => selectedSemester.value?.label || 'Semester')
-const selectSemester = (option) => {
+const selectSemester = async (option) => {
   selectedSemester.value = option
+  try {
+    const filters = {
+      semester: option.value,
+    }
+    await groupStore.filterGroups(filters)
+  } catch (error) {
+    console.error('An unexpected error occurred:', error)
+  }
 }
 
 // --- Lab Group Options
@@ -151,11 +156,31 @@ const labGroupOptions = [
 ]
 const selectedLabGroup = ref(null)
 const labGroupLabel = computed(() => selectedLabGroup.value?.label || 'Lab Group')
-const selectLabGroup = (option) => {
+const selectLabGroup = async (option) => {
   selectedLabGroup.value = option
-  emit('filter-labgroup', option.value) // or option.value if you're only interested in the value
+  try {
+    const filters = {
+      labGroup: option.value,
+    }
+    await groupStore.filterGroups(filters)
+  } catch (error) {
+    console.error('An unexpected error occurred:', error)
+  }
 }
-
+async function getAllGroups() {
+  try {
+    const filters = {} // Empty object means no filters
+    const result = await groupStore.filterGroups(filters)
+    if (result.success) {
+      console.log('All groups:', result.data)
+      // Update your component's data
+    } else {
+      console.error('Error fetching all groups:', result.error)
+    }
+  } catch (error) {
+    console.error('An unexpected error occurred:', error)
+  }
+}
 // --- Actions
 const toggleSearch = () => {
   showSearch.value = true
@@ -188,12 +213,11 @@ watch(searchText, (val) => {
     isLoading.value = true
     try {
       // Replace with real API call
-      const mockResults = [
-        { id: 1, groupName: 'Group Alpha' },
-        { id: 2, groupName: 'Lab Beta' },
-      ].filter((item) => item.groupName.toLowerCase().includes(val.toLowerCase()))
+      console.log(searchText.value)
+      const result = await groupStore.searchGroupByGroupNameForSearchAction(searchText.value)
 
-      searchResults.value = mockResults
+      searchResults.value = result.data
+      console.log('this is the resule ', searchResults.value)
     } catch (err) {
       console.error(err)
       searchResults.value = []

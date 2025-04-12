@@ -7,6 +7,7 @@ export const useGroupStore = defineStore('group', {
     groupList: [],
     groupCount: 0,
     totalMemberCount: 0,
+    filterActive: false,
   }),
 
   actions,
@@ -15,6 +16,6 @@ export const useGroupStore = defineStore('group', {
     enabled: true,
     key: 'group',
     storage: localStorage,
-    paths: ['group', 'groupList', 'groupCount', 'totalMemberCount'],
+    paths: ['group', 'groupList', 'groupCount', 'totalMemberCount', 'filterActive'],
   },
 })

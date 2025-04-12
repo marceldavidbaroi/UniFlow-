@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md bg-grey-1">
     <div class="row justify-center q-ma-md">
-      {{ formattedGroupData }}
+      {{ filteredGroups }}
       <div class="col-auto q-pa-sm">
         <q-card class="flip-clock-card q-pa-md rounded-borders shadow-3">
           <q-card-section class="text-center flex flex-center column">
@@ -91,28 +91,6 @@ onMounted(async () => {
     console.log(response)
   }
 })
-
-const filteredGroups = ref([...formattedGroupData.value])
-
-const applyFilter = (field, value) => {
-  if (!value || value === 'all') {
-    filteredGroups.value = [...formattedGroupData.value]
-    return
-  }
-
-  filteredGroups.value = formattedGroupData.value.filter((group) => {
-    if (field === 'labGroup') {
-      // value should be true, false, or 'all'
-      return group.labGroup === (value === 'lab')
-    }
-
-    return String(group[field]).toLowerCase() === String(value).toLowerCase()
-  })
-}
-
-const clearAllFilters = () => {
-  filteredGroups.value = [...formattedGroupData.value]
-}
 
 const onLabGroupFilter = (value) => {
   console.log('Lab group filter changed:', value)

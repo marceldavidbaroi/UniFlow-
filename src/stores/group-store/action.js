@@ -8,8 +8,10 @@
  * - deleteGroup(groupId)
  * - removeMemberFromGroup(groupId, memberId)
  * - editGroup(groupId, updatedData)
- */
+ * - filterGroups(filters)
+ * - searchGroupByGroupNameForSearchAction(groupName)
 
+ */
 
 import { db } from 'boot/firebase'
 import {
@@ -22,7 +24,7 @@ import {
   updateDoc,
   arrayUnion,
   getDoc,
-  deleteDoc
+  deleteDoc,
 } from 'firebase/firestore'
 import { useUserStore } from '../user-store'
 
@@ -182,9 +184,7 @@ export default {
           id: doc.id,
           ...doc.data(),
         }))
-        .filter((group) =>
-          group.members.some((member) => member.id === userStore.currentUser.id)
-        )
+        .filter((group) => group.members.some((member) => member.id === userStore.currentUser.id))
 
       // Set the group data to store variables
       this.groupList = groups
@@ -220,7 +220,7 @@ export default {
       await deleteDoc(groupDocRef)
 
       // Optionally update local store
-      this.groupList = this.groupList?.filter(group => group.id !== groupId) || []
+      this.groupList = this.groupList?.filter((group) => group.id !== groupId) || []
       this.groupCount = this.groupList.length
       this.totalMemberCount = this.groupList.reduce((total, group) => {
         return total + (Array.isArray(group.members) ? group.members.length : 0)
@@ -251,9 +251,7 @@ export default {
       }
 
       // Filter out the member to remove
-      const updatedMembers = (groupData.members || []).filter(
-        (member) => member.id !== memberId
-      )
+      const updatedMembers = (groupData.members || []).filter((member) => member.id !== memberId)
 
       await updateDoc(groupDocRef, {
         members: updatedMembers,
@@ -293,18 +291,19 @@ export default {
         'groupRules',
         'password',
         'maxMembers',
-        'labGroup'
+        'labGroup',
       ]
 
       const updates = {}
 
       allowedFields.forEach((field) => {
         if (field in updatedData) {
-          updates[field] = field === 'maxMembers'
-            ? parseInt(updatedData[field], 10)
-            : field === 'labGroup'
-            ? Boolean(updatedData[field])
-            : updatedData[field]
+          updates[field] =
+            field === 'maxMembers'
+              ? parseInt(updatedData[field], 10)
+              : field === 'labGroup'
+                ? Boolean(updatedData[field])
+                : updatedData[field]
         }
       })
 
@@ -316,7 +315,92 @@ export default {
     }
   },
 
+  async filterGroups(filters) {
+    try {
+      console.log('filter value', filters)
+      let groupsQuery = collection(db, 'group')
+      const queryConstraints = []
 
+      if (filters.groupName) {
+        queryConstraints.push(where('groupName', '>=', filters.groupName))
+        queryConstraints.push(where('groupName', '<=', filters.groupName + '\uf8ff'))
+      }
+      if (filters.batch) {
+        queryConstraints.push(where('batch', '==', filters.batch))
+      }
+      if (filters.semester) {
+        queryConstraints.push(where('semester', '==', filters.semester))
+      }
+      if (filters.year) {
+        queryConstraints.push(where('year', '==', filters.year))
+      }
+      if (filters.subjectName) {
+        queryConstraints.push(where('subjectName', '>=', filters.subjectName))
+        queryConstraints.push(where('subjectName', '<=', filters.subjectName + '\uf8ff'))
+      }
+      if (
+        filters.labGroup !== undefined &&
+        filters.labGroup !== null &&
+        filters.labGroup !== 'all'
+      ) {
+        queryConstraints.push(where('labGroup', '==', Boolean(filters.labGroup)))
+      }
 
+      const q = query(groupsQuery, ...queryConstraints)
+      const querySnapshot = await getDocs(q)
 
+      const filteredGroups = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      this.groupList = filteredGroups
+      this.filterActive = true
+
+      return { success: true, data: filteredGroups }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  },
+  async searchGroupByGroupNameForSearchAction(groupName) {
+    console.log('Searching by groupName (partial match):', groupName)
+
+    const groupsRef = collection(db, 'group')
+    const q = query(
+      groupsRef,
+      where('groupName', '>=', groupName),
+      where('groupName', '<=', groupName + '\uf8ff'),
+    )
+
+    try {
+      const querySnapshot = await getDocs(q)
+
+      if (querySnapshot.empty) {
+        console.warn('No groups found with a partial match for groupName:', groupName)
+        return {
+          success: false,
+          message: 'No groups found matching the name',
+          data: [],
+        }
+      }
+
+      const groups = []
+      querySnapshot.forEach((doc) => {
+        groups.push({ id: doc.id, ...doc.data() })
+      })
+
+      console.log('Found matching groups:', groups)
+      return {
+        success: true,
+        message: 'Matching groups found',
+        data: groups, // Returning all groups that partially match
+      }
+    } catch (error) {
+      console.error('Error searching groups (partial match):', error.message)
+      return {
+        success: false,
+        message: `Error searching groups: ${error.message}`,
+        data: [],
+      }
+    }
+  },
 }
