@@ -14,6 +14,7 @@
     <!-- Lab Group Filter -->
     <q-btn-dropdown
       v-if="!showSearch"
+      :loading="isLoading"
       color="secondary"
       :label="labGroupLabel"
       icon="filter_alt"
@@ -36,6 +37,7 @@
     <!-- Semester Dropdown -->
     <q-btn-dropdown
       v-if="!showSearch"
+      :loading="isLoading"
       color="info"
       :label="semesterLabel"
       icon="event"
@@ -145,6 +147,7 @@ const semesterOptions = [
 const selectedSemester = ref(null)
 const semesterLabel = computed(() => selectedSemester.value?.label || 'Semester')
 const selectSemester = async (option) => {
+  isLoading.value = true
   selectedSemester.value = option
   try {
     const filters = {
@@ -153,6 +156,8 @@ const selectSemester = async (option) => {
     await groupStore.filterGroups(filters)
   } catch (error) {
     console.error('An unexpected error occurred:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -165,6 +170,7 @@ const labGroupOptions = [
 const selectedLabGroup = ref(null)
 const labGroupLabel = computed(() => selectedLabGroup.value?.label || 'Lab Group')
 const selectLabGroup = async (option) => {
+  isLoading.value = true
   selectedLabGroup.value = option
   try {
     const filters = {
@@ -173,21 +179,20 @@ const selectLabGroup = async (option) => {
     await groupStore.filterGroups(filters)
   } catch (error) {
     console.error('An unexpected error occurred:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 async function getAllGroups() {
+  isLoading.value = true
   try {
     const filters = {} // Empty object means no filters
-    const result = await groupStore.filterGroups(filters)
+    await groupStore.filterGroups(filters)
     groupStore.filterActive = false
-    if (result.success) {
-      console.log('All groups:', result.data)
-      // Update your component's data
-    } else {
-      console.error('Error fetching all groups:', result.error)
-    }
   } catch (error) {
     console.error('An unexpected error occurred:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 // --- Actions
@@ -221,12 +226,8 @@ watch(searchText, (val) => {
 
     isLoading.value = true
     try {
-      // Replace with real API call
-      console.log(searchText.value)
       const result = await groupStore.searchGroupByGroupNameForSearchAction(searchText.value)
-
       searchResults.value = result.data
-      console.log('this is the resule ', searchResults.value)
     } catch (err) {
       console.error(err)
       searchResults.value = []

@@ -36,7 +36,7 @@
         />
       </div>
     </div>
-    <GroupActionButtons @filter-labgroup="onLabGroupFilter" />
+    <GroupActionButtons />
     <div class="q-gutter-md">
       <GroupListItems
         v-for="group in formattedGroupData"
@@ -77,8 +77,7 @@ const formattedGroupData = computed(() =>
 
 const onMemberRemoved = async () => {
   if (userStore.currentRole === 'student') {
-    const response = await groupStore.fetchGroupsByStudent()
-    console.log(response)
+    await groupStore.fetchGroupsByStudent()
   }
 }
 onMounted(async () => {
@@ -87,17 +86,9 @@ onMounted(async () => {
   }
 
   if (userStore.currentRole === 'student') {
-    const response = await groupStore.fetchGroupsByStudent()
-    console.log(response)
+    await groupStore.fetchGroupsByStudent()
   }
 })
-
-const onLabGroupFilter = (value) => {
-  console.log('Lab group filter changed:', value)
-
-  // Apply filter logic here, e.g.:
-  // fetchFilteredGroups({ labGroup: value })
-}
 </script>
 
 <style scoped>
