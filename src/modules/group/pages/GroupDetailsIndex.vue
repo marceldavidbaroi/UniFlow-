@@ -23,15 +23,21 @@
           <!-- leave group for student -->
           <q-btn
             flat
-            v-if="userStore.currentRole !== 'teacher'"
+            v-if="userStore.currentRole === 'student'"
+            v-model="showLeaveGroup"
             dense
             size="sm"
             color="white"
             icon="logout"
-            @click="removeMember(userStore.currentUser.id)"
+            @click="showLeaveGroup = true"
           >
             <q-tooltip>Leave Group</q-tooltip>
           </q-btn>
+
+          <LeaveGroupDialog
+            v-model="showLeaveGroup"
+            @confirm-leave="removeMember(userStore.currentUser.id)"
+          />
           <q-btn
             v-if="userStore.currentRole === 'teacher'"
             flat
@@ -120,6 +126,7 @@ import { useUserStore } from 'src/stores/user-store'
 import { onMounted, ref, computed, nextTick } from 'vue'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
+import LeaveGroupDialog from '../components/LeaveGroupDialog.vue'
 
 const router = useRouter()
 const groupStore = useGroupStore()
@@ -129,6 +136,7 @@ const groupId = ref(null)
 const group = ref(null)
 const showDeletePopup = ref(false)
 const showSharePopup = ref(false)
+const showLeaveGroup = ref(false)
 
 onMounted(async () => {
   groupId.value = window.location.pathname.split('/group/')[1]

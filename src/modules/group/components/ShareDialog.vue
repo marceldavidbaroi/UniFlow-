@@ -27,7 +27,7 @@
           />
 
           <q-btn
-            @click="generateShareText(passwordInput)"
+            @click="generateShareText(group?.password)"
             label="Generate Share Text"
             color="primary"
             class="full-width q-mb-md"

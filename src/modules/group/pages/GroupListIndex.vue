@@ -36,7 +36,12 @@
       </div>
     </div>
     <div class="q-gutter-md">
-      <GroupListItems v-for="group in formattedGroupData" :key="group.id" :group="group" />
+      <GroupListItems
+        v-for="group in formattedGroupData"
+        :key="group.id"
+        :group="group"
+        @member-removed="onMemberRemoved"
+      />
       <span v-if="formattedGroupData.length === 0" class="text-grey-7 text-body1 text-center block"
         >You have no Group</span
       >
@@ -66,6 +71,13 @@ const formattedGroupData = computed(() =>
     owner: group.owner,
   })),
 )
+
+const onMemberRemoved = async () => {
+  if (userStore.currentRole === 'student') {
+    const response = await groupStore.fetchGroupsByStudent()
+    console.log(response)
+  }
+}
 onMounted(async () => {
   if (userStore.currentRole === 'teacher') {
     await groupStore.fetchAllGroups()

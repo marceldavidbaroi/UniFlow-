@@ -18,7 +18,15 @@
     <q-btn flat dense size="sm" color="secondary" icon="share" @click="showSharePopup = true" />
     <ShareDialog v-model="showSharePopup" :group="group" />
 
-    <q-btn flat dense size="sm" color="red" icon="delete" @click="showDeletePopup = true" />
+    <q-btn
+      v-if="userStore.currentRole === 'teacher'"
+      flat
+      dense
+      size="sm"
+      color="red"
+      icon="delete"
+      @click="showDeletePopup = true"
+    />
     <DeleteDialog
       v-model="showDeletePopup"
       cardTitle="Delete Group"
@@ -26,6 +34,25 @@
       inputField="true"
       :nameToMatch="group.groupName"
       @confirm-delete="handleDelete"
+    />
+
+    <!-- leave group for student -->
+    <q-btn
+      flat
+      v-if="userStore.currentRole === 'student'"
+      v-model="showLeaveGroup"
+      dense
+      size="sm"
+      color="negative"
+      icon="logout"
+      @click="showLeaveGroup = true"
+    >
+      <q-tooltip>Leave Group</q-tooltip>
+    </q-btn>
+
+    <LeaveGroupDialog
+      v-model="showLeaveGroup"
+      @confirm-leave="removeMember(userStore.currentUser.id)"
     />
   </div>
 </template>
@@ -36,21 +63,25 @@ import { ref, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
+import LeaveGroupDialog from '../components/LeaveGroupDialog.vue'
 
 import { useGroupStore } from 'src/stores/group-store'
+import { useUserStore } from 'src/stores/user-store'
 
 const router = useRouter()
 
 const props = defineProps({
   group: Object,
 })
+const emit = defineEmits(['member-removed'])
 
 // const baseUrl = ref()
 const groupStore = useGroupStore()
-
+const userStore = useUserStore()
 const showSharePopup = ref(false)
 // const shareLink = ref()
 const showDeletePopup = ref(false)
+const showLeaveGroup = ref(false)
 
 // onMounted(() => {
 //   baseUrl.value = window.location.origin
@@ -79,6 +110,26 @@ const handleDelete = async () => {
       position: 'top',
       timeout: 3000,
     })
+  }
+}
+
+const removeMember = async (memberId) => {
+  try {
+    const response = await groupStore.removeMemberFromGroup(props.group.id, memberId)
+    if (response.success) {
+      Notify.create({ message: response.message, color: 'positive', position: 'top' })
+      // const result = await groupStore.searchGroupById(props.group.id)
+      // group.value = result.data
+      // if (userStore.currentRole === 'student') {
+      //   router.push('/group/list')
+      emit('member-removed', memberId) // ✅ Emit event to update the list
+
+      // }
+    } else {
+      Notify.create({ message: response.message, color: 'negative', position: 'top' })
+    }
+  } catch {
+    Notify.create({ message: 'Failed to remove member.', color: 'negative', position: 'top' })
   }
 }
 </script>
