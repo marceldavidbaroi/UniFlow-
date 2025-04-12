@@ -104,10 +104,9 @@
                 </q-btn>
                 <DeleteDialog
                   v-model="showRemoveMember"
-                  cardTitle="Delete Group"
-                  description="Confirm your group to delete"
-                  inputField="true"
-                  :nameToMatch="group?.groupName"
+                  cardTitle="Remove Member"
+                  description="Do you really want to remove this member"
+                  buttonLabel="Remove"
                   @confirm-delete="removeMember(props.row.id)"
                 />
               </q-td>

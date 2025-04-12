@@ -25,7 +25,6 @@ FEATURE TASK LIST:
     - [ ] Implement the functionality to filter the group list based on the search query.
 
 11. Confirm Delete Popup (Group Member):
-    - [ ] When a teacher attempts to delete a member from a group, display a confirmation popup.
     - [ ] Ensure the delete action only proceeds after confirmation.
 
  

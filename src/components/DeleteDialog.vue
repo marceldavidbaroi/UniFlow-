@@ -20,7 +20,7 @@
             'Are you sure you want to delete this item? This action cannot be undone.'
           }}
         </div>
-
+        {{ typeof inputField }}
         <div v-if="inputField" class="text-caption text-weight-medium q-mb-sm">
           Please type <span class="text-bold text-red text-bold">"{{ nameToMatch }}"</span> to
           confirm deletion:
@@ -44,7 +44,7 @@
       <q-card-actions align="right" class="q-pt-sm">
         <q-btn flat label="Cancel" color="grey-7" class="text-capitalize" @click="closeDialog" />
         <q-btn
-          label="Delete"
+          :label="props.buttonLabel"
           color="negative"
           unelevated
           class="text-capitalize"
@@ -65,6 +65,7 @@ const props = defineProps({
   description: { type: String, default: '' },
   inputField: { type: Boolean, default: false },
   nameToMatch: { type: String, default: '' },
+  buttonLabel: { type: String, default: 'Delete' },
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm-delete'])
