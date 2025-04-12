@@ -9,12 +9,22 @@
 
     <SessionActionButtons />
     <div v-if="formattedSessionData">
-      <SessionListItemsTeacher
-        v-for="session in formattedSessionData"
-        :key="session.id"
-        :session="session"
-        @updateSessionStatus="handleStatusChange"
-      />
+      <div v-if="userStore.currentRole === 'teacher'">
+        <SessionListItemsTeacher
+          v-for="session in formattedSessionData"
+          :key="session.id"
+          :session="session"
+          @updateSessionStatus="handleStatusChange"
+        />
+      </div>
+      <div v-if="userStore.currentRole === 'student'">
+        <SessionListItemsStudent
+          v-for="session in formattedSessionData"
+          :key="session.id"
+          :session="session"
+          @updateSessionStatus="handleStatusChange"
+        />
+      </div>
     </div>
 
     <div v-else class="flex flex-center q-mt-md" style="height: 100vh">
@@ -31,8 +41,9 @@
 </template>
 
 <script setup>
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed } from 'vue'
 import SessionListItemsTeacher from '../components/SessionListItemsTeacher.vue'
+import SessionListItemsStudent from '../components/SessionListItemsStudent.vue'
 import { useSessionStore } from 'src/stores/sessionStore'
 // import { useRouter } from 'vue-router'
 import SessionActionButtons from '../components/SessionActionButtons.vue'
@@ -58,8 +69,6 @@ const formattedSessionData = computed(() =>
 )
 
 console.log(sessionStore.sessionList)
-
-const formattedSessionDataStudent = ref(false)
 
 onMounted(async () => {
   if (userStore.currentRole === 'teacher') {
