@@ -1,9 +1,11 @@
 <template>
   <div class="container">
-    <div class="session-wrapper" @mouseover="isHovered = true" @mouseleave="isHovered = false">
+    <div class="session-wrapper">
       <q-item clickable v-ripple @click="showDetails(session.id)">
         <q-item-section>
-          <q-item-label class="text-bold text-h6">{{ session.sessionName }}</q-item-label>
+          <q-item-label class="text-bold text-h6"
+            >{{ session.sessionID }} - {{ session.sessionName }}</q-item-label
+          >
           <div class="row items-center q-mt-sm q-px-sm">
             <!-- Info section: takes 100% minus icon space -->
             <div class="row col" style="gap: 8px">
@@ -28,7 +30,7 @@
       </q-item>
 
       <!-- Show only on hover -->
-      <div v-if="isHovered" class="row justify-end q-mr-lg">
+      <!-- <div v-if="isHovered" class="row justify-end q-mr-lg">
         <div>
           <q-btn
             dense
@@ -60,7 +62,7 @@
             :disable="session.isEnded"
           />
         </div>
-      </div>
+      </div> -->
     </div>
     <div>
       <q-btn
@@ -79,20 +81,17 @@
 </template>
 
 <script setup>
-import { useSessionStore } from 'src/stores/sessionStore'
 import { ref, defineProps, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
 import { useUserStore } from 'src/stores/user-store'
 import ShareDialog from '../components/ShareDialog.vue'
 
-const sessionStore = useSessionStore()
 const userStore = useUserStore()
 const router = useRouter()
 const props = defineProps({
   session: Object,
 })
-const emit = defineEmits(['updateSessionStatus'])
 const showSharePopup = ref(false)
 const shareLink = ref('')
 const baseUrl = ref()
@@ -106,7 +105,6 @@ onMounted(() => {
   }
 })
 
-const isHovered = ref(false)
 const formatTimestamp = (ts) => {
   if (!ts?.seconds) return 'N/A'
 
@@ -125,14 +123,6 @@ function startDate(input) {
   if (isNaN(dt)) return 'Invalid date'
 
   return date.formatDate(dt, 'MMMM D, YYYY [at] h:mm A')
-}
-const toggleActive = (id, isActive) => {
-  sessionStore.updateSessionData(id, { isActive: !isActive })
-  emit('updateSessionStatus')
-}
-const toggleDiscussion = (id, discussionOption) => {
-  sessionStore.updateSessionData(id, { discussionOption: !discussionOption })
-  emit('updateSessionStatus')
 }
 
 const showDetails = (id) => {

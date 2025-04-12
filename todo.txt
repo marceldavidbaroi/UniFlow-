@@ -9,7 +9,6 @@ FEATURE TASK LIST:
 
 4. Student Session List:
    - [ ] Create a dedicated view/component to display the session list for students.
-   - [ ] Fetch and display relevant session information for students.
 
 5. Role-Based Sessions:
     - [ ] condition based on user role to the list 

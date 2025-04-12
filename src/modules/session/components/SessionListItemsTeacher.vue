@@ -3,7 +3,9 @@
     <div class="session-wrapper" @mouseover="isHovered = true" @mouseleave="isHovered = false">
       <q-item clickable v-ripple @click="showDetails(session.id)">
         <q-item-section>
-          <q-item-label class="text-bold text-h6">{{ session.sessionName }}</q-item-label>
+          <q-item-label class="text-bold text-h6"
+            >{{ session.sessionID }} - {{ session.sessionName }}</q-item-label
+          >
           <div class="row items-center q-mt-sm q-px-sm">
             <!-- Info section: takes 100% minus icon space -->
             <div class="row col" style="gap: 8px">
