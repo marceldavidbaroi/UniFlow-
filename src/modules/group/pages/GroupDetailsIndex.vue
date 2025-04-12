@@ -98,10 +98,18 @@
                   size="sm"
                   color="negative"
                   icon="delete"
-                  @click="removeMember(props.row.id)"
+                  @click="showRemoveMember = true"
                 >
                   <q-tooltip>Remove Member</q-tooltip>
                 </q-btn>
+                <DeleteDialog
+                  v-model="showRemoveMember"
+                  cardTitle="Delete Group"
+                  description="Confirm your group to delete"
+                  inputField="true"
+                  :nameToMatch="group?.groupName"
+                  @confirm-delete="removeMember(props.row.id)"
+                />
               </q-td>
             </q-tr>
           </template>
@@ -137,6 +145,7 @@ const group = ref(null)
 const showDeletePopup = ref(false)
 const showSharePopup = ref(false)
 const showLeaveGroup = ref(false)
+const showRemoveMember = ref(false)
 
 onMounted(async () => {
   groupId.value = window.location.pathname.split('/group/')[1]

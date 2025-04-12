@@ -7,16 +7,6 @@ FEATURE TASK LIST:
 
 
 
-4. Student Session List:
-   - [ ] Create a dedicated view/component to display the session list for students.
-
-5. Role-Based Sessions:
-    - [ ] condition based on user role to the list 
-    - [ ] Create a separate component for the student's session view.
-
-6. Share in Group Details:
-   - [ ] Add a "Share" button/option within the Group Details view.
-   - [ ] Implement the functionality for sharing group details (e.g., generating a shareable link, displaying sharing options).
 
 7. Teacher Dashboard:
    - [ ] Create a dedicated dashboard view for teachers.
