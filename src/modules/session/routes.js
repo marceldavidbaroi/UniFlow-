@@ -36,6 +36,14 @@ export default [
         },
       },
       {
+        path: 'student/:id',
+        component: () => import('./pages/SessionDetailsStudent.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['student'],
+        },
+      },
+      {
         path: 'join/:id',
         component: () => import('./pages/SessionJoinIndex.vue'),
         meta: {

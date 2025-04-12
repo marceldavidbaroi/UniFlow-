@@ -1,5 +1,6 @@
 <template>
   <q-page>
+    this needs work
     <div v-if="data">
       <!-- Session Name -->
       <div class="brand_sb text-center text-h2 q-my-lg">

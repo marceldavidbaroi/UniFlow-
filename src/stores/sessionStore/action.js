@@ -166,7 +166,6 @@ export default {
       return { success: false, error: error.message }
     }
   },
-
   async updateSessionData(sessionId, newData) {
     try {
       // Reference to the session document
@@ -176,11 +175,19 @@ export default {
       await updateDoc(sessionDocRef, newData)
 
       console.log('Session data updated successfully!')
+      return {
+        success: true,
+        message: 'Session data updated successfully.',
+      }
     } catch (error) {
       console.error('Error updating session: ', error)
+      return {
+        success: false,
+        message: 'Failed to update session data.',
+        error: error.message,
+      }
     }
   },
-
   async searchSessionById(sessionId) {
     const sessionDocRef = doc(db, 'sessions', sessionId)
 

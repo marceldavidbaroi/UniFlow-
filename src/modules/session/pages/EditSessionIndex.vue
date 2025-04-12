@@ -188,6 +188,15 @@
         <q-tab-panel name="tasks">
           <div v-for="(task, index) in tasks" :key="index" class="q-mb-sm">
             <div class="text-h6">Task {{ index + 1 }}</div>
+            here
+            <q-input
+              v-model="tasks[index].title"
+              label="Title"
+              filled
+              type="text"
+              class="q-my-md"
+            />
+            <div class="text-bold text-body1 text-black">Description</div>
             <q-editor
               v-model="tasks[index].description"
               label="Task Description"
@@ -228,14 +237,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useSessionStore } from 'src/stores/sessionStore'
-import { useUserStore } from 'src/stores/user-store'
 
 import { Notify } from 'quasar'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
-const userStore = useUserStore()
 
 const activeTab = ref('session')
 
@@ -281,9 +288,7 @@ onMounted(async () => {
 
   questions.value = Array.isArray(data.value.questions) ? data.value.questions : []
 
-  tasks.value = Array.isArray(data.value.task) ? data.value.task : []
-
-  console.log(materialLinks.value)
+  tasks.value = Array.isArray(data.value.tasks) ? data.value.tasks : []
 })
 
 // Add Question Function
@@ -307,7 +312,7 @@ const addVideoLink = () => {
 
 // Add Task Function
 const addTask = () => {
-  tasks.value.push({ description: '' })
+  tasks.value.push({ title: '', description: '' })
 }
 
 // Remove Question Function
@@ -351,7 +356,7 @@ const handleSubmit = () => {
   }
 
   sessionStore
-    .createSession(userStore.currentUser.id, payload)
+    .updateSessionData(sessionID, payload)
     .then((result) => {
       Notify.create({
         message: result.message,
@@ -374,7 +379,7 @@ const handleSubmit = () => {
     })
     .finally(() => {
       isLoading.value = false
-      router.push('/session/list')
+      router.push(`/session/teacher/${sessionID}`)
     })
 }
 </script>
