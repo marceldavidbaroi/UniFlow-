@@ -1,15 +1,5 @@
 <template>
   <q-page class="q-pa-md">
-    <!-- <div class="row justify-center text-center q-ma-md">
-      <div class="col q-pa-xl q-mx-xl my-card text-center">
-        <div class="text-heading-solid text-h3">{{ groupStore.groupCount }}</div>
-        <div class="caption">Groups</div>
-      </div>
-      <div class="col q-pa-xl q-mx-xl my-card">
-        <div class="text-heading-solid text-h3">10</div>
-        <div class="caption">Students</div>
-      </div>
-    </div> -->
     <div class="text-h4 q-pt-md text-center brand_sb">All Sesstions</div>
 
     <div class="text-body1 q-pb-md text-center text-secondary text-bold">
@@ -17,22 +7,9 @@
       {{ sessionStore.sessionCount }}
     </div>
 
-    <!-- <div class="row justify-center q-ma-md">
-      <div class="col-12 flex justify-center">
-        <q-btn
-          label="Create Session"
-          color="secondary"
-          @click="router.push('/session/create')"
-          unelevated
-          class="q-mb-lg"
-          style="border-radius: 8px"
-        />
-      </div>
-    </div> -->
-
     <SessionActionButtons />
     <div v-if="formattedSessionData">
-      <SessionListItems
+      <SessionListItemsTeacher
         v-for="session in formattedSessionData"
         :key="session.id"
         :session="session"
@@ -55,7 +32,7 @@
 
 <script setup>
 import { onMounted, computed } from 'vue'
-import SessionListItems from '../components/SessionListItems.vue'
+import SessionListItemsTeacher from '../components/SessionListItemsTeacher.vue'
 import { useSessionStore } from 'src/stores/sessionStore'
 // import { useRouter } from 'vue-router'
 import SessionActionButtons from '../components/SessionActionButtons.vue'

@@ -6,21 +6,17 @@ FEATURE TASK LIST:
    - [ ] Ensure data persistence for edited session details.
 
 
-3. Delete Functionality:
-   - [ ] Add a "Delete" button/option to the Group list.
-   - [ ] Implement the functionality to delete a group.
-   - [ ] Add a "Delete" button/option to the Session list.
-   - [ ] Implement the functionality to delete a session.
 
 4. Student Session List:
    - [ ] Create a dedicated view/component to display the session list for students.
    - [ ] Fetch and display relevant session information for students.
 
-5. Separate Paths (Group & Session):
-   - [ ] Update the routing configuration to have a separate base path for groups (e.g., `/groups`).
-   - [ ] Update all relevant links and navigation to reflect the new group path.
-   - [ ] Update the routing configuration to have a separate base path for sessions (e.g., `/sessions`).
-   - [ ] Update all relevant links and navigation to reflect the new session path.
+5. Role-Based Sessions:
+    - [ ] Update the routing configuration for sessions to have role-based paths:
+        - [ ] Use `/teacher/sessions` for teacher sessions.
+        - [ ] Use `/student/sessions` for student sessions.
+    - [ ] Update all relevant links and navigation to reflect the new session paths based on the user's role.
+    - [ ] Create a separate component for the student's session view.
 
 6. Share in Group Details:
    - [ ] Add a "Share" button/option within the Group Details view.
