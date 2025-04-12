@@ -65,30 +65,32 @@ const route = useRoute()
 
 const id = route.params.id
 
-const password = ref('')
 const loading = ref(false)
 // const showPassword = ref(false)
 const response = ref()
 
-const joinSession = () => {
-  sessionStore.joinSession(id, userStore.currentUser.id).then((result) => {
-    if (result.success) {
-      Notify.create({
-        message: result.message, // Use the message from the result
-        color: 'positive', // Green color for success
-        position: 'top',
-        timeout: 2500,
-      })
-      router.push(`/session/${userStore.currentRole}/${id}`)
-    } else {
-      Notify.create({
-        message: result.message || 'An error occurred.', // Use message or generic error
-        color: 'negative', // Red color for error
-        position: 'top',
-        timeout: 2500,
-      })
-    }
-  })
+const joinSession = async () => {
+  loading.value = true
+  try {
+    const result = await sessionStore.joinSession(id, userStore.currentUser.id)
+
+    Notify.create({
+      message: result.message || (result.success ? 'Success!' : 'An error occurred.'),
+      color: result.success ? 'positive' : 'negative',
+      position: 'top',
+      timeout: 2500,
+    })
+  } catch (error) {
+    Notify.create({
+      message: error.message || 'Something went wrong.',
+      color: 'negative',
+      position: 'top',
+      timeout: 2500,
+    })
+  } finally {
+    router.push(`/session/${userStore.currentRole}/${id}`)
+    loading.value = false
+  }
 }
 
 onMounted(async () => {
