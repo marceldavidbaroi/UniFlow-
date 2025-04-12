@@ -55,6 +55,16 @@
       </q-list>
     </q-btn-dropdown>
 
+    <q-btn
+      v-if="!showSearch && groupStore.filterActive"
+      color="negative"
+      icon="filter_alt_off"
+      label="Clear"
+      size="sm"
+      class="toolbar-btn"
+      @click="getAllGroups"
+    />
+
     <!-- Search Group Name -->
     <div class="search-wrapper column">
       <div class="row items-center q-gutter-sm">
@@ -126,8 +136,6 @@ const searchText = ref('')
 const isLoading = ref(false)
 const searchResults = ref([])
 
-const year = ref(new Date().getFullYear())
-
 // --- Semester Options
 const semesterOptions = [
   { label: 'Spring', value: 'spring' },
@@ -171,6 +179,7 @@ async function getAllGroups() {
   try {
     const filters = {} // Empty object means no filters
     const result = await groupStore.filterGroups(filters)
+    groupStore.filterActive = false
     if (result.success) {
       console.log('All groups:', result.data)
       // Update your component's data

@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed } from 'vue'
 import GroupListItems from '../components/GroupListItems.vue'
 import GroupActionButtons from '../components/GroupActionButtons.vue'
 import { useGroupStore } from 'src/stores/group-store'
