@@ -22,6 +22,7 @@ FEATURE TASK LIST:
 
 10. Group List Search:
     - [ ] Implement the functionality to filter the group list based on the search query.
+    - [ ] filter based on the requirement .
 
 
 
@@ -35,6 +36,10 @@ FEATURE TASK LIST:
 
 18. Admin Dashboard:
     - [ ] Create a dedicated dashboard view for administrators.
+    - [ ] add the ability to add course name and year and other necessary things .
+    - [ ] make a collecton for this .
+    - [ ] make all the options dynamic .
+
     - [ ] Implement the display of the following statistics on the admin dashboard:
         - [ ] Total number of students.
         - [ ] Total number of teachers.

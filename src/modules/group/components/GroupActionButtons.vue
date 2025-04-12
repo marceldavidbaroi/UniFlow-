@@ -121,6 +121,8 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const emit = defineEmits(['filter-labgroup'])
+
 // --- Reactive State
 const showSearch = ref(false)
 const searchText = ref('')
@@ -144,13 +146,14 @@ const selectSemester = (option) => {
 // --- Lab Group Options
 const labGroupOptions = [
   { label: 'All Groups', value: 'all' },
-  { label: 'Lab Groups Only', value: 'lab' },
-  { label: 'Non-Lab Groups', value: 'nonlab' },
+  { label: 'Lab Groups Only', value: true },
+  { label: 'Non-Lab Groups', value: false },
 ]
 const selectedLabGroup = ref(null)
 const labGroupLabel = computed(() => selectedLabGroup.value?.label || 'Lab Group')
 const selectLabGroup = (option) => {
   selectedLabGroup.value = option
+  emit('filter-labgroup', option.value) // or option.value if you're only interested in the value
 }
 
 // --- Actions
