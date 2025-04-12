@@ -35,6 +35,7 @@
         />
       </div>
     </div>
+    <GroupActionButtons />
     <div class="q-gutter-md">
       <GroupListItems
         v-for="group in formattedGroupData"
@@ -52,6 +53,7 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import GroupListItems from '../components/GroupListItems.vue'
+import GroupActionButtons from '../components/GroupActionButtons.vue'
 import { useGroupStore } from 'src/stores/group-store'
 import router from 'src/router'
 import { useUserStore } from 'src/stores/user-store'

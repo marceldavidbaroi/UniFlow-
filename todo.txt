@@ -21,14 +21,7 @@ FEATURE TASK LIST:
    - [ ] Verify that students do not have editing capabilities for sessions.
 
 10. Group List Search:
-    - [ ] Add a search input field to the Group list view.
     - [ ] Implement the functionality to filter the group list based on the search query.
-
-11. Confirm Delete Popup (Group Member):
-    - [ ] Ensure the delete action only proceeds after confirmation.
-
- 
-
 
 
 
