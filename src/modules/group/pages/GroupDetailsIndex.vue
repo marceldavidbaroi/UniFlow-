@@ -3,7 +3,15 @@
     <div v-if="group">
       <div class="group-header">
         <div class="row justify-end q-pa-none q-gutter-x-md">
-          <q-btn flat dense size="sm" color="white" icon="delete" @click="showDeletePopup = true" />
+          <q-btn
+            flat
+            dense
+            v-if="userStore.currentRole === 'teacher'"
+            size="sm"
+            color="white"
+            icon="delete"
+            @click="showDeletePopup = true"
+          />
           <DeleteDialog
             v-model="showDeletePopup"
             cardTitle="Delete Group"
@@ -12,6 +20,18 @@
             :nameToMatch="group?.groupName"
             @confirm-delete="handleDelete"
           />
+          <!-- leave group for student -->
+          <q-btn
+            flat
+            v-if="userStore.currentRole !== 'teacher'"
+            dense
+            size="sm"
+            color="white"
+            icon="logout"
+            @click="removeMember(userStore.currentUser.id)"
+          >
+            <q-tooltip>Leave Group</q-tooltip>
+          </q-btn>
           <q-btn
             v-if="userStore.currentRole === 'teacher'"
             flat
@@ -176,6 +196,9 @@ const removeMember = async (memberId) => {
       Notify.create({ message: response.message, color: 'positive', position: 'top' })
       const result = await groupStore.searchGroupById(groupId.value)
       group.value = result.data
+      if (userStore.currentRole === 'student') {
+        router.push('/group/list')
+      }
     } else {
       Notify.create({ message: response.message, color: 'negative', position: 'top' })
     }
