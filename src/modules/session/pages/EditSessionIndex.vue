@@ -269,7 +269,6 @@ const data = ref()
 const sessionID = window.location.pathname.split('/')[3]
 
 onMounted(async () => {
-  console.log(sessionID)
   data.value = await sessionStore.searchSessionById(sessionID)
 
   sessionName.value = data.value.sessionName || ''

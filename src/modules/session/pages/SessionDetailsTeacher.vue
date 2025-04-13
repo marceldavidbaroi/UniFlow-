@@ -408,7 +408,6 @@ const openLink = (link) => {
 onMounted(async () => {
   try {
     data.value = await sessionStore.searchSessionById(sessionID)
-    console.log('this all are thas', data.value.tasks)
 
     // Set default material link if available
     if (data.value.materialLinks.length > 0) {
@@ -418,7 +417,6 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error loading session:', error)
   }
-  console.log(data.value)
   baseUrl.value = window.location.origin
 
   if (sessionID) {

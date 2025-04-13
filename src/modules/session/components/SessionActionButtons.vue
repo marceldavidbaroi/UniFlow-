@@ -158,7 +158,6 @@ const filterLabel = computed(() => selectedFilter.value?.label || 'Filter')
 
 const selectSort = (option) => {
   selectedSort.value = option
-  console.log(option.value.field)
   sessionStore.sortSessionsBy(option.value.field, option.value.order)
 }
 
@@ -176,18 +175,16 @@ const clearSearch = () => {
 }
 
 const onCreate = () => {
-  // console.log('Create clicked')
   router.push('/session/create')
 }
 
 onMounted(async () => {
   sessionStore.fetchCreatedSessions()
-  console.log(sessionStore.sessionList)
 })
 
 let timeout = null
 const searchResultsArr = ref([])
-const searchResults = ref({}) // holds the full response with success, message, data
+const searchResults = ref({})
 const isLoading = ref(false)
 
 watch(searchText, (newVal) => {

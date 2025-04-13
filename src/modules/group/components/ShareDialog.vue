@@ -117,7 +117,6 @@ const passwordInput = ref('')
 const shareText = ref('')
 const isOwner = ref()
 onMounted(() => {
-  console.log(userStore.currentUser.id)
   if (props.group.owner.id === userStore.currentUser.id) {
     isOwner.value = true
   } else {

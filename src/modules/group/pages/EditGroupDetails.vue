@@ -172,13 +172,11 @@ const group = ref()
 
 onMounted(async () => {
   groupId.value = window.location.pathname.split('/group/edit/')[1]
-  console.log(groupId.value)
   if (groupId.value) {
     try {
       const result = await groupStore.searchGroupById(groupId.value)
       if (result?.data) {
         group.value = result.data
-        console.log(group.value.groupRules)
         groupName.value = group.value.groupName
         batch.value = group.value.batch
         semester.value = group.value.semester

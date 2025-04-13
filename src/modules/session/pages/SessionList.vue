@@ -68,8 +68,6 @@ const formattedSessionData = computed(() =>
   })),
 )
 
-console.log(sessionStore.sessionList)
-
 onMounted(async () => {
   if (userStore.currentRole === 'teacher') {
     await sessionStore.fetchCreatedSessions()
@@ -85,8 +83,6 @@ const handleStatusChange = async () => {
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
-
-// console.log('this is the session', formattedSessionData)
 </script>
 
 <style scoped>

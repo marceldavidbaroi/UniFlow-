@@ -99,7 +99,6 @@ const joinSession = async () => {
 onMounted(async () => {
   await sessionStore.searchSessionById(id).then((result) => {
     response.value = result
-    console.log(response.value)
   })
 })
 </script>

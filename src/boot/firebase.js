@@ -17,7 +17,5 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app) // Initialize Firebase Authentication
 const db = getFirestore(app) // Initialize Firestore
 
-console.log('Firebase initialized:', app.name) // Should log "[DEFAULT]"
-
 // Export auth and db
 export { auth, db }

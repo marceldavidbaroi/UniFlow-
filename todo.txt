@@ -9,7 +9,6 @@ FEATURE TASK LIST:
 
 
 7. Teacher Dashboard:
-   - [ ] Create a dedicated dashboard view for teachers.
    - [ ] Implement functional elements for the teacher dashboard (e.g., quick access to manage groups, sessions, etc.).
 
 8. Student Dashboard:
