@@ -88,15 +88,28 @@
         <!-- Questions -->
         <q-tab-panel name="questions">
           <div class="q-mb-md">
-            <div v-for="(question, index) in questions" :key="index" class="q-mb-sm">
+            <div v-for="(question, index) in questions" :key="index" class="q-mb-md q-pa-md q-card">
               <div class="text-h6">Question {{ index + 1 }}</div>
+
+              <!-- Question Text -->
               <q-editor
-                v-model="questions[index].text"
+                v-model="question.text"
                 label="Question"
                 filled
                 :rules="[(val) => !!val || 'Question is required']"
                 required
               />
+
+              <!-- Marks -->
+              <q-input
+                v-model.number="question.marks"
+                label="Total Marks"
+                type="number"
+                filled
+                class="q-mt-sm"
+              />
+
+              <!-- Remove Button -->
               <q-btn
                 color="negative"
                 icon="delete"
@@ -106,8 +119,9 @@
                 class="q-mt-sm"
               />
             </div>
-            <div class="row justify-between">
-              Total questions: {{ questions.length }}
+
+            <div class="row justify-between items-center q-mt-md">
+              <div>Total questions: {{ questions.length }}</div>
               <q-btn label="Add Question" color="primary" @click="addQuestion" />
             </div>
           </div>
@@ -260,7 +274,14 @@ const tasks = ref([])
 
 // Add Question Function
 const addQuestion = () => {
-  questions.value.push({ text: '' })
+  questions.value.push({
+    qno: questions.value.length + 1,
+    text: '',
+    marks: 0,
+    answer: '',
+    obtainMarks: 0,
+    isSubmitted: false,
+  })
 }
 
 // Add Material Link Function
