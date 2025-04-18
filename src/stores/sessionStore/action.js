@@ -9,6 +9,7 @@
  * - searchSessionById(sessionId)
  * - searchSessionByIdForSearchAction(sessionId)
  * - sortSessionsBy(field, order)
+ * - addQuestionResponse(sessionId, responseText)
  */
 
 import { db } from 'boot/firebase'
@@ -262,5 +263,47 @@ export default {
         return aComparable < bComparable ? 1 : -1
       }
     })
+  },
+  async addQuestionResponse(sessionId, responseText) {
+    const currentUserId = userStore.currentUser?.id
+    if (!currentUserId) {
+      return { success: false, message: 'User not logged in.' }
+    }
+
+    try {
+      const sessionRef = doc(db, 'sessions', sessionId)
+      const sessionSnap = await getDoc(sessionRef)
+
+      if (!sessionSnap.exists()) {
+        return { success: false, message: 'Session not found.' }
+      }
+
+      const sessionData = sessionSnap.data()
+      const existingResponses = sessionData.questionResponses || []
+
+      const alreadyResponded = existingResponses.some((resp) => resp.userId === currentUserId)
+
+      if (alreadyResponded) {
+        return { success: false, message: 'You have already submitted a response.' }
+      }
+
+      // Create new response without timestamp for arrayUnion
+      const newResponse = {
+        totalMarks: 0,
+        evaluated: false,
+        userId: currentUserId,
+        ...responseText,
+      }
+
+      // Update with arrayUnion first
+      await updateDoc(sessionRef, {
+        questionResponses: arrayUnion(newResponse),
+      })
+
+      return { success: true, message: 'Response added successfully.' }
+    } catch (error) {
+      console.error('Error adding response:', error)
+      return { success: false, message: 'Failed to add response.' }
+    }
   },
 }

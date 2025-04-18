@@ -244,14 +244,92 @@
           </q-tab-panel>
 
           <!-- Questions -->
-          <q-tab-panel name="questions">
+          <!-- <q-tab-panel name="questions">
             <div class="text-h6">Questions</div>
             <ul>
               <li v-for="(question, index) in data.questions" :key="index">
                 {{ question.text }}
               </li>
             </ul>
+          </q-tab-panel> -->
+
+          <q-tab-panel name="questions">
+            <div v-if="!isQAFinished">
+              <div class="text-h5 q-mb-md">Questions</div>
+              <div v-for="(question, index) in data.questions" :key="question.qno" class="q-mb-md">
+                <q-card class="q-pa-md no-shadow bordered">
+                  <div class="row items-start justify-between q-mb-sm">
+                    <div class="col">
+                      <div class="text-subtitle1 q-mb-xs">
+                        <span class="text-primary">Q{{ question.qno }}:</span> {{ question.text }}
+                      </div>
+                      <div class="text-caption text-weight-medium">
+                        Marks: <span class="text-bold">{{ question.marks }}</span>
+                      </div>
+                      <div
+                        class="text-caption"
+                        :class="question.isSubmitted ? 'text-positive' : 'text-grey'"
+                      >
+                        {{ question.isSubmitted ? 'Answered' : 'Not Answered' }}
+                      </div>
+                    </div>
+                    <q-btn
+                      flat
+                      icon="edit_note"
+                      color="primary"
+                      size="md"
+                      @click="toggleAnswerInput(index)"
+                      class="q-ml-sm"
+                    />
+                  </div>
+                  <!-- Answer Editor -->
+                  <q-slide-transition>
+                    <div v-show="activeAnswerIndex === index" class="q-mt-sm">
+                      <q-editor
+                        v-model="question.answer"
+                        :toolbar="[
+                          ['bold', 'italic', 'underline'],
+                          ['unordered', 'ordered'],
+                          ['link'],
+                        ]"
+                        min-height="100px"
+                        class="bg-grey-1 q-pa-sm rounded-borders"
+                        @blur="markAsSubmitted(index)"
+                      />
+                    </div>
+                  </q-slide-transition>
+                </q-card>
+              </div>
+              <!-- Finish Button -->
+              <div class="q-mt-xl flex justify-center">
+                <q-btn
+                  label="Finish"
+                  color="primary"
+                  icon="task_alt"
+                  @click="confirmFinish = true"
+                  class="q-px-xl"
+                />
+              </div>
+              <!-- Confirmation Dialog -->
+              <q-dialog v-model="confirmFinish">
+                <q-card class="q-pa-md">
+                  <q-card-section class="row items-center">
+                    <q-icon name="warning" color="warning" size="md" class="q-mr-sm" />
+                    <div class="text-h6">Confirm Finish</div>
+                  </q-card-section>
+                  <q-card-section>
+                    Are you sure you want to finish answering the questions? You won't be able to
+                    edit them afterward.
+                  </q-card-section>
+                  <q-card-actions align="right">
+                    <q-btn flat label="Cancel" color="primary" v-close-popup />
+                    <q-btn flat label="Yes, Submit" color="primary" @click="submitAnswers" />
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
+            </div>
           </q-tab-panel>
+
           <!-- coding platform -->
           <q-tab-panel name="coding">
             <div class="text-h6">Coding Challenges</div>
@@ -318,6 +396,7 @@ import { useSessionStore } from 'src/stores/sessionStore'
 import { useUserStore } from 'src/stores/user-store'
 import { ref, onMounted } from 'vue'
 import { date } from 'quasar'
+import { Notify } from 'quasar' // Assuming you are using Quasar Framework for Notify
 import ShareDialog from '../components/ShareDialog.vue'
 
 const sessionStore = useSessionStore()
@@ -333,6 +412,7 @@ const tab = ref('info') // Default tab
 const splitterModel = ref(300) // Initial width of left panel
 const selectedMaterial = ref()
 const selectedCodingPlatform = ref()
+const isQAFinished = ref(false)
 
 const formatTimestamp = (ts) => {
   if (!ts?.seconds) return 'N/A'
@@ -357,6 +437,8 @@ function startDate(input) {
 const openLink = (link) => {
   window.open(link, '_blank')
 }
+
+const incomingQuestions = ref()
 onMounted(async () => {
   try {
     data.value = await sessionStore.searchSessionById(sessionID)
@@ -365,6 +447,9 @@ onMounted(async () => {
       selectedMaterial.value = data.value.materialLinks[0]
       selectedCodingPlatform.value = data.value.codingPlatformLinks[0]
     }
+
+    incomingQuestions.value = data.value.questions || []
+    console.log('incomingQuestions.value', incomingQuestions.value)
   } catch (error) {
     console.error('Error loading session:', error)
   }
@@ -392,6 +477,72 @@ const getUserName = (id) => {
     return 'Loading...'
   }
   return userDetails.value[id]
+}
+
+const activeAnswerIndex = ref(null)
+const confirmFinish = ref(false)
+
+onMounted(() => {
+  if (incomingQuestions.value && Array.isArray(incomingQuestions.value)) {
+    data.value.questions = incomingQuestions.value.map((q) => ({
+      ...q,
+      answer: '',
+      isSubmitted: false,
+    }))
+  }
+})
+
+function toggleAnswerInput(index) {
+  activeAnswerIndex.value = activeAnswerIndex.value === index ? null : index
+}
+
+function markAsSubmitted(index) {
+  const raw = data.value.questions[index].answer || ''
+  const cleanText = raw.replace(/<[^>]*>/g, '').trim()
+  data.value.questions[index].isSubmitted = cleanText.length > 0
+}
+
+async function submitAnswers() {
+  confirmFinish.value = false
+  isQAFinished.value = true
+
+  try {
+    const submission = data.value.questions.map((q) => ({
+      qno: q.qno,
+      answer: q.answer,
+      obtainedMarks: 0,
+    }))
+
+    const response = await sessionStore.addQuestionResponse(sessionID, submission)
+
+    if (response && response.success) {
+      Notify.create({
+        type: 'positive',
+        message: response.message || 'Answers submitted successfully!',
+        position: 'top', // You can adjust the position
+        timeout: 3000, // Adjust the duration as needed
+      })
+      console.log('Answers submitted successfully:', response.message)
+      // Optionally, perform other actions after successful submission
+    } else {
+      Notify.create({
+        type: 'negative',
+        message: response?.message || 'Failed to submit answers.',
+        position: 'top',
+        timeout: 5000,
+      })
+      console.error('Error submitting answers:', response?.error || 'Unknown error')
+    }
+  } catch (error) {
+    Notify.create({
+      type: 'negative',
+      message: 'An unexpected error occurred during submission.',
+      position: 'top',
+      timeout: 5000,
+    })
+    console.error('Error submitting answers:', error)
+    // Handle the error appropriately, such as displaying a more detailed error message to the user if needed.
+  }
 }
 </script>
 
