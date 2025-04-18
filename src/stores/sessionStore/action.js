@@ -298,12 +298,35 @@ export default {
       // Update with arrayUnion first
       await updateDoc(sessionRef, {
         questionResponses: arrayUnion(newResponse),
+        [`participantsResponded.questionResponses`]: arrayUnion(currentUserId),
       })
 
       return { success: true, message: 'Response added successfully.' }
     } catch (error) {
       console.error('Error adding response:', error)
       return { success: false, message: 'Failed to add response.' }
+    }
+  },
+  async getParticipantsResponded(sessionId) {
+    try {
+      const sessionRef = doc(db, 'sessions', sessionId)
+      const sessionSnap = await getDoc(sessionRef)
+
+      if (!sessionSnap.exists()) {
+        return { success: false, message: 'Session not found.' }
+      }
+
+      const sessionData = sessionSnap.data()
+      const participantsResponded = sessionData.participantsResponded || {}
+
+      return {
+        success: true,
+        message: 'Participants responded fetched successfully.',
+        data: participantsResponded,
+      }
+    } catch (error) {
+      console.error('Error fetching participantsResponded:', error)
+      return { success: false, message: 'Failed to fetch participantsResponded.' }
     }
   },
 }

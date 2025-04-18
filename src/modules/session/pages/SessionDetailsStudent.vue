@@ -254,7 +254,7 @@
           </q-tab-panel> -->
 
           <q-tab-panel name="questions">
-            <div v-if="!isQAFinished">
+            <div v-if="!isQAFinished && data.isActive">
               <div class="text-h5 q-mb-md">Questions</div>
               <div v-for="(question, index) in data.questions" :key="question.qno" class="q-mb-md">
                 <q-card class="q-pa-md no-shadow bordered">
@@ -327,6 +327,16 @@
                   </q-card-actions>
                 </q-card>
               </q-dialog>
+            </div>
+            <div v-else class="text-center text-body1 q-pa-md q-mt-md">
+              <div v-if="!data.isActive">
+                <strong>The session hasn’t started yet.</strong><br />
+                Please wait for the host to begin the session.
+              </div>
+              <div v-else>
+                <strong>You’ve completed your exam.</strong><br />
+                Thank you for participating!
+              </div>
             </div>
           </q-tab-panel>
 
