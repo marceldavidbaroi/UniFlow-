@@ -278,9 +278,6 @@ const addQuestion = () => {
     qno: questions.value.length + 1,
     text: '',
     marks: 0,
-    answer: '',
-    obtainMarks: 0,
-    isSubmitted: false,
   })
 }
 
