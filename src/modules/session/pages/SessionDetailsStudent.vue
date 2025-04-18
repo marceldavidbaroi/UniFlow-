@@ -5,82 +5,49 @@
       <!-- Session Name -->
       <div class="brand_sb text-center text-h2 q-my-lg">
         #<span class="text-5 text-bold">{{ data.sessionID }}</span> - {{ data.sessionName }}
-        <q-btn
-          dense
-          flat
-          rounded
-          size="md"
-          icon="edit"
-          color="primary"
-          class="q-ml-md"
-          @click="router.push(`/session/edit/${sessionID}`)"
-        />
       </div>
 
       <!-- Buttons to Toggle Status -->
       <div class="row justify-center q-my-md">
         <div>
           <!-- button to end session -->
-          <q-btn
-            dense
+          <!-- If session is ended, show only this --><!-- If session is ended -->
+          <q-chip
+            v-if="data.isEnded"
             outline
-            size="md"
-            color="dark"
-            :label="data.isEnded ? 'Session Ended' : 'End Session'"
-            class="q-px-xs q-px-md q-mx-sm"
-            @click="openConfirmEnd"
-            :disable="data.isEnded"
-          />
+            square
+            color="red"
+            text-color="white"
+            icon="event_busy"
+          >
+            Session Ended
+          </q-chip>
 
-          <q-dialog v-model="showEndDialog" persistent>
-            <q-card class="q-pa-md" style="min-width: 400px; border-radius: 8px">
-              <q-card-section>
-                <div class="text-h6">Confirm Session End</div>
-                <div class="text-subtitle2 q-mt-sm">
-                  Enter the session name
-                  <span class="text-red text-bold">"{{ data.sessionName }}"</span> to confirm:
-                </div>
-              </q-card-section>
+          <!-- If not ended -->
+          <template v-else>
+            <!-- Ongoing or Not Started -->
+            <q-chip
+              outline
+              square
+              :color="data.isActive ? 'teal' : 'orange'"
+              text-color="white"
+              :icon="data.isActive ? 'play_circle' : 'pause_circle'"
+            >
+              {{ data.isActive ? 'Ongoing' : 'Not Started' }}
+            </q-chip>
 
-              <q-card-section>
-                <q-input
-                  v-model="confirmSessionName"
-                  label="Session Name"
-                  filled
-                  color="secondary"
-                  autofocus
-                  :rules="[(val) => !!val || 'Session name is required']"
-                />
-              </q-card-section>
-
-              <q-card-actions align="right">
-                <q-btn flat label="Cancel" color="secondary" v-close-popup />
-                <q-btn label="Confirm" color="negative" @click="confirmEndSession" />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-          <q-btn
-            dense
-            outline
-            size="md"
-            :color="data.isActive ? 'green' : 'red'"
-            :label="data.isActive ? 'Active' : 'Inactive'"
-            class="q-px-xs q-mx-sm q-px-md"
-            @click="toggleActive(sessionID, data.isActive)"
-            :disable="data.isEnded"
-          />
-        </div>
-        <div>
-          <q-btn
-            dense
-            outline
-            size="md"
-            :color="data.discussionOption ? 'green' : 'red'"
-            :label="data.discussionOption ? 'Discussion' : 'No Discussion'"
-            class="q-px-xs q-mx-sm q-px-md"
-            @click="toggleDiscussion(sessionID, data.discussionOption)"
-            :disable="data.isEnded"
-          />
+            <!-- Discussion status (only when active) -->
+            <q-chip
+              v-if="data.isActive"
+              outline
+              square
+              :color="data.discussionOption ? 'blue' : 'light-blue'"
+              text-color="white"
+              :icon="data.discussionOption ? 'forum' : 'chat_bubble_outline'"
+            >
+              {{ data.discussionOption ? 'Discussion Open' : 'Discussion Closed' }}
+            </q-chip>
+          </template>
         </div>
         <div>
           <q-btn
@@ -347,14 +314,11 @@
 </template>
 
 <script setup>
-import { Notify } from 'quasar'
 import { useSessionStore } from 'src/stores/sessionStore'
 import { useUserStore } from 'src/stores/user-store'
 import { ref, onMounted } from 'vue'
 import { date } from 'quasar'
 import ShareDialog from '../components/ShareDialog.vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
 
 const sessionStore = useSessionStore()
 const userStore = useUserStore()
@@ -390,19 +354,6 @@ function startDate(input) {
   return date.formatDate(dt, 'MMMM D, YYYY [at] h:mm A')
 }
 
-const toggleEnded = async (id) => {
-  await sessionStore.endSession(id)
-  data.value = await sessionStore.searchSessionById(sessionID)
-}
-const toggleActive = async (id, isActive) => {
-  await sessionStore.updateSessionData(id, { isActive: !isActive })
-  data.value = await sessionStore.searchSessionById(sessionID)
-}
-
-const toggleDiscussion = async (id, discussionOption) => {
-  await sessionStore.updateSessionData(id, { discussionOption: !discussionOption })
-  data.value = await sessionStore.searchSessionById(sessionID)
-}
 const openLink = (link) => {
   window.open(link, '_blank')
 }
@@ -425,38 +376,6 @@ onMounted(async () => {
     shareLink.value = 'invalid link'
   }
 })
-
-const showEndDialog = ref(false)
-const confirmSessionName = ref('')
-
-const openConfirmEnd = () => {
-  confirmSessionName.value = ''
-  showEndDialog.value = true
-}
-
-const confirmEndSession = () => {
-  const isOwner = data.value.createdBy === userStore.currentUser?.id
-  const nameMatches = confirmSessionName.value === data.value.sessionName
-
-  if (!isOwner) {
-    Notify.create({
-      type: 'negative',
-      message: 'Only the session owner can end the session.',
-    })
-    return
-  }
-
-  if (!nameMatches) {
-    Notify.create({
-      type: 'negative',
-      message: 'Session name does not match.',
-    })
-    return
-  }
-
-  toggleEnded(sessionID)
-  showEndDialog.value = false
-}
 
 const userDetails = ref({})
 
