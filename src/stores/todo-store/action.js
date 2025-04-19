@@ -12,7 +12,7 @@ import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from '
 import { db } from 'boot/firebase'
 import { useUserStore } from '../user-store'
 export default {
-  async createTodo({ title, description, dueDate, priority = 'medium' }) {
+  async createTodo(payload) {
     const userStore = useUserStore()
     const userId = userStore.currentUser.id
     if (!userId) throw new Error('User not authenticated')
@@ -25,11 +25,8 @@ export default {
     const todoData = {
       id: nextId,
       userId,
-      title,
-      description,
-      dueDate: dueDate || null,
+      ...payload,
       isCompleted: false,
-      priority,
       createdAt: now,
       updatedAt: now,
     }
