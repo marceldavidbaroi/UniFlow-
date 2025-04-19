@@ -10,7 +10,7 @@
 
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore'
 import { db } from 'boot/firebase'
-import { useUserStore } from './user-store'
+import { useUserStore } from '../user-store'
 export default {
   async createTodo({ title, description, dueDate, priority = 'medium' }) {
     const userStore = useUserStore()
