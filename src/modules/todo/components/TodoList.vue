@@ -3,7 +3,8 @@
     <q-item
       v-for="todo in props.todos"
       :key="todo.id"
-      class="q-mb-sm rounded-borders shadow-1 bg-white"
+      class="q-mb-sm rounded-borders bg-grey-1"
+      style="border-radius: 8px"
     >
       <q-item-section side top> </q-item-section>
 
@@ -20,12 +21,12 @@
               :label="todo.isCompleted ? 'Mark as Undone' : 'Mark as Done'"
             />
           </div>
-          {{ todo.priority }}
-          <div class="justify-end">
+          <div class="justify-end q-gutter-x-md">
             <q-btn-dropdown
               :label="todo.priority"
               dropdown-icon="expand_more"
               dense
+              unelevated
               size="sm"
               :color="getPriorityColor(todo.priority)"
               @click.stop
@@ -49,7 +50,7 @@
               dense
               icon="edit"
               size="sm"
-              color="primary"
+              color="secondary"
               @click.stop="showCreateDialog = true"
             />
             <CreateTodoDialog

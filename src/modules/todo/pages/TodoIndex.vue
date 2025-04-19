@@ -102,7 +102,7 @@ const handleTodoUpdated = async () => {
   const completed = todoStore.filterTodos((todo) => todo.isCompleted)
   completedTasks.value = completed.data
 }
-const selectedTab = ref('today')
+const selectedTab = ref('all')
 
 // Dummy Tasks
 const todayTasks = ref([])
