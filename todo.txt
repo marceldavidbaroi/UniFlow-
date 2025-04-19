@@ -1,9 +1,6 @@
 FEATURE TASK LIST:
 
-1. Session Details:
-   - [ ] Add an "Edit" option to the Session Details view.
-   - [ ] Implement the functionality for editing session details (likely a form).
-   - [ ] Ensure data persistence for edited session details.
+
 
 
 
@@ -19,9 +16,6 @@ FEATURE TASK LIST:
 
 
 
-16. Student Session View:
-    - [ ] Create a dedicated view to display the details of a single session for students.
-    - [ ] Fetch and display all relevant information for a specific session.
 
 17. Todo List (All Users):
     - [ ] Design and implement a "Todo List" feature accessible to all user roles (admin, teacher, student).
@@ -39,6 +33,97 @@ FEATURE TASK LIST:
         - [ ] Total number of groups.
         - [ ] Total number of active sessions.
         - [ ] Total number of sessions.
+
+
+
+
+TODO LIST FEATURE ROADMAP (ALL USERS: ADMIN, TEACHER, STUDENT)
+
+==================================
+PHASE 1: CORE FEATURES (CRUD)
+==================================
+
+- Database Design (Firebase - Firestore):
+    • Collection: todos
+        - id
+        - userId
+        - title
+        - description
+        - dueDate
+        - isCompleted
+        - priority (low, medium, high)
+        - createdAt
+        - updatedAt
+
+- User Authentication
+    • Link todos to auth.currentUser.uid
+
+- Core CRUD Functionality:
+    [ ] Create Todo (form: title, description, priority, due date)
+    [ ] Read Todos (fetch by userId)
+    [ ] Update Todo (inline or modal form)
+    [ ] Delete Todo (with confirmation)
+
+==================================
+PHASE 2: UI/UX FEATURES
+==================================
+
+- Todo List Display:
+    [ ] Categorized view (Today, Upcoming, Completed)
+    [ ] Filter by priority or status
+    [ ] Search bar for keyword filtering
+    [ ] Sort by due date or priority
+
+- Visual Enhancements:
+    [ ] Priority color coding
+    [ ] Status icons (checkmark, calendar, etc.)
+    [ ] Responsive layout for mobile & desktop
+
+==================================
+PHASE 3: ADVANCED FEATURES
+==================================
+
+- Interactivity:
+    [ ] Drag & drop to reorder tasks
+    [ ] Mark as recurring (daily, weekly, monthly)
+
+- Productivity Tools:
+    [ ] Reminder notifications (local or push)
+    [ ] Progress tracking (% complete, charts)
+
+==================================
+PHASE 4: COLLABORATION & ROLES
+==================================
+
+- Shared Todos:
+    [ ] Option to share tasks with other users
+    [ ] Role-based permissions (read-only or editable)
+
+- Role Enhancements:
+    [ ] Admin view: see todos of all users
+    [ ] Teacher view: track students’ task progress
+    [ ] Analytics (task completion stats, active users)
+
+==================================
+PHASE 5: USER PREFERENCES
+==================================
+
+- Personalization:
+    [ ] Toggle dark/light mode
+    [ ] Save default filter/sort preferences
+    [ ] Enable/disable notifications
+
+==================================
+PHASE 6: POLISH & TESTING
+==================================
+
+- Quality Assurance:
+    [ ] Form input validation
+    [ ] Loading and empty state UI
+    [ ] Unit and integration tests
+    [ ] Accessibility compliance
+
+
 
 
 
