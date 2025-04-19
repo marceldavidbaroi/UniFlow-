@@ -431,7 +431,7 @@ const formatTimestamp = (ts) => {
   return date.formatDate(dt, 'MMMM D, YYYY [at] h:mm A')
 }
 
-function startDate(input) {
+const startDate = (input) => {
   if (!input) return 'N/A'
 
   if (input?.seconds) {
@@ -448,10 +448,16 @@ const openLink = (link) => {
   window.open(link, '_blank')
 }
 
+const participantsResponded = ref()
 const incomingQuestions = ref()
 onMounted(async () => {
   try {
     data.value = await sessionStore.searchSessionById(sessionID)
+    participantsResponded.value =
+      (await sessionStore.getParticipantsResponded(sessionID)).data || {}
+    console.log(participantsResponded.value)
+
+    isQAFinished.value = hasUserParticipated(participantsResponded.value, userStore.currentUser?.id)
 
     if (data.value.materialLinks.length > 0) {
       selectedMaterial.value = data.value.materialLinks[0]
@@ -502,17 +508,22 @@ onMounted(() => {
   }
 })
 
-function toggleAnswerInput(index) {
+const hasUserParticipated = (participantsResponded, userId) => {
+  if (!participantsResponded?.questionResponses) return false
+  return participantsResponded.questionResponses.includes(userId)
+}
+
+const toggleAnswerInput = (index) => {
   activeAnswerIndex.value = activeAnswerIndex.value === index ? null : index
 }
 
-function markAsSubmitted(index) {
+const markAsSubmitted = (index) => {
   const raw = data.value.questions[index].answer || ''
   const cleanText = raw.replace(/<[^>]*>/g, '').trim()
   data.value.questions[index].isSubmitted = cleanText.length > 0
 }
 
-async function submitAnswers() {
+const submitAnswers = async () => {
   confirmFinish.value = false
   isQAFinished.value = true
 
