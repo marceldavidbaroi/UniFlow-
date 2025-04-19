@@ -4,6 +4,7 @@ import dashboard from 'src/modules/dashboard/routes'
 import home from 'src/modules/home/routes'
 import group from 'src/modules/group/routes'
 import session from 'src/modules/session/routes'
+import todo from 'src/modules/todo/routes'
 
 // Error and unauthorized fallback pages
 
@@ -13,6 +14,7 @@ const routes = [
   ...dashboard,
   ...group,
   ...session,
+  ...todo,
 
   // Unauthorized Route
   {
@@ -26,7 +28,7 @@ const routes = [
     path: '/:catchAll(.*)*',
     name: 'ErrorNotFound',
     component: () => import('src/components/PageNotFound.vue'),
-  }
+  },
 ]
 
 const router = createRouter({

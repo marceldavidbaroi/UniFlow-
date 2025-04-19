@@ -39,30 +39,7 @@ FEATURE TASK LIST:
 
 TODO LIST FEATURE ROADMAP (ALL USERS: ADMIN, TEACHER, STUDENT)
 
-==================================
-PHASE 1: CORE FEATURES (CRUD)
-==================================
 
-- Database Design (Firebase - Firestore):
-    • Collection: todos
-        - id
-        - userId
-        - title
-        - description
-        - dueDate
-        - isCompleted
-        - priority (low, medium, high)
-        - createdAt
-        - updatedAt
-
-- User Authentication
-    • Link todos to auth.currentUser.uid
-
-- Core CRUD Functionality:
-    [ ] Create Todo (form: title, description, priority, due date)
-    [ ] Read Todos (fetch by userId)
-    [ ] Update Todo (inline or modal form)
-    [ ] Delete Todo (with confirmation)
 
 ==================================
 PHASE 2: UI/UX FEATURES
