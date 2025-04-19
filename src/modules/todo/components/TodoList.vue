@@ -1,6 +1,5 @@
 <template>
   <q-list class="q-pa-md">
-    {{ props.todos }}
     <q-item
       v-for="todo in props.todos"
       :key="todo.id"
@@ -80,7 +79,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 const props = defineProps({
   todos: Array,
 })
@@ -114,7 +112,7 @@ function editTask(todo) {
   console.log('Edit task:', todo)
 }
 
-function deleteTask(todo) {
+function deleteTask() {
   // tasks.value = tasks.value.filter((t) => t.id !== todo.id)
 }
 </script>

@@ -6,6 +6,8 @@
  * - deleteTodo(todoId)
  * - searchTodos(searchTerm)
  * - sortTodos(key, direction)
+ * - filterTodos(filterFn)
+
  */
 
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore'
@@ -141,6 +143,19 @@ export default {
       success: true,
       message: 'Todos sorted successfully',
       data: sorted,
+    }
+  },
+  filterTodos(filterFn) {
+    if (typeof filterFn !== 'function') {
+      throw new Error('filterFn must be a function')
+    }
+
+    const filtered = this.todos.filter(filterFn)
+
+    return {
+      success: true,
+      message: `${filtered.length} todo(s) matched the filter`,
+      data: filtered,
     }
   },
 }

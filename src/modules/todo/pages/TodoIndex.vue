@@ -17,123 +17,22 @@
       <q-tab-panels v-model="selectedTab" animated>
         <q-tab-panel name="all">
           <TodoList :todos="todoStore.todos" />
-          <!-- <q-list class="q-pa-md">
-            <q-item
-              v-for="todo in todayTasks"
-              :key="todo.id"
-              class="q-mb-sm rounded-borders shadow-1 bg-white"
-            >
-              <q-item-section side top> </q-item-section>
-
-              <q-item-section>
-                <div class="row justify-between q-gutter-sm">
-                  <div class="justify-start">
-                    <q-btn
-                      v-if="!todo.done"
-                      flat
-                      dense
-                      size="sm"
-                      icon="radio_button_unchecked"
-                      color="grey-5"
-                      @click.stop="markAsDone(todo)"
-                      :label="'Mark as Done'"
-                    />
-                    <q-btn
-                      v-else
-                      flat
-                      round
-                      dense
-                      icon="check_circle"
-                      color="positive"
-                      :label="'Done'"
-                    />
-                  </div>
-
-                  <div class="justify-end">
-                    <q-btn-dropdown
-                      v-model="todo.priority"
-                      split
-                      label="Priority"
-                      dropdown-icon="expand_more"
-                      dense
-                      outlined
-                      :color="priorityColor(todo.priority)"
-                      @click.stop
-                    >
-                      <q-list>
-                        <q-item
-                          v-for="option in priorityOptions"
-                          :key="option.value"
-                          clickable
-                          @click="todo.priority = option.value"
-                        >
-                          <q-item-section>
-                            {{ option.label }}
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </q-btn-dropdown>
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      icon="edit"
-                      size="sm"
-                      color="primary"
-                      @click.stop="editTask(todo)"
-                    />
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      icon="delete"
-                      size="sm"
-                      color="negative"
-                      @click.stop="deleteTask(todo)"
-                    />
-                  </div>
-                </div>
-                <div class="q-mt-sm cursor-pointer" @click="toggleDescription(todo)">
-                  <div class="text-subtitle1">{{ todo.text }}</div>
-                  <div v-if="todo.showDescription" class="text-caption text-grey-7 q-mt-xs">
-                    {{ todo.description }}
-                  </div>
-                </div>
-              </q-item-section>
-            </q-item>
-          </q-list> -->
         </q-tab-panel>
 
         <q-tab-panel name="today">
-          <q-list bordered>
-            <q-item v-for="todo in todayTasks" :key="todo.id">
-              <q-item-section>{{ todo.text }}</q-item-section>
-            </q-item>
-          </q-list>
+          <TodoList :todos="todayTasks" />
         </q-tab-panel>
 
         <q-tab-panel name="yesterday">
-          <q-list bordered>
-            <q-item v-for="todo in yesterdayTasks" :key="todo.id">
-              <q-item-section>{{ todo.text }}</q-item-section>
-            </q-item>
-          </q-list>
+          <TodoList :todos="yesterdayTasks" />
         </q-tab-panel>
 
         <q-tab-panel name="upcoming">
-          <q-list bordered>
-            <q-item v-for="todo in upcomingTasks" :key="todo.id">
-              <q-item-section>{{ todo.text }}</q-item-section>
-            </q-item>
-          </q-list>
+          <TodoList :todos="upcomingTasks" />
         </q-tab-panel>
 
         <q-tab-panel name="completed">
-          <q-list bordered>
-            <q-item v-for="todo in completedTasks" :key="todo.id">
-              <q-item-section>{{ todo.text }}</q-item-section>
-            </q-item>
-          </q-list>
+          <TodoList :todos="completedTasks" />
         </q-tab-panel>
       </q-tab-panels>
     </div>
@@ -142,7 +41,6 @@
       <q-tabs
         v-model="selectedTab"
         vertical
-        dense
         active-color="primary"
         indicator-color="primary"
         class="q-py-xl bg-grey-2"
@@ -187,18 +85,108 @@ const showCreateDialog = ref(false)
 onMounted(async () => {
   await todoStore.getTodos()
   console.log(todoStore.todos)
+  todayTasks.value = findTodosUpdatedToday(todoStore.todos)
+  upcomingTasks.value = findUpcomingTodos(todoStore.todos)
+  upcomingTasks.value = findYesterdayTodos(todoStore.todos)
+
+  const completed = todoStore.filterTodos((todo) => todo.isCompleted)
+  completedTasks.value = completed.data
 })
 const selectedTab = ref('today')
 
 // Dummy Tasks
-const todayTasks = ref([
-  { id: 1, text: 'Buy groceries' },
-  { id: 2, text: 'Call Alice' },
-])
+const todayTasks = ref([])
 
-const yesterdayTasks = ref([{ id: 3, text: 'Finish report' }])
+function findTodosUpdatedToday(todos) {
+  const today = new Date().toLocaleDateString()
+  const matchingTodos = []
 
-const upcomingTasks = ref([{ id: 4, text: 'Schedule dentist appointment' }])
+  for (const todo of todos) {
+    if (todo.updatedAt) {
+      let updatedDate
+      if (typeof todo.updatedAt.toDate === 'function') {
+        // Assuming updatedAt is a Firebase Timestamp
+        updatedDate = todo.updatedAt.toDate().toLocaleDateString()
+      } else if (typeof todo.updatedAt === 'string' || typeof todo.updatedAt === 'number') {
+        // Assuming updatedAt is an ISO string or a Unix timestamp (in milliseconds)
+        updatedDate = new Date(todo.updatedAt).toLocaleDateString()
+      } else if (todo.updatedAt instanceof Date) {
+        // Assuming updatedAt is a JavaScript Date object
+        updatedDate = todo.updatedAt.toLocaleDateString()
+      } else {
+        console.warn(
+          `Warning: Could not parse 'updatedAt' value: ${todo.updatedAt} for todo:`,
+          todo,
+        )
+        continue // Skip this todo if parsing fails
+      }
+
+      if (updatedDate === today) {
+        matchingTodos.push(todo)
+      }
+    }
+  }
+
+  return matchingTodos
+}
+
+function findUpcomingTodos(todos) {
+  const currentDate = new Date()
+  const upcomingTodos = []
+
+  for (const todo of todos) {
+    if (todo.dueDate) {
+      let dueDate
+      if (typeof todo.dueDate === 'string') {
+        dueDate = new Date(todo.dueDate)
+      } else if (todo.dueDate instanceof Date) {
+        dueDate = todo.dueDate
+      } else {
+        console.warn(`Warning: Could not parse 'dueDate' value: ${todo.dueDate} for todo:`, todo)
+        continue // Skip this todo if parsing fails
+      }
+
+      // Compare dueDate with the current date
+      if (dueDate >= currentDate) {
+        upcomingTodos.push(todo)
+      }
+    }
+  }
+
+  return upcomingTodos
+}
+
+function findYesterdayTodos(todos) {
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
+
+  const yesterdayString = yesterday.toLocaleDateString()
+  const yesterdayTodos = []
+
+  for (const todo of todos) {
+    if (todo.dueDate) {
+      let dueDate
+      if (typeof todo.dueDate === 'string') {
+        dueDate = new Date(todo.dueDate).toLocaleDateString()
+      } else if (todo.dueDate instanceof Date) {
+        dueDate = todo.dueDate.toLocaleDateString()
+      } else {
+        console.warn(`Warning: Could not parse 'dueDate' value: ${todo.dueDate} for todo:`, todo)
+        continue // Skip this todo if parsing fails
+      }
+
+      if (dueDate === yesterdayString) {
+        yesterdayTodos.push(todo)
+      }
+    }
+  }
+
+  return yesterdayTodos
+}
+const yesterdayTasks = ref()
+
+const upcomingTasks = ref()
 
 const completedTasks = ref([{ id: 5, text: 'Submit timesheet' }])
 
@@ -214,9 +202,6 @@ const onFilter = () => {
 }
 const onSort = () => {
   console.log('Sort clicked')
-}
-const onAddTodo = () => {
-  console.log('Add Todo clicked')
 }
 </script>
 
