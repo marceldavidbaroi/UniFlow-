@@ -52,7 +52,12 @@
               color="primary"
               @click.stop="showCreateDialog = true"
             />
-            <CreateTodoDialog v-model="showCreateDialog" />
+            <CreateTodoDialog
+              v-model="showCreateDialog"
+              :todo="todo"
+              :isEdit="true"
+              @todo-updated="handleTodoUpdated"
+            />
             <q-btn
               flat
               round
@@ -78,6 +83,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
+import CreateTodoDialog from './CreateTodoDialog.vue'
 
 const todoStore = useTodoStore()
 const props = defineProps({
@@ -90,6 +96,9 @@ const priorityOptions = [
   { label: 'High', value: 'high' },
 ]
 
+const handleTodoUpdated = async () => {
+  emit('todo-updated') // emit to parent
+}
 function toggleDescription(todo) {
   todo.showDescription = !todo.showDescription
 }
@@ -121,11 +130,6 @@ const changePriority = async (id, data) => {
   // example: remove from list or mark visually
   await todoStore.updateTodo(id, data)
   emit('todo-updated') // emit to parent
-}
-
-function editTask(todo) {
-  // open a modal or emit event
-  console.log('Edit task:', todo)
 }
 
 function deleteTask() {

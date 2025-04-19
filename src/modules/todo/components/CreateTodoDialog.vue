@@ -74,7 +74,22 @@
 
       <q-card-actions align="right">
         <q-btn flat label="Cancel" color="grey-7" @click="closeDialog" />
-        <q-btn unelevated :loading="loading" label="Create" color="secondary" @click="createTodo" />
+        <q-btn
+          v-if="!isEdit"
+          unelevated
+          :loading="loading"
+          label="Create"
+          color="secondary"
+          @click="createTodo"
+        />
+        <q-btn
+          v-if="isEdit"
+          unelevated
+          :loading="loading"
+          label="Edit"
+          color="secondary"
+          @click="updateTodo"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -83,7 +98,7 @@
 <script setup>
 import { Notify } from 'quasar'
 import { useTodoStore } from 'src/stores/todo-store'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 const todoStore = useTodoStore()
 // Props for v-model
 const props = defineProps({
@@ -91,9 +106,16 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  todo: {
+    type: Array,
+  },
+  isEdit: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'todo-updated'])
 
 const loading = ref(false)
 const form = ref({
@@ -122,6 +144,17 @@ function closeDialog() {
   resetForm()
 }
 
+onMounted(() => {
+  if (props.todo) {
+    form.value = {
+      title: props.todo?.title,
+      description: props.todo?.description,
+      dueDate: props.todo?.dueDate,
+      priority: props.todo?.priority,
+    }
+  }
+})
+
 function resetForm() {
   form.value = {
     title: '',
@@ -143,6 +176,7 @@ const createTodo = async () => {
         timeout: 2500,
         position: 'top',
       })
+      emit('todo-updated') // emit to parent
     } else {
       Notify.create({
         message: response?.message || 'Failed to create todo.',
@@ -155,6 +189,43 @@ const createTodo = async () => {
   } catch {
     Notify.create({
       message: 'An unexpected error occurred while creating the todo.',
+      color: 'negative',
+      icon: 'error',
+      timeout: 5000,
+      position: 'top',
+    })
+  } finally {
+    loading.value = false
+    closeDialog()
+  }
+}
+
+const updateTodo = async () => {
+  loading.value = true
+  try {
+    const response = await todoStore.updateTodo(props.todo.id, form.value)
+    if (response && response.success) {
+      Notify.create({
+        message: response?.message || 'Todo updated successfully!',
+        color: 'positive',
+        icon: 'check',
+        timeout: 2500,
+        position: 'top',
+      })
+
+      emit('todo-updated') // emit to parent
+    } else {
+      Notify.create({
+        message: response?.message || 'Failed to update todo.',
+        color: 'negative',
+        icon: 'warning',
+        timeout: 5000,
+        position: 'top',
+      })
+    }
+  } catch {
+    Notify.create({
+      message: 'An unexpected error occurred while updating the todo.',
       color: 'negative',
       icon: 'error',
       timeout: 5000,
