@@ -11,27 +11,23 @@
         <div class="row justify-between q-gutter-sm">
           <div class="justify-start">
             <q-btn
-              v-if="!todo.done"
               flat
               dense
               size="sm"
-              icon="radio_button_unchecked"
-              color="grey-5"
-              @click.stop="markAsDone(todo)"
-              :label="'Mark as Done'"
+              :icon="todo.isCompleted ? 'check_circle' : 'radio_button_unchecked'"
+              :color="todo.isCompleted ? 'positive' : 'grey-5'"
+              @click.stop="markAsDone(todo.id, { isCompleted: !todo.isCompleted })"
+              :label="todo.isCompleted ? 'Mark as Undone' : 'Mark as Done'"
             />
-            <q-btn v-else flat round dense icon="check_circle" color="positive" :label="'Done'" />
           </div>
-
+          {{ todo.priority }}
           <div class="justify-end">
             <q-btn-dropdown
-              v-model="todo.priority"
-              split
-              label="Priority"
+              :label="todo.priority"
               dropdown-icon="expand_more"
               dense
-              outlined
-              :color="priorityColor(todo.priority)"
+              size="sm"
+              :color="getPriorityColor(todo.priority)"
               @click.stop
             >
               <q-list>
@@ -39,7 +35,7 @@
                   v-for="option in priorityOptions"
                   :key="option.value"
                   clickable
-                  @click="todo.priority = option.value"
+                  @click="changePriority(todo.id, { priority: option.value })"
                 >
                   <q-item-section>
                     {{ option.label }}
@@ -54,8 +50,9 @@
               icon="edit"
               size="sm"
               color="primary"
-              @click.stop="editTask(todo)"
+              @click.stop="showCreateDialog = true"
             />
+            <CreateTodoDialog v-model="showCreateDialog" />
             <q-btn
               flat
               round
@@ -79,9 +76,14 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useTodoStore } from 'src/stores/todo-store'
+
+const todoStore = useTodoStore()
 const props = defineProps({
   todos: Array,
 })
+const showCreateDialog = ref(false)
 const priorityOptions = [
   { label: 'Low', value: 'low' },
   { label: 'Medium', value: 'medium' },
@@ -92,19 +94,33 @@ function toggleDescription(todo) {
   todo.showDescription = !todo.showDescription
 }
 
-function priorityColor(priority) {
-  return (
-    {
-      low: 'blue',
-      medium: 'orange',
-      high: 'red',
-    }[priority] || 'grey'
-  )
+const getPriorityColor = (priority) => {
+  const value = String(priority).toLowerCase()
+
+  switch (value) {
+    case 'high':
+      return 'red-5'
+    case 'medium':
+      return 'orange-5'
+    case 'low':
+      return 'green-5'
+    default:
+      return 'grey-5'
+  }
 }
 
-function markAsDone(todo) {
+const emit = defineEmits(['todo-updated'])
+
+const markAsDone = async (id, data) => {
   // example: remove from list or mark visually
-  console.log('Marked as done:', todo)
+  await todoStore.updateTodo(id, data)
+  emit('todo-updated') // emit to parent
+}
+
+const changePriority = async (id, data) => {
+  // example: remove from list or mark visually
+  await todoStore.updateTodo(id, data)
+  emit('todo-updated') // emit to parent
 }
 
 function editTask(todo) {

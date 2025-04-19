@@ -42,7 +42,7 @@
         <q-select
           v-model="form.priority"
           label="Priority"
-          :options="['Low', 'Medium', 'High']"
+          :options="['low', 'medium', 'high']"
           outlined
           emit-value
           map-options
@@ -127,7 +127,7 @@ function resetForm() {
     title: '',
     description: '',
     dueDate: '',
-    priority: 'Medium',
+    priority: 'medium',
   }
 }
 

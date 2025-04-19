@@ -16,23 +16,23 @@
       <!-- Task List Panels -->
       <q-tab-panels v-model="selectedTab" animated>
         <q-tab-panel name="all">
-          <TodoList :todos="todoStore.todos" />
+          <TodoList :todos="todoStore.todos" @todo-updated="handleTodoUpdated" />
         </q-tab-panel>
 
         <q-tab-panel name="today">
-          <TodoList :todos="todayTasks" />
+          <TodoList :todos="todayTasks" @todo-updated="handleTodoUpdated" />
         </q-tab-panel>
 
         <q-tab-panel name="yesterday">
-          <TodoList :todos="yesterdayTasks" />
+          <TodoList :todos="yesterdayTasks" @todo-updated="handleTodoUpdated" />
         </q-tab-panel>
 
         <q-tab-panel name="upcoming">
-          <TodoList :todos="upcomingTasks" />
+          <TodoList :todos="upcomingTasks" @todo-updated="handleTodoUpdated" />
         </q-tab-panel>
 
         <q-tab-panel name="completed">
-          <TodoList :todos="completedTasks" />
+          <TodoList :todos="completedTasks" @todo-updated="handleTodoUpdated" />
         </q-tab-panel>
       </q-tab-panels>
     </div>
@@ -92,6 +92,16 @@ onMounted(async () => {
   const completed = todoStore.filterTodos((todo) => todo.isCompleted)
   completedTasks.value = completed.data
 })
+const handleTodoUpdated = async () => {
+  await todoStore.getTodos()
+  console.log(todoStore.todos)
+  todayTasks.value = findTodosUpdatedToday(todoStore.todos)
+  upcomingTasks.value = findUpcomingTodos(todoStore.todos)
+  upcomingTasks.value = findYesterdayTodos(todoStore.todos)
+
+  const completed = todoStore.filterTodos((todo) => todo.isCompleted)
+  completedTasks.value = completed.data
+}
 const selectedTab = ref('today')
 
 // Dummy Tasks
