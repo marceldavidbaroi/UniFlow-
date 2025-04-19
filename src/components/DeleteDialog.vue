@@ -20,7 +20,6 @@
             'Are you sure you want to delete this item? This action cannot be undone.'
           }}
         </div>
-        {{ typeof inputField }}
         <div v-if="inputField" class="text-caption text-weight-medium q-mb-sm">
           Please type <span class="text-bold text-red text-bold">"{{ nameToMatch }}"</span> to
           confirm deletion:

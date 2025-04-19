@@ -65,7 +65,14 @@
               icon="delete"
               size="sm"
               color="negative"
-              @click.stop="deleteTask(todo)"
+              @click="showDeleteDialog = true"
+            />
+            <DeleteDialog
+              v-model="showDeleteDialog"
+              card-title="Delete Todo"
+              description="Are you sure you want to permanently delete this todo?"
+              button-label="Confirm Delete"
+              @confirm-delete="handleDelete(todo.id)"
             />
           </div>
         </div>
@@ -84,12 +91,16 @@
 import { ref } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
 import CreateTodoDialog from './CreateTodoDialog.vue'
+import DeleteDialog from 'src/components/DeleteDialog.vue'
+import { Notify } from 'quasar'
 
 const todoStore = useTodoStore()
 const props = defineProps({
   todos: Array,
 })
 const showCreateDialog = ref(false)
+const showDeleteDialog = ref(false)
+
 const priorityOptions = [
   { label: 'Low', value: 'low' },
   { label: 'Medium', value: 'medium' },
@@ -131,9 +142,27 @@ const changePriority = async (id, data) => {
   await todoStore.updateTodo(id, data)
   emit('todo-updated') // emit to parent
 }
-
-function deleteTask() {
-  // tasks.value = tasks.value.filter((t) => t.id !== todo.id)
+async function handleDelete(id) {
+  try {
+    const response = await todoStore.deleteTodo(id)
+    if (response && response.success) {
+      Notify.create({
+        message: response.message || 'Todo deleted successfully!',
+        color: 'positive',
+        icon: 'check',
+        position: 'top',
+        timeout: 2500,
+      })
+    }
+  } catch {
+    Notify.create({
+      message: 'An error occurred while deleting the todo.',
+      color: 'negative',
+      icon: 'error',
+      position: 'top',
+      timeout: 5000,
+    })
+  }
 }
 </script>
 
