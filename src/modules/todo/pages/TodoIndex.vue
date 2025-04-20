@@ -41,11 +41,11 @@
       <q-tabs
         v-model="selectedTab"
         vertical
-        active-color="primary"
-        indicator-color="primary"
+        active-color="secondary"
+        indicator-color="secondary"
         class="q-py-xl bg-grey-2"
       >
-        <q-tab name="all" label="" icon="list" class="q-mb-lg">
+        <q-tab name="all" label="" icon="checklist" class="q-mb-lg">
           <q-tooltip class="bg-secondary text-white">All Todos</q-tooltip>
         </q-tab>
 

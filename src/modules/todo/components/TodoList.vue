@@ -3,7 +3,7 @@
     <q-item
       v-for="todo in props.todos"
       :key="todo.id"
-      class="q-mb-sm rounded-borders bg-grey-1"
+      class="q-mb-lg rounded-borders bg-grey-1 my-card"
       style="border-radius: 8px"
     >
       <q-item-section side top> </q-item-section>
@@ -167,4 +167,11 @@ async function handleDelete(id) {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.my-card {
+  width: 100%;
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+</style>

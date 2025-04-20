@@ -25,7 +25,7 @@
 
     <div class="row justify-center q-ma-md">
       <div class="col-12 flex justify-center">
-        <q-btn
+        <!-- <q-btn
           v-if="userStore.currentRole === 'teacher'"
           label="Create Group"
           color="secondary"
@@ -33,7 +33,7 @@
           unelevated
           class="q-mb-lg"
           style="border-radius: 8px"
-        />
+        /> -->
       </div>
     </div>
     <GroupActionButtons />
@@ -56,7 +56,7 @@ import { onMounted, computed } from 'vue'
 import GroupListItems from '../components/GroupListItems.vue'
 import GroupActionButtons from '../components/GroupActionButtons.vue'
 import { useGroupStore } from 'src/stores/group-store'
-import router from 'src/router'
+// import router from 'src/router'
 import { useUserStore } from 'src/stores/user-store'
 const userStore = useUserStore()
 const groupStore = useGroupStore()
