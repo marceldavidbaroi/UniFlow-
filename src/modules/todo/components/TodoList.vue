@@ -28,6 +28,7 @@
               dense
               unelevated
               size="sm"
+              class="q-pl-sm"
               :color="getPriorityColor(todo.priority)"
               @click.stop
             >
