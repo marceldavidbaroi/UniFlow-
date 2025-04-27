@@ -3,7 +3,9 @@
     <div class="text-h4 brand_sb text-center">Dashboard</div>
     <!-- action button -->
     <div class="row justify-between">
-      <div class="text-bold">Total Gorups 3 Total session 10</div>
+      <div class="text-bold">
+        Total Gorups {{ groupStore.groupCount }} Total session {{ sessionStore.sessionCount }}
+      </div>
       <div class="q-gutter-sm text-right">
         <q-btn flat color="primary" icon="groups" @click="router.push('/group/create')" class="">
           <q-tooltip>Create a Group</q-tooltip>
@@ -27,7 +29,7 @@
       <div class="col-12 col-md-9">
         <q-card>
           <q-card-section>
-            <div class="text-h6">Session Overview</div>
+            <div class="text-h6">Overview</div>
             <div class="row q-gutter-md q-mt-md justify-center">
               <div class="col-auto">
                 <div style="width: 100%; height: 300px">
@@ -83,6 +85,10 @@ import { ref, onMounted } from 'vue'
 // import { useUserStore } from 'src/stores/user-store'
 import { useRouter } from 'vue-router'
 import { Chart, registerables } from 'chart.js'
+import { useGroupStore } from 'src/stores/group-store'
+import { useSessionStore } from 'src/stores/sessionStore'
+const groupStore = useGroupStore()
+const sessionStore = useSessionStore()
 
 Chart.register(...registerables)
 
@@ -97,51 +103,155 @@ const sessionTypeChart = ref(null)
 
 const createGroupStudentChart = () => {
   const ctx = groupStudentChart.value.getContext('2d')
+
+  // Define theme-appropriate colors
+  const themeColors = [
+    'rgba(75, 192, 192, 0.2)', // Teal
+    'rgba(153, 102, 255, 0.2)', // Purple
+    'rgba(255, 159, 64, 0.2)', // Orange
+    'rgba(255, 99, 132, 0.2)', // Red
+    'rgba(54, 162, 235, 0.2)', // Blue
+  ]
+
+  const borderColors = [
+    'rgba(75, 192, 192, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)',
+    'rgba(255, 99, 132, 1)',
+    'rgba(54, 162, 235, 1)',
+  ]
+
   new Chart(ctx, {
-    type: 'doughnut', // Changed to doughnut
+    type: 'doughnut',
     data: {
-      labels: ['Group A', 'Group B', 'Group C'],
+      labels: graphDataGroup.value.groupNames, // Use labels for hover
       datasets: [
         {
           label: '# of Students',
-          data: [12, 19, 3],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-          ],
-          borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
+          data: graphDataGroup.value.groupData,
+          backgroundColor: themeColors,
+          borderColor: borderColors,
           borderWidth: 1,
         },
       ],
     },
+    options: {
+      plugins: {
+        legend: {
+          display: false, // Hides the legend with color boxes
+        },
+        title: {
+          display: true, // Adds a label at the top of the donut chart
+          text: 'Group Distribution',
+          font: {
+            size: 18,
+            color: 'black', // Sets the label color to black
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return context.label // Show the label instead of the count
+            },
+          },
+        },
+      },
+    },
   })
+}
+
+const graphDataGroup = ref()
+
+const getgraphDataGroup = () => {
+  const groupNames = []
+  const groupData = []
+
+  groupStore.groupList.forEach((group) => {
+    groupNames.push(group.groupName)
+    groupData.push(group.members.length)
+  })
+
+  return { groupNames, groupData }
+}
+const graphDataSession = ref()
+
+const getgraphDataSession = () => {
+  const sessionNames = []
+  const sessionData = []
+
+  sessionStore.sessionList.forEach((session) => {
+    sessionNames.push(session.sessionName)
+    sessionData.push(session.participants.length)
+  })
+
+  return { sessionNames, sessionData }
 }
 
 const createSessionTypeChart = () => {
   const ctx = sessionTypeChart.value.getContext('2d')
+
+  // Define theme-appropriate colors
+  const themeColors = [
+    'rgba(75, 192, 192, 0.2)', // Teal
+    'rgba(153, 102, 255, 0.2)', // Purple
+    'rgba(255, 159, 64, 0.2)', // Orange
+    'rgba(255, 99, 132, 0.2)', // Red
+    'rgba(54, 162, 235, 0.2)', // Blue
+  ]
+
+  const borderColors = [
+    'rgba(75, 192, 192, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)',
+    'rgba(255, 99, 132, 1)',
+    'rgba(54, 162, 235, 1)',
+  ]
+
   new Chart(ctx, {
-    type: 'pie', // Changed to pie
+    type: 'doughnut',
     data: {
-      labels: ['Lecture', 'Workshop', 'Lab'],
+      labels: graphDataSession.value.sessionNames, // Use labels for hover
       datasets: [
         {
           label: '# of Sessions',
-          data: [5, 3, 7],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-          ],
-          borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
+          data: graphDataSession.value.sessionData,
+          backgroundColor: themeColors,
+          borderColor: borderColors,
           borderWidth: 1,
         },
       ],
     },
+    options: {
+      plugins: {
+        legend: {
+          display: false, // Hides the legend with color boxes
+        },
+        title: {
+          display: true, // Adds a label at the top of the donut chart
+          text: 'Session Distribution',
+          font: {
+            size: 18,
+            color: 'black', // Sets the label color to black
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return context.label // Show the label instead of the count
+            },
+          },
+        },
+      },
+    },
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await groupStore.fetchAllGroups()
+  graphDataGroup.value = getgraphDataGroup()
+  await sessionStore.fetchCreatedSessions()
+  graphDataSession.value = getgraphDataSession()
+  console.log('graphDataGroup', graphDataSession.value)
   createGroupStudentChart()
   createSessionTypeChart()
 })
