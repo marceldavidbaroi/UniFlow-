@@ -33,6 +33,16 @@
             :rules="[(val) => val > 0 || 'Session Length must be greater than 0']"
             required
           />
+
+          <!-- Dropdown for Group Names -->
+          <q-select
+            v-model="selectedGroup"
+            :options="groupOptions"
+            label="Select Group"
+            filled
+            required
+          />
+
           <q-editor
             v-model="sessionDescription"
             label="Session Description"
@@ -246,6 +256,8 @@ import { useUserStore } from 'src/stores/user-store'
 
 import { Notify } from 'quasar'
 import { useRouter } from 'vue-router'
+import { useGroupStore } from 'src/stores/group-store'
+const groupStore = useGroupStore()
 
 const router = useRouter()
 const sesstionStore = useSessionStore()
@@ -338,6 +350,7 @@ const handleSubmit = () => {
     materialLinks: materialLinks.value,
     codingPlatformLinks: codingPlatformLinks.value,
     tasks: tasks.value,
+    selectedGroup: selectedGroup.value,
   }
 
   sesstionStore
@@ -367,6 +380,12 @@ const handleSubmit = () => {
       router.push('/session/list')
     })
 }
+
+const selectedGroup = ref(null)
+const groupOptions = groupStore.groupList.map((group) => ({
+  label: group.groupName,
+  value: group.id,
+}))
 </script>
 
 <style scoped>

@@ -141,8 +141,8 @@
                   { name: 'value', label: 'Value', field: 'value', align: 'left' },
                 ]"
                 row-key="label"
-                bordered
                 flat
+                separator="vertical"
                 hide-bottom
                 class="text-body1"
                 style="width: 800px"
@@ -276,14 +276,24 @@
           </q-tab-panel>
 
           <!-- Questions -->
-          <q-tab-panel name="questions">
-            <div class="text-h6">Questions</div>
-            <ul>
-              <li v-for="(question, index) in data.questions" :key="index">
-                {{ question.text }}
-              </li>
-            </ul>
+          <q-tab-panel name="questions" class="q-pa-sm">
+            <div class="text-xl font-bold text-primary mb-sm">Questions</div>
+            <q-card flat bordered class="q-pa-sm bg-grey-1 shadow-md rounded-borders">
+              <q-list dense separator>
+                <q-item
+                  v-for="(question, index) in data.questions"
+                  :key="index"
+                  class="hover:bg-grey-2 rounded"
+                >
+                  <q-item-section avatar class="text-primary"> {{ index + 1 }}. </q-item-section>
+                  <q-item-section>
+                    <div class="text-base">{{ question.text }}</div>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card>
           </q-tab-panel>
+
           <!-- coding platform -->
           <q-tab-panel name="coding">
             <div class="text-h6">Coding Challenges</div>
@@ -408,6 +418,7 @@ const openLink = (link) => {
 onMounted(async () => {
   try {
     data.value = await sessionStore.searchSessionById(sessionID)
+    console.log(data)
 
     // Set default material link if available
     if (data.value.materialLinks.length > 0) {

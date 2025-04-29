@@ -37,70 +37,104 @@ FEATURE TASK LIST:
 
 
 
-TODO LIST FEATURE ROADMAP (ALL USERS: ADMIN, TEACHER, STUDENT)
-
-
-
-==================================
-PHASE 2: UI/UX FEATURES
-==================================
-
-- Todo List Display:
-    [ ] Categorized view (Today, Upcoming, Completed)
-    [ ] Filter by priority or status
-    [ ] Search bar for keyword filtering
-    [ ] Sort by due date or priority
-
-- Visual Enhancements:
-    [ ] Priority color coding
-    [ ] Status icons (checkmark, calendar, etc.)
-    [ ] Responsive layout for mobile & desktop
-
-==================================
-PHASE 3: ADVANCED FEATURES
-==================================
-
-- Interactivity:
-    [ ] Drag & drop to reorder tasks
-    [ ] Mark as recurring (daily, weekly, monthly)
-
-- Productivity Tools:
-    [ ] Reminder notifications (local or push)
-    [ ] Progress tracking (% complete, charts)
-
-==================================
-PHASE 4: COLLABORATION & ROLES
-==================================
-
-- Shared Todos:
-    [ ] Option to share tasks with other users
-    [ ] Role-based permissions (read-only or editable)
-
-- Role Enhancements:
-    [ ] Admin view: see todos of all users
-    [ ] Teacher view: track students’ task progress
-    [ ] Analytics (task completion stats, active users)
-
-==================================
-PHASE 5: USER PREFERENCES
-==================================
-
-- Personalization:
-    [ ] Toggle dark/light mode
-    [ ] Save default filter/sort preferences
-    [ ] Enable/disable notifications
-
-==================================
-PHASE 6: POLISH & TESTING
-==================================
-
-- Quality Assurance:
-    [ ] Form input validation
-    [ ] Loading and empty state UI
-    [ ] Unit and integration tests
-    [ ] Accessibility compliance
-
-
+task schema 
+{
+  "taskID": "string",
+  "sessionId": "string",
+  "groupID": "string",
+  "ownerId": "string",
+  "subject": "string",
+  "description": "string",
+  "category": "string",
+  "tags": ["string"],
+  "deadline": "string (ISO 8601 format)",
+  "totalMarks": "number",
+  "gradingRubric": {
+    "criteria": [
+      {
+        "criterionId": "string",
+        "description": "string",
+        "maxPoints": "number"
+      }
+    ],
+    "notes": "string"
+  },
+  "tasks": [
+    {
+      "taskId": "string",
+      "question": "string",
+      "taskDetails": {
+        "description": "string",
+        "points": "number",
+        "type": "string",
+        "attachments": [
+          {
+            "filename": "string",
+            "url": "string"
+          }
+        ],
+        "timeLimit": "string",
+        "difficulty": "string"
+      },
+      "dependencies": ["string"],
+      "learningObjectives": ["string"],
+      "membersProgress": [
+        {
+          "memberId": "string",
+          "taskState": "string",
+          "obtainedMarks": "number | null",
+          "submissionDetails": {
+            "submittedAt": "string (ISO 8601 format)",
+            "answer": "string | null",
+            "fileUrl": "string | null",
+            "feedback": "string | null",
+            "attachments": [
+              {
+                "filename": "string",
+                "url": "string"
+              }
+            ],
+            "urls": ["string"],
+            "gradedBy": "string | null",
+            "gradedAt": "string (ISO 8601 format) | null",
+            "criterionScores": {
+              "string": "number" // Key is criterionId from gradingRubric
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "allowLateSubmissions": "boolean",
+    "lateSubmissionPenalty": "number",
+    "gradingScheme": "string",
+    "submissionType": "string",
+    "reviewSettings": {
+      "peerReview": "boolean",
+      "instructorReview": "boolean"
+    }
+  },
+  "announcements": [
+    {
+      "announcementId": "string",
+      "title": "string",
+      "content": "string",
+      "createdAt": "string (ISO 8601 format)",
+      "authorId": "string"
+    }
+  ],
+  "resources": [
+    {
+      "resourceId": "string",
+      "title": "string",
+      "url": "string",
+      "type": "string"
+    }
+  ],
+  "createdAt": "string (ISO 8601 format)",
+  "updatedAt": "string (ISO 8601 format)"
+}
 
 
 

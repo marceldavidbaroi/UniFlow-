@@ -1,36 +1,39 @@
 <template>
   <q-page padding>
-    <div class="text-h4 brand_sb text-center">Dashboard</div>
-    <!-- action button -->
-    <div class="row justify-between">
-      <div class="text-bold">
-        Total Gorups {{ groupStore.groupCount }} Total session {{ sessionStore.sessionCount }}
+    <div class="text-h4 brand_sb text-center q-mb-md">Dashboard</div>
+
+    <!-- Action Buttons -->
+    <div class="row justify-between items-center q-mb-lg">
+      <div class="text-bold text-secondary">
+        Total Groups: {{ groupStore.groupCount }} | Total Sessions: {{ sessionStore.sessionCount }}
       </div>
-      <div class="q-gutter-sm text-right">
-        <q-btn flat color="primary" icon="groups" @click="router.push('/group/create')" class="">
+      <div class="q-gutter-sm">
+        <q-btn flat color="secondary" icon="groups" @click="router.push('/group/create')">
           <q-tooltip>Create a Group</q-tooltip>
         </q-btn>
-
-        <q-btn flat color="primary" icon="event" @click="router.push('/session/create')" class="">
+        <q-btn flat color="secondary" icon="event" @click="router.push('/session/create')">
           <q-tooltip>Create a Session</q-tooltip>
         </q-btn>
-        <q-btn flat color="primary" icon="calendar_today" @click="showCalendar = true" class="">
-          <q-tooltip>Calender</q-tooltip>
+        <q-btn flat color="secondary" icon="calendar_today" @click="showCalendar = true">
+          <q-tooltip>Calendar</q-tooltip>
         </q-btn>
         <q-dialog v-model="showCalendar">
           <q-date v-model="selectedDate" color="secondary">
             <div class="row items-center justify-end q-gutter-sm">
-              <q-btn label="Cancel" color="secodary" flat v-close-popup /></div
-          ></q-date>
+              <q-btn label="Cancel" color="secondary" flat v-close-popup />
+            </div>
+          </q-date>
         </q-dialog>
       </div>
     </div>
+
+    <!-- Overview Section -->
     <div class="row q-gutter-md justify-center q-mt-md">
       <div class="col-12 col-md-9">
-        <q-card>
+        <q-card flat bordered class="bg-light">
           <q-card-section>
-            <div class="text-h6">Overview</div>
-            <div class="row q-gutter-md q-mt-md justify-center">
+            <div class="text-h6 text-secondary text-center q-mb-md">Overview</div>
+            <div class="row q-gutter-md justify-center">
               <div class="col-auto">
                 <div style="width: 100%; height: 300px">
                   <canvas ref="groupStudentChart"></canvas>
@@ -45,9 +48,10 @@
           </q-card-section>
         </q-card>
 
-        <q-card class="q-mt-md">
+        <!-- Group and Session Details -->
+        <q-card flat bordered class="q-mt-md bg-light">
           <q-card-section>
-            <div class="text-h6">Group and Session Details</div>
+            <div class="text-h6 text-secondary text-center q-mb-md">Group and Session Details</div>
             <q-table
               title="Groups and Sessions"
               :rows="tableData"
@@ -59,9 +63,10 @@
           </q-card-section>
         </q-card>
 
-        <q-card class="q-mt-md">
+        <!-- Task Management -->
+        <q-card flat bordered class="q-mt-md bg-light">
           <q-card-section>
-            <div class="text-h6">Task Management</div>
+            <div class="text-h6 text-secondary text-center q-mb-md">Task Management</div>
             <q-list bordered separator class="q-mt-md">
               <q-item v-for="(task, index) in tasks" :key="index">
                 <q-item-section>
@@ -319,4 +324,27 @@ const tasks = ref([
 // }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.text-primary {
+  color: #1e88e5;
+}
+.bg-light {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.q-btn {
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.q-btn:hover {
+  transform: scale(1.1);
+}
+.q-card-section {
+  padding: 20px;
+}
+.q-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+</style>
