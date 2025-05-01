@@ -103,6 +103,14 @@ const teacherLinks = [
       { title: 'Session List', icon: 'view_list', link: '/session/list' },
     ],
   },
+  {
+    title: 'Tasks',
+    icon: 'event',
+    subMenu: [
+      { title: 'Create tasks', icon: 'add_circle', link: '' },
+      { title: 'Task List', icon: 'view_list', link: '/tasks' },
+    ],
+  },
   { title: 'Todo List', icon: 'checklist', link: '/todos' },
 
   { title: 'Logout', icon: 'logout', link: '/auth/logout' },
@@ -119,6 +127,11 @@ const studentLinks = [
     title: 'Session',
     icon: 'event',
     subMenu: [{ title: 'Session List', icon: 'view_list', link: '/session/list' }],
+  },
+  {
+    title: 'Tasks',
+    icon: 'task_alt',
+    subMenu: [{ title: 'Task List', icon: 'view_list', link: '/tasks' }],
   },
   { title: 'Todo List', icon: 'checklist', link: '/todos' },
 
