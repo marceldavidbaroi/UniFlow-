@@ -37,7 +37,7 @@
       <q-tooltip class="bg-secondary text-white"> Take note </q-tooltip>
     </q-btn>
 
-    <NoteDialog v-model="showNote" :notes="notes" :note="notes[0]" />
+    <NoteDialog v-model="showNote" />
     <div>
       <ClockCard />
     </div>
@@ -51,32 +51,7 @@ import NoteDialog from './NoteDialog.vue'
 
 const showNote = ref(false)
 const emit = defineEmits(['toggle-drawer']) // Define the event
-const notes = [
-  {
-    title: 'Vue 3 Composition API',
-    description:
-      'Understand how to use ref, reactive, and computed in the Composition API. Great for building scalable components.',
-  },
-  {
-    title: 'Pinia Store Basics',
-    description:
-      'Learn how to define state, actions, and getters using Pinia, the next-generation state management system for Vue.',
-  },
-  {
-    title: 'Quasar Framework Tips',
-    description:
-      "Use Quasar's powerful components like QTable, QDialog, and QLayout to build elegant UIs quickly.",
-  },
-  {
-    title: 'Firebase Integration',
-    description: 'Integrate Firestore with Vue to fetch, add, and manage user data in real time.',
-  },
-  {
-    title: 'Note Sharing Ideas',
-    description:
-      'Allow users to share public or private notes with others, and categorize them with tags and filters.',
-  },
-]
+
 function toggleLeftDrawer() {
   emit('toggle-drawer') // Emit event when button is clicked
 }
