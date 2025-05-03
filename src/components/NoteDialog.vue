@@ -18,13 +18,14 @@
         maxWidth: 'none',
         borderRadius: '8px',
       }"
+      style="border: 1px solid red"
       v-touch-pan.prevent.mouse="onPan"
       @mousedown.stop
     >
       <!-- Header -->
       <div
-        class="flex justify-between q-pa-sm bg-grey-2"
-        style="position: sticky; top: 0; z-index: 10"
+        class="row justify-between q-pa-sm bg-grey-2"
+        style="position: sticky; top: 0; z-index: 10; border: 1px solid green"
       >
         <div class="text-subtitle2 q-ml-sm">
           My Notes
@@ -62,53 +63,40 @@
       </div>
 
       <!-- Body -->
-      <div class="row q-gutter-none" style="flex: 1; overflow: hidden">
-        <!-- Left: Notes List -->
-        <div class="col-4 bg-grey-1 q-pa-sm column" style="height: 100%">
-          <div class="scroll" style="flex: 1">
-            <q-list>
-              <q-item
-                v-for="(n, index) in notes"
-                :key="index"
-                clickable
-                v-ripple
-                :active="index === selectedNoteIndex"
-                active-class="bg-secondary text-white"
-                @click="selectedNoteIndex = index"
-                class="q-mb-sm rounded-borders"
-                :disable="showAddNoteInput || showEditNoteInput"
-              >
-                <q-item-section>
-                  <q-item-label lines="1">{{ n.title }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </div>
-        </div>
-
-        <!-- Right: Note Detail -->
-        <div class="col-8 q-pa-md column" style="height: 100%">
-          <div class="scroll" style="flex: 1">
-            <!-- New note input form -->
-            <div v-if="showAddNoteInput" class="q-mt-sm">
-              <q-input
-                v-model="newNote.title"
-                placeholder="Title..."
-                dense
-                borderless
-                class="text-h5"
-              />
-              <q-input
-                v-model="newNote.description"
-                placeholder=" Description..."
-                dense
-                borderless
-                type="textarea"
-              />
+      <div class="row" style="flex: 1; overflow-x: hidden; border: 1px solid blue">
+        <q-splitter v-model="splitterModel">
+          <!-- Left: Notes List -->
+          <template v-slot:before>
+            <div class="col-4 bg-grey-1 q-pa-sm column" style="height: 100%">
+              <div class="scroll" style="flex: 1; overflow-y: auto; overflow-x: auto">
+                <q-list>
+                  <q-item
+                    v-for="(n, index) in notes"
+                    :key="index"
+                    clickable
+                    v-ripple
+                    :active="index === selectedNoteIndex"
+                    active-class="bg-secondary text-white"
+                    @click="selectedNoteIndex = index"
+                    class="q-mb-sm rounded-borders"
+                    :disable="showAddNoteInput || showEditNoteInput"
+                  >
+                    <q-item-section>
+                      <q-item-label lines="1" style="white-space: nowrap">{{
+                        n.title
+                      }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
             </div>
-            <div v-else>
-              <div v-if="notes.length > 0">
-                <div v-if="showEditNoteInput" class="text-h6">
+          </template>
+          <template v-slot:after>
+            <!-- Right: Note Detail -->
+            <div class="col-8 q-pa-md column" style="height: 100%">
+              <div class="scroll" style="flex: 1">
+                <!-- New note input form -->
+                <div v-if="showAddNoteInput" class="q-mt-sm">
                   <q-input
                     v-model="newNote.title"
                     placeholder="Title..."
@@ -116,9 +104,6 @@
                     borderless
                     class="text-h5"
                   />
-                </div>
-                <div v-else class="text-h6">{{ selectedNote?.title }}</div>
-                <div v-if="showEditNoteInput" class="text-body2 q-mt-sm">
                   <q-input
                     v-model="newNote.description"
                     placeholder=" Description..."
@@ -127,20 +112,43 @@
                     type="textarea"
                   />
                 </div>
-                <div v-else class="text-body2 q-mt-sm">{{ selectedNote?.description }}</div>
-              </div>
-              <div v-else class="text-body2 q-mt-sm text-center">
-                No notes available. Please add a note.
+                <div v-else>
+                  <div v-if="notes.length > 0">
+                    <div v-if="showEditNoteInput" class="text-h6">
+                      <q-input
+                        v-model="newNote.title"
+                        placeholder="Title..."
+                        dense
+                        borderless
+                        class="text-h5"
+                      />
+                    </div>
+                    <div v-else class="text-h6">{{ selectedNote?.title }}</div>
+                    <div v-if="showEditNoteInput" class="text-body2 q-mt-sm">
+                      <q-input
+                        v-model="newNote.description"
+                        placeholder=" Description..."
+                        dense
+                        borderless
+                        type="textarea"
+                      />
+                    </div>
+                    <div v-else class="text-body2 q-mt-sm">{{ selectedNote?.description }}</div>
+                  </div>
+                  <div v-else class="text-body2 q-mt-sm text-center">
+                    No notes available. Please add a note.
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </template>
+        </q-splitter>
       </div>
 
       <!-- Resize Handle (unchanged) -->
       <div
         class="resize-handle"
-        style="position: sticky; left: 100%; z-index: 10"
+        style="position: sticky; left: 100%; z-index: 10; border: 1px solid purple"
         @mousedown.stop.prevent="startResizing"
       ></div>
     </div>
@@ -149,6 +157,7 @@
 
 <script setup>
 import { ref, watch, onBeforeUnmount, computed } from 'vue'
+const splitterModel = ref(30)
 const props = defineProps({
   modelValue: Boolean,
   // note: { type: Object, required: true },
