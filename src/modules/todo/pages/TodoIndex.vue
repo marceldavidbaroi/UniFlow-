@@ -7,80 +7,103 @@
       <div class="q-gutter-sm q-mb-md action-buttons text-center">
         <div class="text-h4 brand_sb text-center">Todos</div>
 
-        <q-btn icon="search" label="Search" @click="onSearch" />
-        <q-btn icon="clear" label="Clear" @click="onClear" />
-        <q-btn-dropdown icon="filter_list" label="Filter">
-          <q-list style="min-width: 150px">
-            <!-- ALL Option -->
-            <q-item v-ripple>
-              <q-item-section>
-                <q-checkbox v-model="filters.all" label="All" @update:model-value="onAllChange" />
-              </q-item-section>
-            </q-item>
+        <!-- Modern and stylish search box -->
+        <div v-if="showSearchBox" class="row justify-center">
+          <q-input
+            v-model="searchQuery"
+            placeholder="Search todos..."
+            @input="applySearch"
+            clearable
+            outlined
+            dense
+            class="modern-search-box col-6"
+          >
+            <template v-slot:append>
+              <q-icon name="close" class="cursor-pointer" @click="closeSearchBox" />
+            </template>
+          </q-input>
+        </div>
 
-            <q-separator />
+        <div v-else>
+          <q-btn icon="search" label="Search" @click="toggleSearchBox" />
+          <q-btn icon="clear" label="Clear" @click="onClear" />
+          <q-btn-dropdown icon="filter_list" label="Filter">
+            <q-list style="min-width: 150px">
+              <!-- ALL Option -->
+              <q-item v-ripple>
+                <q-item-section>
+                  <q-checkbox v-model="filters.all" label="All" @update:model-value="onAllChange" />
+                </q-item-section>
+              </q-item>
 
-            <q-item v-ripple>
-              <q-item-section>
-                <q-checkbox
-                  v-model="filters.high"
-                  label="High"
-                  @update:model-value="onOtherChange"
-                />
-              </q-item-section>
-            </q-item>
+              <q-separator />
 
-            <q-item v-ripple>
-              <q-item-section>
-                <q-checkbox
-                  v-model="filters.medium"
-                  label="Medium"
-                  @update:model-value="onOtherChange"
-                />
-              </q-item-section>
-            </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <q-checkbox
+                    v-model="filters.high"
+                    label="High"
+                    @update:model-value="onOtherChange"
+                  />
+                </q-item-section>
+              </q-item>
 
-            <q-item v-ripple>
-              <q-item-section>
-                <q-checkbox v-model="filters.low" label="Low" @update:model-value="onOtherChange" />
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-        <q-btn-dropdown icon="sort" label="Sort">
-          <q-list style="min-width: 150px">
-            <q-item v-ripple v-close-popup>
-              <q-item-section>
-                <q-radio
-                  v-model="selectedSort"
-                  val="priority"
-                  label="Sort by Priority"
-                  @update:model-value="sortTodos('priority')"
-                />
-              </q-item-section>
-            </q-item>
-            <q-item v-ripple v-close-popup>
-              <q-item-section>
-                <q-radio
-                  v-model="selectedSort"
-                  val="dueDate"
-                  label="Sort by Due Date"
-                  @update:model-value="sortTodos('dueDate')"
-                />
-              </q-item-section>
-            </q-item>
-            <q-item v-ripple v-close-popup>
-              <q-item-section>
-                <q-radio
-                  v-model="selectedSort"
-                  val="createdAt"
-                  label="Sort by Created Date"
-                  @update:model-value="sortTodos('createdAt')"
-                />
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
+              <q-item v-ripple>
+                <q-item-section>
+                  <q-checkbox
+                    v-model="filters.medium"
+                    label="Medium"
+                    @update:model-value="onOtherChange"
+                  />
+                </q-item-section>
+              </q-item>
+
+              <q-item v-ripple>
+                <q-item-section>
+                  <q-checkbox
+                    v-model="filters.low"
+                    label="Low"
+                    @update:model-value="onOtherChange"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+          <q-btn-dropdown icon="sort" label="Sort">
+            <q-list style="min-width: 150px">
+              <q-item v-ripple v-close-popup>
+                <q-item-section>
+                  <q-radio
+                    v-model="selectedSort"
+                    val="priority"
+                    label="Sort by Priority"
+                    @update:model-value="sortTodos('priority')"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple v-close-popup>
+                <q-item-section>
+                  <q-radio
+                    v-model="selectedSort"
+                    val="dueDate"
+                    label="Sort by Due Date"
+                    @update:model-value="sortTodos('dueDate')"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple v-close-popup>
+                <q-item-section>
+                  <q-radio
+                    v-model="selectedSort"
+                    val="createdAt"
+                    label="Sort by Created Date"
+                    @update:model-value="sortTodos('createdAt')"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
       </div>
 
       <!-- Task List Panels -->
@@ -167,6 +190,8 @@ const todayTasks = ref([])
 const yesterdayTasks = ref()
 const upcomingTasks = ref()
 const completedTasks = ref([{ id: 5, text: 'Submit timesheet' }])
+const showSearchBox = ref(false)
+const searchQuery = ref('')
 
 // Functions
 function onAllChange(val) {
@@ -296,18 +321,45 @@ const onClear = () => {
   filters.value.low = false
   applyFilters()
 }
-// Lifecycle hooks
-onMounted(() => {
-  todoStore.getTodos().then(() => {
-    filteredTodos.value = todoStore.todos
-    data.value = todoStore.todos
-    todayTasks.value = findTodosUpdatedToday(todoStore.todos)
-    upcomingTasks.value = findUpcomingTodos(todoStore.todos)
-    yesterdayTasks.value = findYesterdayTodos(todoStore.todos)
 
-    const completed = todoStore.filterTodos(data.value, (todo) => todo.isCompleted)
-    completedTasks.value = completed.data
-  })
+// Function to toggle the search box visibility
+function toggleSearchBox() {
+  showSearchBox.value = true
+}
+
+// Function to close the search box
+function closeSearchBox() {
+  showSearchBox.value = false
+  searchQuery.value = ''
+  applySearch() // Reset the search results
+}
+
+// Function to apply search logic
+async function applySearch() {
+  try {
+    console.log('Searching for:', searchQuery.value)
+    const result = await todoStore.searchTodos(searchQuery.value)
+    if (result.success) {
+      console.log('Search results:', result.data)
+      filteredTodos.value = result.data
+    } else {
+      console.error('Search failed:', result.message)
+    }
+  } catch (error) {
+    console.error('Error during search:', error)
+  }
+}
+
+// Watch for changes in the search input and trigger search
+watch(searchQuery, (newVal) => {
+  console.log('Search input changed:', newVal)
+  applySearch()
+})
+
+// Ensure todos are fetched before searching
+onMounted(async () => {
+  await todoStore.getTodos()
+  filteredTodos.value = todoStore.todos
 })
 </script>
 
@@ -325,5 +377,10 @@ onMounted(() => {
   background: white;
   padding: 60px 0;
   z-index: 5;
+}
+
+.modern-search-box {
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 </style>
