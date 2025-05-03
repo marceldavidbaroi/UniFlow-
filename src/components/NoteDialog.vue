@@ -7,9 +7,11 @@
     transition-show="scale"
     transition-hide="scale"
   >
+    <!-- Outer container -->
     <div
-      class="absolute bg-grey-1 column"
+      class="bg-grey-1 column"
       :style="{
+        position: 'absolute',
         left: `${position.x}px`,
         top: `${position.y}px`,
         width: `${size.width}px`,
@@ -17,15 +19,16 @@
         zIndex: 9999,
         maxWidth: 'none',
         borderRadius: '8px',
+        border: '1px solid red',
+        minWidth: '400px',
       }"
-      style="border: 1px solid red"
       v-touch-pan.prevent.mouse="onPan"
       @mousedown.stop
     >
-      <!-- Header -->
+      <!-- HEADER -->
       <div
         class="row justify-between q-pa-sm bg-grey-2"
-        style="position: sticky; top: 0; z-index: 10; border: 1px solid green"
+        style="z-index: 10; border: 1px solid green"
       >
         <div class="text-subtitle2 q-ml-sm">
           My Notes
@@ -62,13 +65,14 @@
         </div>
       </div>
 
-      <!-- Body -->
-      <div class="row" style="flex: 1; overflow-x: hidden; border: 1px solid blue">
-        <q-splitter v-model="splitterModel">
-          <!-- Left: Notes List -->
+      <!-- BODY: Scrollable Splitter -->
+      <div class="col">
+        <q-splitter v-model="splitterModel" style="height: 100%">
+          <!-- LEFT -->
           <template v-slot:before>
-            <div class="col-4 bg-grey-1 q-pa-sm column" style="height: 100%">
-              <div class="scroll" style="flex: 1; overflow-y: auto; overflow-x: auto">
+            <div class="column full-height bg-grey-1 q-pa-sm">
+              <div class="col-auto text-subtitle1">Notes</div>
+              <div class="col scroll">
                 <q-list>
                   <q-item
                     v-for="(n, index) in notes"
@@ -82,21 +86,22 @@
                     :disable="showAddNoteInput || showEditNoteInput"
                   >
                     <q-item-section>
-                      <q-item-label lines="1" style="white-space: nowrap">{{
-                        n.title
-                      }}</q-item-label>
+                      <q-item-label lines="1" style="white-space: nowrap">
+                        {{ n.title }}
+                      </q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
               </div>
             </div>
           </template>
+
+          <!-- RIGHT -->
           <template v-slot:after>
-            <!-- Right: Note Detail -->
-            <div class="col-8 q-pa-md column" style="height: 100%">
-              <div class="scroll" style="flex: 1">
-                <!-- New note input form -->
-                <div v-if="showAddNoteInput" class="q-mt-sm">
+            <div class="column full-height q-pa-md">
+              <div class="col-auto text-subtitle1">Note Detail</div>
+              <div class="col scroll">
+                <div v-if="showAddNoteInput">
                   <q-input
                     v-model="newNote.title"
                     placeholder="Title..."
@@ -106,7 +111,7 @@
                   />
                   <q-input
                     v-model="newNote.description"
-                    placeholder=" Description..."
+                    placeholder="Description..."
                     dense
                     borderless
                     type="textarea"
@@ -127,7 +132,7 @@
                     <div v-if="showEditNoteInput" class="text-body2 q-mt-sm">
                       <q-input
                         v-model="newNote.description"
-                        placeholder=" Description..."
+                        placeholder="Description..."
                         dense
                         borderless
                         type="textarea"
@@ -145,10 +150,10 @@
         </q-splitter>
       </div>
 
-      <!-- Resize Handle (unchanged) -->
+      <!-- RESIZE HANDLE -->
       <div
-        class="resize-handle"
-        style="position: sticky; left: 100%; z-index: 10; border: 1px solid purple"
+        class="q-mt-xs resize-handle"
+        style="height: 16px; cursor: row-resize; z-index: 10; border: 1px solid purple"
         @mousedown.stop.prevent="startResizing"
       ></div>
     </div>
