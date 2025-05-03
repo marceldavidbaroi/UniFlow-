@@ -19,17 +19,13 @@
         zIndex: 9999,
         maxWidth: 'none',
         borderRadius: '8px',
-        border: '1px solid red',
         minWidth: '400px',
       }"
       v-touch-pan.prevent.mouse="onPan"
       @mousedown.stop
     >
       <!-- HEADER -->
-      <div
-        class="row justify-between q-pa-sm bg-grey-2"
-        style="z-index: 10; border: 1px solid green"
-      >
+      <div class="row justify-between q-pa-sm bg-grey-2" style="z-index: 10">
         <div class="text-subtitle2 q-ml-sm">
           My Notes
           <q-btn flat dense size="sm" color="secondary" icon="add" @click="addNoteInput" />
@@ -153,7 +149,7 @@
       <!-- RESIZE HANDLE -->
       <div
         class="q-mt-xs resize-handle"
-        style="height: 16px; cursor: row-resize; z-index: 10; border: 1px solid purple"
+        style="height: 16px; cursor: row-resize; z-index: 10"
         @mousedown.stop.prevent="startResizing"
       ></div>
     </div>
