@@ -20,12 +20,12 @@ export default {
     if (!userId) throw new Error('User not authenticated')
 
     const todosRef = collection(db, 'todos', userId, 'items')
-    const snapshot = await getDocs(todosRef)
-    const nextId = snapshot.size + 1
+    await getDocs(todosRef)
     const now = new Date()
 
+    const todoDocRef = doc(todosRef) // Firestore will generate a unique ID
     const todoData = {
-      id: nextId,
+      id: todoDocRef.id, // Use the auto-generated ID
       userId,
       ...payload,
       isCompleted: false,
@@ -33,7 +33,6 @@ export default {
       updatedAt: now,
     }
 
-    const todoDocRef = doc(todosRef, String(nextId))
     await setDoc(todoDocRef, todoData)
 
     this.todos.push(todoData)
@@ -124,8 +123,8 @@ export default {
     }
   },
 
-  sortTodos(key = 'dueDate', direction = 'asc') {
-    const sorted = [...this.todos].sort((a, b) => {
+  sortTodos(data, key = 'dueDate', direction = 'asc') {
+    const sorted = [...data].sort((a, b) => {
       if (!a[key]) return 1
       if (!b[key]) return -1
 
@@ -137,20 +136,18 @@ export default {
       return 0
     })
 
-    this.todos = sorted
-
     return {
       success: true,
       message: 'Todos sorted successfully',
       data: sorted,
     }
   },
-  filterTodos(filterFn) {
-    if (typeof filterFn !== 'function') {
-      throw new Error('filterFn must be a function')
-    }
+  filterTodos(data = [], filterFn) {
+    // if (typeof filterFn !== 'function') {
+    //   throw new Error('filterFn must be a function')
+    // }
 
-    const filtered = this.todos.filter(filterFn)
+    const filtered = data.filter(filterFn) // Use the passed 'data' instead of 'this.todos'
 
     return {
       success: true,

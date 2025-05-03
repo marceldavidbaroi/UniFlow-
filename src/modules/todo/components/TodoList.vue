@@ -155,6 +155,7 @@ async function handleDelete(id) {
         position: 'top',
         timeout: 2500,
       })
+      emit('todo-updated') // Emit event to update the list immediately
     }
   } catch {
     Notify.create({
