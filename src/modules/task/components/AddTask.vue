@@ -4,15 +4,17 @@
       <q-form @submit="onSubmit" class="q-gutter-md q-pa-md rounded-borders">
         <div class="row q-col-gutter-md">
           <!-- <q-input v-model="formData.taskID" label="Task ID" outlined class="col-xs-12 col-sm-6" /> -->
-          <q-input
+          <q-select
             v-model="formData.sessionId"
-            label="Session ID"
+            :options="sessionOption"
+            label="Session "
             outlined
             class="col-xs-12 col-sm-6"
           />
-          <q-input
+          <q-select
             v-model="formData.groupID"
-            label="Group ID"
+            :options="groupOption"
+            label="Group"
             outlined
             class="col-xs-12 col-sm-6"
           />
@@ -30,8 +32,9 @@
             outlined
             class="col-xs-12"
           />
-          <q-input
+          <q-select
             v-model="formData.category"
+            :options="categories"
             label="Category"
             outlined
             class="col-xs-12 col-sm-6"
@@ -39,33 +42,66 @@
           <div class="col-xs-12">
             <label class="text-weight-medium q-mb-sm text-grey-8">Tags</label>
             <div class="row items-center q-gutter-sm">
-              <q-input
-                v-model="newTag"
-                placeholder="Add tag and press Enter"
+              <div class="col-12">
+                <q-chip
+                  v-for="(tag, index) in formData.tags"
+                  :key="index"
+                  closable
+                  square
+                  @close="removeTag(index)"
+                  color="secondary"
+                  text-color="white"
+                >
+                  {{ tag }}
+                </q-chip>
+              </div>
+              <q-select
+                v-model="formData.tags"
+                :options="tags"
+                label="Tags"
                 outlined
                 dense
-                @keyup.enter="addTag"
+                multiple
+                emit-value
+                map-options
                 class="col"
               />
-              <q-chip
-                v-for="(tag, index) in formData.tags"
-                :key="index"
-                closable
-                @close="removeTag(index)"
-                color="primary"
-                text-color="white"
-              >
-                {{ tag }}
-              </q-chip>
             </div>
           </div>
           <q-input
             v-model="formData.deadline"
-            type="datetime"
             label="Deadline"
             outlined
             class="col-xs-12 col-sm-6"
-          />
+            readonly
+          >
+            <template v-slot:append>
+              <q-icon name="event" color="secondary" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date
+                    v-model="formData.deadline"
+                    mask="YYYY-MM-DDTHH:mm:ss"
+                    :default-view="'Calendar'"
+                    :emit-immediately="false"
+                    color="secondary"
+                  >
+                    <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                      <q-btn label="OK" color="secondary" flat v-close-popup />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-time v-model="formData.deadline" mask="YYYY-MM-DDTHH:mm:ss" format24h>
+                <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                  <q-btn label="OK" color="secondary" flat v-close-popup />
+                </div>
+              </q-time>
+            </q-popup-proxy>
+          </q-input>
+
           <q-input
             v-model="formData.totalMarks"
             type="number"
@@ -74,26 +110,40 @@
             class="col-xs-12 col-sm-6"
           />
         </div>
-        <q-expansion-item label="Grading Rubric" icon="rule" class="q-mt-md">
-          <q-card>
-            <q-card-section class="q-gutter-md">
+        <q-expansion-item label="Grading Rubric" icon="rule" color="secondary" class="q-mt-md">
+          <q-card bordered="">
+            <q-card-section class="bg-grey-2">
               <div
                 v-for="(criterion, index) in formData.gradingRubric.criteria"
                 :key="criterion.criterionId || index"
                 class="row q-col-gutter-md items-end"
               >
-                <q-input
+                <!-- <q-input
                   v-model="criterion.criterionId"
                   label="Criterion ID"
                   outlined
                   class="col-xs-12 col-sm-6"
-                />
+                /> -->
+                <div class="col-12 text-bold text-secondary q-mt-lg">
+                  Criterion No: {{ criterion.criterionId }}
+                  <q-btn
+                    icon="delete"
+                    color="negative"
+                    @click="removeCriterion(index)"
+                    size="sm"
+                    flat
+                    round
+                    dense
+                  />
+                </div>
                 <q-input
                   v-model="criterion.description"
                   label="Description"
                   outlined
                   class="col-xs-12 col-sm-8"
-                />
+                >
+                  <template #default></template>
+                </q-input>
                 <q-input
                   v-model="criterion.maxPoints"
                   type="number"
@@ -101,18 +151,9 @@
                   outlined
                   class="col-xs-12 col-sm-4"
                 />
-                <q-btn
-                  icon="delete"
-                  color="negative"
-                  @click="removeCriterion(index)"
-                  size="sm"
-                  flat
-                  round
-                  dense
-                />
               </div>
               <div class="q-mt-md">
-                <q-btn label="Add Criterion" @click="addCriterion" color="primary" />
+                <q-btn label="Add Criterion" @click="addCriterion" color="secondary" />
                 <q-input
                   v-model="formData.gradingRubric.notes"
                   type="textarea"
@@ -124,22 +165,34 @@
             </q-card-section>
           </q-card>
         </q-expansion-item>
-        <q-expansion-item label="Tasks" icon="list_alt" class="q-mt-md">
+        <q-expansion-item label="Tasks" icon="list_alt" color="secondary" class="q-mt-md">
           <q-card>
             <q-card-section class="q-gutter-md">
               <div
                 v-for="(task, index) in formData.tasks"
                 :key="task.taskId || index"
-                class="q-mb-md bordered rounded-borders"
+                class="q-mb-md bg-grey-2"
               >
                 <div class="q-pa-md">
                   <div class="row q-col-gutter-md">
-                    <q-input
+                    <!-- <q-input
                       v-model="task.taskId"
                       label="Task ID"
                       outlined
                       class="col-xs-12 col-sm-6"
-                    />
+                    /> -->
+
+                    <div class="text-bold text-secondary">
+                      Task No: {{ task.taskId }}
+                      <q-btn
+                        flat
+                        size="sm"
+                        dense
+                        icon="delete"
+                        color="negative"
+                        @click="removeTask(index)"
+                      />
+                    </div>
                     <q-input
                       v-model="task.question"
                       type="textarea"
@@ -209,7 +262,7 @@
                       <q-btn
                         label="Add Attachment"
                         @click="addTaskAttachment(index)"
-                        color="primary"
+                        color="secondary"
                         size="sm"
                       />
                     </div>
@@ -227,15 +280,15 @@
                     />
                   </div>
                   <div class="q-mt-md flex justify-end">
-                    <q-btn icon="delete" color="negative" @click="removeTask(index)" />
+                    <!-- <q-btn icon="delete" color="negative" @click="removeTask(index)" /> -->
                   </div>
                 </div>
               </div>
-              <q-btn label="Add Task" @click="addTask" color="primary" />
+              <q-btn label="Add Task" @click="addTask" color="secondary" />
             </q-card-section>
           </q-card>
         </q-expansion-item>
-        <q-expansion-item label="Settings" icon="settings" class="q-mt-md">
+        <q-expansion-item label="Settings" icon="settings" color="secondary" class="q-mt-md">
           <q-card>
             <q-card-section class="q-gutter-md">
               <q-toggle
@@ -267,21 +320,33 @@
             </q-card-section>
           </q-card>
         </q-expansion-item>
-        <q-expansion-item label="Announcements" icon="campaign" class="q-mt-md">
+        <q-expansion-item label="Announcements" icon="campaign" color="secondary" class="q-mt-md">
           <q-card>
             <q-card-section class="q-gutter-md">
               <div
                 v-for="(announcement, index) in formData.announcements"
                 :key="announcement.announcementId || index"
-                class="q-mb-md bordered rounded-borders"
+                class="q-mb-md bordered rounded-borders bg-grey-2"
               >
                 <div class="q-pa-md row q-col-gutter-md items-end">
-                  <q-input
+                  <!-- <q-input
                     v-model="announcement.announcementId"
                     label="Announcement ID"
                     outlined
                     class="col-xs-12 col-sm-6"
-                  />
+                  /> -->
+                  <div class="text-secondary text-bold">
+                    Announcement No: {{ announcement.announcementId }}
+                    <q-btn
+                      icon="delete"
+                      color="negative"
+                      @click="removeAnnouncement(index)"
+                      size="sm"
+                      flat
+                      round
+                      dense
+                    />
+                  </div>
                   <q-input v-model="announcement.title" label="Title" outlined class="col-xs-12" />
                   <q-input
                     v-model="announcement.content"
@@ -303,10 +368,32 @@
                     outlined
                     class="col-xs-12 col-sm-6"
                   />
+                </div>
+              </div>
+              <q-btn label="Add Announcement" @click="addAnnouncement" color="secondary" />
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
+        <q-expansion-item label="Resources" icon="folder" color="secondary" class="q-mt-md">
+          <q-card class="bg-grey-2">
+            <q-card-section class="">
+              <div
+                v-for="(resource, index) in formData.resources"
+                :key="resource.resourceId || index"
+                class="row q-col-gutter-md items-end q-mb-sm q-mt-md"
+              >
+                <!-- <q-input
+                  v-model="resource.resourceId"
+                  label="Resource ID"
+                  outlined
+                  class="col-xs-12 col-sm-4"
+                /> -->
+                <div class="text-secondary text-bold col-12">
+                  Resource No: {{ resource.resourceId }}
                   <q-btn
                     icon="delete"
                     color="negative"
-                    @click="removeAnnouncement(index)"
+                    @click="removeResource(index)"
                     size="sm"
                     flat
                     round
@@ -314,34 +401,10 @@
                     class="col-auto"
                   />
                 </div>
-              </div>
-              <q-btn label="Add Announcement" @click="addAnnouncement" color="primary" />
-            </q-card-section>
-          </q-card>
-        </q-expansion-item>
-        <q-expansion-item label="Resources" icon="folder" class="q-mt-md">
-          <q-card>
-            <q-card-section class="q-gutter-md">
-              <div
-                v-for="(resource, index) in formData.resources"
-                :key="resource.resourceId || index"
-                class="row q-col-gutter-md items-end q-mb-sm"
-              >
-                <q-input
-                  v-model="resource.resourceId"
-                  label="Resource ID"
-                  outlined
-                  class="col-xs-12 col-sm-4"
-                />
-                <q-input
-                  v-model="resource.title"
-                  label="Title"
-                  outlined
-                  class="col-xs-12 col-sm-4"
-                />
-                <q-input v-model="resource.url" label="URL" outlined class="col-xs-12 col-sm-4" />
-                <q-input v-model="resource.type" label="Type" outlined class="col-xs-12 col-sm-4" />
-                <q-btn
+                <q-input v-model="resource.title" label="Title" outlined class="col-12" />
+                <q-input v-model="resource.url" label="URL" outlined class="col-12" />
+                <q-input v-model="resource.type" label="Type" outlined class="col-12" />
+                <!-- <q-btn
                   icon="delete"
                   color="negative"
                   @click="removeResource(index)"
@@ -350,36 +413,74 @@
                   round
                   dense
                   class="col-auto"
-                />
+                /> -->
               </div>
-              <q-btn label="Add Resource" @click="addResource" color="primary" />
+              <q-btn label="Add Resource" @click="addResource" color="secondary" />
             </q-card-section>
           </q-card>
         </q-expansion-item>
-        <div class="row q-col-gutter-md q-mt-md">
-          <!-- <q-input
-            v-model="formData.createdAt"
-            type="datetime"
-            label="Created At"
-            outlined
-            class="col-xs-12 col-sm-6"
-          />
-          <q-input
-            v-model="formData.updatedAt"
-            type="datetime"
-            label="Updated At"
-            outlined
-            class="col-xs-12 col-sm-6"
-          /> -->
-        </div>
-        <q-btn label="Create Task" type="submit" color="primary" class="full-width q-mt-md" />
+        <div class="row q-col-gutter-md q-mt-md"></div>
+        <q-btn label="Create Task" type="submit" color="secondary" class="full-width q-mt-md" />
       </q-form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { useGroupStore } from 'src/stores/group-store'
+import { useSessionStore } from 'src/stores/sessionStore'
+import { onMounted, ref } from 'vue'
+const sessionStore = useSessionStore()
+const groupStore = useGroupStore()
+
+const sessionOption = ref([])
+const groupOption = ref([])
+onMounted(async () => {
+  const sessions = await sessionStore.fetchCreatedSessions()
+  sessionOption.value = sessions.data.map((session) => ({
+    label: `${session.sessionID} - ${session.sessionName}`,
+    value: session.id,
+  }))
+
+  const groups = await groupStore.fetchAllGroups()
+
+  groupOption.value = groups.data.map((group) => ({
+    label: group.groupName,
+    value: group.id,
+  }))
+
+  console.log(groupOption.value)
+})
+
+const categories = ref([
+  { label: 'Assignment', value: 'assignment' },
+  { label: 'Project', value: 'project' },
+  { label: 'Quiz', value: 'quiz' },
+  { label: 'Lab Work', value: 'lab_work' },
+  { label: 'Homework', value: 'homework' },
+  { label: 'Exam', value: 'exam' },
+  { label: 'Presentation', value: 'presentation' },
+  { label: 'Peer Review', value: 'peer_review' },
+  { label: 'Research Paper', value: 'research_paper' },
+  { label: 'Discussion', value: 'discussion' },
+])
+
+const tags = ref([
+  { label: 'Group', value: 'group' },
+  { label: 'Graded', value: 'graded' },
+  { label: 'Deadline', value: 'deadline' },
+  { label: 'Critical', value: 'critical' },
+  { label: 'Collaborative', value: 'collaborative' },
+  { label: 'Peer Review', value: 'peer_review' },
+  { label: 'Easy', value: 'easy' },
+  { label: 'Medium', value: 'medium' },
+  { label: 'Hard', value: 'hard' },
+  { label: 'Programming', value: 'programming' },
+  { label: 'Writing', value: 'writing' },
+  { label: 'Presentation', value: 'presentation' },
+  { label: 'Research', value: 'research' },
+  { label: 'Review', value: 'review' },
+])
 
 const formData = ref({
   taskID: '',
@@ -411,34 +512,39 @@ const formData = ref({
   resources: [],
 })
 
-const newTag = ref('')
+// const newTag = ref('')
 
-const addTag = () => {
-  if (newTag.value.trim() !== '') {
-    formData.value.tags.push(newTag.value.trim())
-    newTag.value = ''
-  }
-}
+// const addTag = () => {
+//   if (newTag.value.trim() !== '') {
+//     formData.value.tags.push(newTag.value.trim())
+//     newTag.value = ''
+//   }
+// }
 
 const removeTag = (index) => {
   formData.value.tags.splice(index, 1)
 }
 
+const criterionCounter = ref(1) // Initialize a counter for auto-incrementing IDs
+
 const addCriterion = () => {
   formData.value.gradingRubric.criteria.push({
-    criterionId: '',
+    criterionId: criterionCounter.value, // Use the counter for the ID
     description: '',
     maxPoints: null,
   })
+  criterionCounter.value++ // Increment the counter
 }
 
 const removeCriterion = (index) => {
   formData.value.gradingRubric.criteria.splice(index, 1)
 }
 
+const taskCounter = ref(1) // Initialize a counter for auto-incrementing task IDs
+
 const addTask = () => {
   formData.value.tasks.push({
-    taskId: '',
+    taskId: taskCounter.value, // Use the counter for the task ID
     question: '',
     taskDetails: {
       description: '',
@@ -452,6 +558,7 @@ const addTask = () => {
     learningObjectives: [],
     membersProgress: [], // Note: This is usually populated dynamically
   })
+  taskCounter.value++ // Increment the counter
 }
 
 const removeTask = (index) => {
@@ -468,28 +575,30 @@ const addTaskAttachment = (taskIndex) => {
 const removeTaskAttachment = (taskIndex, attachIndex) => {
   formData.value.tasks[taskIndex].taskDetails.attachments.splice(attachIndex, 1)
 }
-
+const announcementCounter = ref(1) // Initialize a counter for auto-incrementing IDs
 const addAnnouncement = () => {
   formData.value.announcements.push({
-    announcementId: '',
+    announcementId: announcementCounter.value,
     title: '',
     content: '',
     createdAt: '',
     authorId: '',
   })
+  announcementCounter.value++
 }
 
 const removeAnnouncement = (index) => {
   formData.value.announcements.splice(index, 1)
 }
-
+const resourceCounter = ref(1) // Initialize a counter for auto-incrementing IDs
 const addResource = () => {
   formData.value.resources.push({
-    resourceId: '',
+    resourceId: resourceCounter.value,
     title: '',
     url: '',
     type: '',
   })
+  resourceCounter.value++
 }
 
 const removeResource = (index) => {
