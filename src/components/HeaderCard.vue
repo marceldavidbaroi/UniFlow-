@@ -25,7 +25,19 @@
     />
 
     <q-toolbar-title class="brand_sb text-h3 q-pa-sm"> UNIFLOW </q-toolbar-title>
+    <q-btn
+      flat
+      dense
+      size="md"
+      color="secondary"
+      icon="description"
+      class="q-mx-sm"
+      @click="showNote = true"
+    >
+      <q-tooltip class="bg-secondary text-white"> Take note </q-tooltip>
+    </q-btn>
 
+    <NoteDialog v-model="showNote" />
     <div>
       <ClockCard />
     </div>
@@ -33,9 +45,11 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue'
+import { defineEmits, ref } from 'vue'
 import ClockCard from 'src/components/ClockCard.vue'
+import NoteDialog from './NoteDialog.vue'
 
+const showNote = ref(false)
 const emit = defineEmits(['toggle-drawer']) // Define the event
 
 function toggleLeftDrawer() {

@@ -87,6 +87,12 @@
       </q-item-section>
     </q-item>
   </q-list>
+
+  <div v-if="!props.todos.length" class="q-pa-md text-center text-grey-6">
+    <q-icon name="info" size="lg" color="grey-5" class="q-mb-sm" />
+    <div class="text-h6">No Todos Found</div>
+    <div class="text-caption">You can add a new todo to get started!</div>
+  </div>
 </template>
 
 <script setup>
@@ -155,6 +161,7 @@ async function handleDelete(id) {
         position: 'top',
         timeout: 2500,
       })
+      emit('todo-updated') // Emit event to update the list immediately
     }
   } catch {
     Notify.create({
