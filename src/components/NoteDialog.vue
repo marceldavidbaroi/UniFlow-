@@ -515,25 +515,18 @@ async function saveNote() {
       isPublic: selectedNote.value.isPublic,
       sharedWith: '',
     }
-    console.log(payload)
     if (isEdit.value) {
-      console.log('update', selectedNoteIndex.value)
       await noteStore.updateNote(selectedNote.value.id, payload)
-      console.log('update', selectedNoteIndex.value)
 
       isEdit.value = false
     } else {
-      console.log('new ')
       await noteStore.createNote(payload)
       selectedNoteIndex.value = notes.value.length
     }
     await noteStore.fetchNotesByUser()
 
-    console.log(selectedNoteIndex.value)
-
     notes.value = noteStore.userNotes
 
-    console.log('saved', notes.value)
     // title, description, links, category, tags, isPublic, sharedWith
     newNote.value = ''
     showAddNoteInput.value = false
@@ -554,7 +547,6 @@ onMounted(async () => {
   await noteStore.fetchPublicNotes()
   notes.value = noteStore.userNotes
 
-  console.log(noteStore.userNotes)
   if (userStore.currentRole === 'teacher') {
     tagOptions.value = [...teacherTags, ...statusTags]
   } else if (userStore.currentRole === 'student') {
