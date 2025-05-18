@@ -257,7 +257,6 @@ onMounted(async () => {
   graphDataGroup.value = getgraphDataGroup()
   await sessionStore.fetchCreatedSessions()
   graphDataSession.value = getgraphDataSession()
-  console.log('graphDataGroup', graphDataSession.value)
   createGroupStudentChart()
   createSessionTypeChart()
 })

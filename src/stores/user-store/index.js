@@ -5,6 +5,7 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     currentUser: null,
     currentRole: null,
+    allUsers:[]
   }),
 
   // actions: {

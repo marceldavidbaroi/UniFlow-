@@ -157,12 +157,12 @@
                   size="sm"
                   flat
                   dense
-                  :icon="selectedNote?.isPublic ? 'public' : 'lock'"
-                  :color="selectedNote?.isPublic ? 'green-4' : 'grey-5'"
-                  @click="selectedNote.isPublic = !selectedNote.isPublic"
+                  :icon="newNote?.isPublic ? 'public' : 'lock'"
+                  :color="newNote?.isPublic ? 'green-4' : 'grey-5'"
+                  @click="newNote.isPublic = !newNote.isPublic"
                 >
                   <q-tooltip class="bg-secondary">
-                    {{ isPublic ? 'public' : 'private' }}
+                    {{ newNote.isPublic ? 'public' : 'private' }}
                   </q-tooltip>
                 </q-btn>
               </div>
@@ -188,7 +188,6 @@
                     square
                     @remove="removeTag(scope.option.value)"
                     :label="scope.option.label"
-                    :text-color="getTextColor(scope.option.color)"
                     class="q-mx-xs"
                     :class="`bg-${scope.option.color}`"
                   />
@@ -205,9 +204,48 @@
                   </q-item>
                 </template>
               </q-select>
+              <!-- {{ userStore.allUsers }} -->
+              <!-- shared With -->
+              <q-select
+                v-if="showShareUser && (showEditNoteInput || showAddNoteInput)"
+                filled
+                v-model="newNote.sharedWith"
+                :options="userStore.allUsers"
+                label="Select user"
+                use-chips
+                multiple
+                dense
+                option-value="id"
+                option-label="name"
+                color="secondary"
+                class="q-mx-md"
+              >
+                <!-- Custom chip rendering -->
+                <template v-slot:chip="scope">
+                  <q-chip
+                    removable
+                    square
+                    @remove="removeSharedUser(scope.option.value)"
+                    :label="scope.option.label"
+                    class="q-mx-xs"
+                  />
+                </template>
+                <!-- Option rendering -->
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+                    <q-item-section avatar>
+                      <q-icon name="label" :color="scope.opt.color" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.name }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+
               <div class="column full-height q-pa-md">
                 <div v-if="!showAddNoteInput" class="row">
-                  <div v-for="(tag, tagIndex) in selectedNote.tags" :key="tagIndex">
+                  <div v-for="(tag, tagIndex) in selectedNote?.tags" :key="tagIndex">
                     <q-chip
                       square
                       dense
@@ -382,7 +420,6 @@ const statusTags = [
   { label: 'Draft', value: '#draft', color: 'blue-grey-2', textColor: 'blue-grey-10' },
 ]
 
-const isPublic = ref(false)
 const showShareUser = ref(false)
 const showTagSelect = ref(false)
 const isUserNotes = ref(true)
@@ -405,25 +442,28 @@ const toggleNotes = () => {
 function removeTag(val) {
   newNote.value.tags = newNote.value.tagsfilter((tag) => tag !== val)
 }
+function removeSharedUser(val) {
+  newNote.value.sharedWith = newNote.value.sharedWithfilter((tag) => tag !== val)
+}
 
 // Helper to get text color based on chip bg color for contrast
-function getTextColor(bgColor) {
-  const darkColors = [
-    'blue-4',
-    'blue-5',
-    'blue-6',
-    'green-4',
-    'green-5',
-    'green-6',
-    'red-5',
-    'red-6',
-    'orange-4',
-    'orange-5',
-    'orange-6',
-    'grey-5',
-  ]
-  return darkColors.includes(bgColor) ? 'white' : 'black'
-}
+// function getTextColor(bgColor) {
+//   const darkColors = [
+//     'blue-4',
+//     'blue-5',
+//     'blue-6',
+//     'green-4',
+//     'green-5',
+//     'green-6',
+//     'red-5',
+//     'red-6',
+//     'orange-4',
+//     'orange-5',
+//     'orange-6',
+//     'grey-5',
+//   ]
+//   return darkColors.includes(bgColor) ? 'white' : 'black'
+// }
 
 const notes = ref(noteStore.userNotes)
 
@@ -460,6 +500,8 @@ const editNote = () => {
     title: selectedNote.value.title,
     description: selectedNote.value.description,
     tags: selectedNote.value.tags,
+    sharedWith: selectedNote.value.sharedWith,
+    isPublic: selectedNote.value.isPublic,
   }
   // showEditNoteInput.value = false
 }
@@ -494,7 +536,23 @@ const showEditNoteInput = ref(false)
 const newNote = ref({
   title: '',
   description: '',
+  links: [],
+  category: [],
+  tags: [],
+  isPublic: false,
+  sharedWith: [],
 })
+const resetNewNote = () => {
+  newNote.value = {
+    title: '',
+    description: '',
+    links: [],
+    category: [],
+    tags: [],
+    isPublic: false,
+    sharedWith: [],
+  }
+}
 
 function addNoteInput() {
   showAddNoteInput.value = true
@@ -507,13 +565,13 @@ async function saveNote() {
     // notes.value.push({ title: newNote.value.title, description: newNote.value.description })
 
     const payload = {
-      title: newNote.value.title,
-      description: newNote.value.description,
-      links: '',
-      category: '',
+      title: newNote.value.title || '',
+      description: newNote.value.description || '',
+      links: newNote.value.links || [],
+      category: newNote.value.category || [],
       tags: newNote.value.tags || [],
-      isPublic: selectedNote.value.isPublic,
-      sharedWith: '',
+      isPublic: newNote.value.isPublic || false,
+      sharedWith: newNote.value.sharedWith || [],
     }
     if (isEdit.value) {
       await noteStore.updateNote(selectedNote.value.id, payload)
@@ -524,13 +582,16 @@ async function saveNote() {
       selectedNoteIndex.value = notes.value.length
     }
     await noteStore.fetchNotesByUser()
+    await noteStore.fetchPublicNotes()
 
     notes.value = noteStore.userNotes
 
     // title, description, links, category, tags, isPublic, sharedWith
-    newNote.value = ''
+    resetNewNote()
     showAddNoteInput.value = false
     showEditNoteInput.value = false
+    showShareUser.value = false
+    showTagSelect.value = false
   }
   isLoading.value = false
 }
@@ -545,6 +606,8 @@ const deleteNote = async () => {
 onMounted(async () => {
   await noteStore.fetchNotesByUser()
   await noteStore.fetchPublicNotes()
+  await userStore.getAllUsers()
+
   notes.value = noteStore.userNotes
 
   if (userStore.currentRole === 'teacher') {

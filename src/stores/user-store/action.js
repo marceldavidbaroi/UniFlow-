@@ -7,7 +7,7 @@
 
 
 import { db } from 'boot/firebase'
-import { collection, doc, getDoc } from 'firebase/firestore'
+import { collection, doc, getDoc ,getDocs} from 'firebase/firestore'
 
 export default {
   setUser(user) {
@@ -42,4 +42,20 @@ export default {
       throw error
     }
   },
+    async getAllUsers() {
+    try {
+      const usersCollection = collection(db, 'users')
+      const snapshot = await getDocs(usersCollection)
+
+      const data= snapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name || 'Unnamed'
+      }))
+      this.allUsers=data
+      return data
+    } catch (error) {
+      console.error('Error fetching all users:', error)
+      throw error
+    }
+  }
 }

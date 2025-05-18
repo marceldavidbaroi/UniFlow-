@@ -16,14 +16,18 @@ export const useNoteStore = defineStore('note', {
     groupBy: null, // 'tags' or 'category'
   }),
 
-  getters: {
-    sortedUserNotes: (state) => {
-      return [...state.userNotes].sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
-    },
-    sortedPublicNotes: (state) => {
-      return [...state.publicNotes].sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
-    },
+getters: {
+  sortedUserNotes: (state) => {
+    return [...state.userNotes].sort((a, b) => {
+      return b.createdAt?.toMillis?.() - a.createdAt?.toMillis?.()
+    })
   },
+  sortedPublicNotes: (state) => {
+    return [...state.publicNotes].sort((a, b) => {
+      return b.createdAt?.toMillis?.() - a.createdAt?.toMillis?.()
+    })
+  },
+},
 
   actions,
 
