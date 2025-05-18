@@ -32,12 +32,22 @@
         </div>
         <div>
           <q-btn
+            v-if="showAddNoteInput"
+            flat
+            dense
+            color="red-10"
+            icon="arrow_back"
+            size="sm"
+            @click="showAddNoteInput = false"
+          />
+          <q-btn
+            v-if="notes.length && !showAddNoteInput"
             flat
             dense
             color="red-10"
             icon="delete"
             size="sm"
-            @click="showAddNoteInput = false"
+            @click="showDeleteDialog = true"
           />
           <q-btn
             flat
@@ -54,7 +64,7 @@
             color="secondary"
             icon="edit"
             size="sm"
-            v-if="!showAddNoteInput && !showEditNoteInput"
+            v-if="!showAddNoteInput && !showEditNoteInput && notes.length"
             @click="editNote"
           />
           <q-btn
@@ -67,14 +77,25 @@
           />
         </div>
       </div>
-
       <!-- BODY: Scrollable Splitter -->
       <div class="col">
         <q-splitter v-model="splitterModel" style="height: 100%">
           <!-- LEFT -->
           <template v-slot:before>
             <div class="column full-height bg-grey-1 q-pa-sm">
-              <div class="col-auto text-subtitle1">Notes</div>
+              <div class="row items-center justify-between q-mb-sm">
+                <div class="text-subtitle1">Notes</div>
+                <q-btn
+                  dense
+                  unelevated
+                  size="xs"
+                  :color="isUserNotes ? 'blue-2' : 'green-2'"
+                  text-color="blue-10"
+                  :label="isUserNotes ? 'Your notes' : 'Public notes'"
+                  @click="toggleNotes"
+                />
+              </div>
+
               <div class="col scroll">
                 <q-list>
                   <q-item
@@ -101,123 +122,158 @@
 
           <!-- RIGHT -->
           <template v-slot:after>
-            <div v-if="showEditNoteInput" class="q-gutter-sm q-ml-xs">
-              <q-btn
-                color="grey-6"
-                size="sm"
-                flat
-                dense
-                icon="label"
-                @click="showTagSelect = !showTagSelect"
-              >
-                <q-tooltip class="bg-secondary"> tags </q-tooltip>
-              </q-btn>
-              <q-btn
-                color="grey-6"
-                size="sm"
-                flat
-                dense
-                icon="person_add"
-                @click="showShareUser = !showShareUser"
-              >
-                <q-tooltip class="bg-secondary"> share </q-tooltip>
-              </q-btn>
-              <q-btn
-                color="grey-6"
-                size="sm"
-                flat
-                dense
-                :icon="isPublic ? 'public' : 'lock'"
-                @click="isPublic = !isPublic"
-              >
-                <q-tooltip class="bg-secondary"> {{ isPublic ? 'public' : 'private' }} </q-tooltip>
-              </q-btn>
+            <!-- <div v-if="isLoading" class="flex flex-center items-center">
+              <q-spinner-bars color="primary" size="40px" />
+            </div> -->
+            <div v-if="isLoading" class="flex flex-center" style="height: 400px">
+              <div class="text-center">
+                <q-spinner-bars color="secondary" size="2em" />
+                <div>Loading note...</div>
+              </div>
             </div>
-            <!-- for tags -->
-            <q-select
-              v-if="showTagSelect && showEditNoteInput"
-              outlined
-              v-model="selectedTags"
-              :options="tagOptions"
-              label="Select tags"
-              use-chips
-              multiple
-              emit-value
-              map-options
-              dense
-              option-value="value"
-              option-label="label"
-              color="secondary"
-            >
-              <!-- Custom chip rendering -->
-              <template v-slot:chip="scope">
-                <q-chip
-                  removable
-                  @remove="removeTag(scope.option.value)"
-                  :label="scope.option.label"
-                  :text-color="getTextColor(scope.option.color)"
-                  class="q-mx-xs"
-                  :class="`bg-${scope.option.color}`"
-                />
-              </template>
-
-              <!-- Option rendering -->
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
-                  <q-item-section avatar>
-                    <q-icon name="label" :color="scope.opt.color" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-
-            <div class="column full-height q-pa-md">
-              <div class="col-auto text-subtitle1">Note Detail</div>
-              <div class="col scroll">
-                <div v-if="showAddNoteInput">
-                  <q-input
-                    v-model="newNote.title"
-                    placeholder="Title..."
-                    dense
-                    borderless
-                    class="text-h5"
+            <div v-else>
+              <div v-if="showEditNoteInput || showAddNoteInput" class="q-gutter-sm q-ml-xs">
+                <q-btn
+                  color="grey-6"
+                  size="sm"
+                  flat
+                  dense
+                  icon="label"
+                  @click="showTagSelect = !showTagSelect"
+                >
+                  <q-tooltip class="bg-secondary"> tags </q-tooltip>
+                </q-btn>
+                <q-btn
+                  color="grey-6"
+                  size="sm"
+                  flat
+                  dense
+                  icon="person_add"
+                  @click="showShareUser = !showShareUser"
+                >
+                  <q-tooltip class="bg-secondary"> share </q-tooltip>
+                </q-btn>
+                <q-btn
+                  size="sm"
+                  flat
+                  dense
+                  :icon="selectedNote?.isPublic ? 'public' : 'lock'"
+                  :color="selectedNote?.isPublic ? 'green-4' : 'grey-5'"
+                  @click="selectedNote.isPublic = !selectedNote.isPublic"
+                >
+                  <q-tooltip class="bg-secondary">
+                    {{ isPublic ? 'public' : 'private' }}
+                  </q-tooltip>
+                </q-btn>
+              </div>
+              <!-- for tags -->
+              <q-select
+                v-if="showTagSelect && (showEditNoteInput || showAddNoteInput)"
+                filled
+                v-model="newNote.tags"
+                :options="tagOptions"
+                label="Select tags"
+                use-chips
+                multiple
+                dense
+                option-value="value"
+                option-label="label"
+                color="secondary"
+                class="q-mx-md"
+              >
+                <!-- Custom chip rendering -->
+                <template v-slot:chip="scope">
+                  <q-chip
+                    removable
+                    square
+                    @remove="removeTag(scope.option.value)"
+                    :label="scope.option.label"
+                    :text-color="getTextColor(scope.option.color)"
+                    class="q-mx-xs"
+                    :class="`bg-${scope.option.color}`"
                   />
-                  <q-input
-                    v-model="newNote.description"
-                    placeholder="Description..."
-                    dense
-                    borderless
-                    type="textarea"
-                  />
-                </div>
-                <div v-else>
-                  <div v-if="notes.length > 0">
-                    <div v-if="showEditNoteInput" class="text-h6">
-                      <q-input
-                        v-model="newNote.title"
-                        placeholder="Title..."
-                        dense
-                        borderless
-                        class="text-h5"
-                      />
-                    </div>
-                    <div v-else class="text-h6">{{ selectedNote?.title }}</div>
-                    <div v-if="showEditNoteInput" class="text-body2 q-mt-sm">
-                      <q-input
-                        v-model="newNote.description"
-                        placeholder="Description..."
-                        dense
-                        borderless
-                        type="textarea"
-                      />
-                    </div>
-                    <div v-else class="text-body2 q-mt-sm">{{ selectedNote?.description }}</div>
+                </template>
+                <!-- Option rendering -->
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+                    <q-item-section avatar>
+                      <q-icon name="label" :color="scope.opt.color" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <div class="column full-height q-pa-md">
+                <div v-if="!showAddNoteInput" class="row">
+                  <div v-for="(tag, tagIndex) in selectedNote.tags" :key="tagIndex">
+                    <q-chip
+                      square
+                      dense
+                      :color="tag.color"
+                      :text-color="tag.textColor"
+                      :label="tag.value"
+                      size="md"
+                    />
                   </div>
-                  <div v-else class="text-body2 q-mt-sm text-center">
-                    No notes available. Please add a note.
+                </div>
+                <div class="col-auto text-subtitle1">
+                  <!-- <q-icon
+                    :name="newNote.isPublic ? 'public' : 'lock'"
+                    :color="newNote.isPublic ? 'green-4' : 'grey-5'"
+                  /> -->
+                </div>
+                <!-- {{ selectedNote }} -->
+                <div class="col scroll">
+                  <div v-if="showAddNoteInput">
+                    <q-input
+                      v-model="newNote.title"
+                      placeholder="Title..."
+                      dense
+                      borderless
+                      class="text-h5"
+                    />
+                    <q-input
+                      v-model="newNote.description"
+                      placeholder="Description..."
+                      dense
+                      borderless
+                      type="textarea"
+                    />
+                  </div>
+                  <div v-else>
+                    <div v-if="notes.length > 0">
+                      <div v-if="showEditNoteInput" class="text-h6">
+                        <q-input
+                          v-model="newNote.title"
+                          placeholder="Title..."
+                          dense
+                          borderless
+                          class="text-h5"
+                        />
+                      </div>
+                      <div v-else class="text-h6">
+                        <q-icon
+                          size="xs"
+                          :name="selectedNote?.isPublic ? 'public' : 'lock'"
+                          :color="selectedNote?.isPublic ? 'green-4' : 'grey-5'"
+                        />&nbsp;{{ selectedNote?.title }}
+                      </div>
+                      <div v-if="showEditNoteInput" class="text-body2 q-mt-sm">
+                        <q-input
+                          v-model="newNote.description"
+                          placeholder="Description..."
+                          dense
+                          borderless
+                          type="textarea"
+                        />
+                      </div>
+                      <div v-else class="text-body2 q-mt-sm">{{ selectedNote?.description }}</div>
+                    </div>
+                    <div v-else class="text-body2 q-mt-sm text-center">
+                      No notes available. Please add a note.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -233,12 +289,18 @@
         @mousedown.stop.prevent="startResizing"
       ></div>
     </div>
+
+    <DeleteDialog :modelValue="showDeleteDialog" @confirm-delete="deleteNote" />
   </q-dialog>
 </template>
 
 <script setup>
 import { useNoteStore } from 'src/stores/note-store'
 import { ref, watch, onBeforeUnmount, computed, onMounted } from 'vue'
+import DeleteDialog from './DeleteDialog.vue'
+import { useUserStore } from 'src/stores/user-store'
+const userStore = useUserStore()
+
 const noteStore = useNoteStore()
 const splitterModel = ref(30)
 const props = defineProps({
@@ -250,43 +312,98 @@ const props = defineProps({
   initialWidth: { type: Number, default: 600 },
   initialHeight: { type: Number, default: 400 },
 })
+const showDeleteDialog = ref(false)
+const tagOptions = ref([])
+const isLoading = ref(false)
 
-const tagOptions = [
-  // Student Tags (Blue - darker for chip bg)
-  { label: 'Lecture Notes', value: '#lecture-notes', color: 'blue-4' },
-  { label: 'Assignments', value: '#assignments', color: 'blue-5' },
-  { label: 'Exam Prep', value: '#exam-prep', color: 'blue-6' },
-  { label: 'Summary', value: '#summary', color: 'blue-4' },
-  { label: 'Homework', value: '#homework', color: 'blue-5' },
+const studentTags = [
+  { label: 'Lecture Notes', value: '#lecture-notes', color: 'blue-1', textColor: 'blue-10' },
+  { label: 'Assignments', value: '#assignments', color: 'blue-2', textColor: 'blue-10' },
+  { label: 'Exam Prep', value: '#exam-prep', color: 'blue-3', textColor: 'blue-10' },
+  { label: 'Summary', value: '#summary', color: 'blue-1', textColor: 'blue-10' },
+  { label: 'Homework', value: '#homework', color: 'blue-2', textColor: 'blue-10' },
+  { label: 'Group Work', value: '#group-work', color: 'cyan-1', textColor: 'cyan-10' },
+  { label: 'Reading Material', value: '#reading', color: 'cyan-2', textColor: 'cyan-10' },
+  {
+    label: 'Class Notes',
+    value: '#class-notes',
+    color: 'light-blue-1',
+    textColor: 'light-blue-10',
+  },
+  {
+    label: 'Practice Problems',
+    value: '#practice',
+    color: 'blue-grey-1',
+    textColor: 'blue-grey-10',
+  },
+  { label: 'Peer Review', value: '#peer-review', color: 'teal-1', textColor: 'teal-10' },
+]
 
-  // Teacher Tags (Green)
-  { label: 'Lesson Plan', value: '#lesson-plan', color: 'green-4' },
-  { label: 'Class Materials', value: '#class-materials', color: 'green-5' },
-  { label: 'Quiz Questions', value: '#quiz-questions', color: 'green-6' },
-  { label: 'Syllabus', value: '#syllabus', color: 'green-4' },
+const teacherTags = [
+  { label: 'Lesson Plan', value: '#lesson-plan', color: 'green-1', textColor: 'green-10' },
+  { label: 'Class Materials', value: '#class-materials', color: 'green-2', textColor: 'green-10' },
+  { label: 'Quiz Questions', value: '#quiz-questions', color: 'green-3', textColor: 'green-10' },
+  { label: 'Syllabus', value: '#syllabus', color: 'green-1', textColor: 'green-10' },
+  { label: 'Lecture Slides', value: '#slides', color: 'lime-1', textColor: 'lime-10' },
+  { label: 'Project Guide', value: '#project-guide', color: 'lime-2', textColor: 'lime-10' },
+  {
+    label: 'Attendance Sheet',
+    value: '#attendance',
+    color: 'light-green-1',
+    textColor: 'light-green-10',
+  },
+  { label: 'Marking Rubric', value: '#rubric', color: 'teal-1', textColor: 'teal-10' },
+]
 
-  // Subject Tags (Orange)
-  { label: 'Math', value: '#math', color: 'orange-4' },
-  { label: 'Science', value: '#science', color: 'orange-5' },
-  { label: 'History', value: '#history', color: 'orange-6' },
-  { label: 'Computer Science', value: '#computer-science', color: 'orange-4' },
+const adminTags = [
+  { label: 'Policy', value: '#policy', color: 'orange-1', textColor: 'orange-10' },
+  { label: 'Notices', value: '#notices', color: 'amber-1', textColor: 'amber-10' },
+  { label: 'Meeting Notes', value: '#meeting-notes', color: 'purple-1', textColor: 'purple-10' },
+  {
+    label: 'Event Plan',
+    value: '#event-plan',
+    color: 'deep-purple-1',
+    textColor: 'deep-purple-10',
+  },
+  { label: 'Budget', value: '#budget', color: 'grey-2', textColor: 'grey-10' },
+  { label: 'Feedback', value: '#feedback', color: 'pink-1', textColor: 'pink-10' },
+  { label: 'Circular', value: '#circular', color: 'deep-orange-1', textColor: 'deep-orange-10' },
+  { label: 'Meeting Agenda', value: '#agenda', color: 'purple-2', textColor: 'purple-10' },
+]
 
-  // Utility / Priority (Red/Gray)
-  { label: 'Urgent', value: '#urgent', color: 'red-5' },
-  { label: 'Important', value: '#important', color: 'red-6' },
-  { label: 'To Review', value: '#to-review', color: 'grey-4' },
-  { label: 'Completed', value: '#completed', color: 'grey-5' },
+const statusTags = [
+  { label: 'Urgent', value: '#urgent', color: 'red-1', textColor: 'red-10' },
+  { label: 'Important', value: '#important', color: 'pink-1', textColor: 'pink-10' },
+  { label: 'To Review', value: '#to-review', color: 'grey-1', textColor: 'grey-10' },
+  { label: 'Completed', value: '#completed', color: 'grey-3', textColor: 'grey-10' },
+  { label: 'In Progress', value: '#in-progress', color: 'yellow-1', textColor: 'yellow-10' },
+  { label: 'Pending Approval', value: '#pending', color: 'orange-2', textColor: 'orange-10' },
+  { label: 'Archived', value: '#archived', color: 'grey-4', textColor: 'grey-10' },
+  { label: 'Draft', value: '#draft', color: 'blue-grey-2', textColor: 'blue-grey-10' },
 ]
 
 const isPublic = ref(false)
 const showShareUser = ref(false)
 const showTagSelect = ref(false)
+const isUserNotes = ref(true)
+const toggleNotes = () => {
+  isLoading.value = true
+  isUserNotes.value = !isUserNotes.value
+  if (isUserNotes.value) {
+    notes.value = noteStore.userNotes
+    selectedNoteIndex.value = 0
+  } else {
+    notes.value = noteStore.publicNotes
+    selectedNoteIndex.value = 0
+  }
+  isLoading.value = false
+}
 
-const selectedTags = ref([])
+// const selectedTags = ref([])
 
 // helper to remove tag from selection
 function removeTag(val) {
-  selectedTags.value = selectedTags.value.filter((tag) => tag !== val)
+  newNote.value.tags = newNote.value.tagsfilter((tag) => tag !== val)
 }
 
 // Helper to get text color based on chip bg color for contrast
@@ -308,32 +425,8 @@ function getTextColor(bgColor) {
   return darkColors.includes(bgColor) ? 'white' : 'black'
 }
 
-const notes = ref([
-  {
-    title: 'Vue 3 Composition API',
-    description:
-      'Understand how to use ref, reactive, and computed in the Composition API. Great for building scalable components.',
-  },
-  {
-    title: 'Pinia Store Basics',
-    description:
-      'Learn how to define state, actions, and getters using Pinia, the next-generation state management system for Vue.',
-  },
-  {
-    title: 'Quasar Framework Tips',
-    description:
-      "Use Quasar's powerful components like QTable, QDialog, and QLayout to build elegant UIs quickly.",
-  },
-  {
-    title: 'Firebase Integration',
-    description: 'Integrate Firestore with Vue to fetch, add, and manage user data in real time.',
-  },
-  {
-    title: 'Note Sharing Ideas',
-    description:
-      'Allow users to share public or private notes with others, and categorize them with tags and filters.',
-  },
-])
+const notes = ref(noteStore.userNotes)
+
 const selectedNoteIndex = ref(0)
 
 const emit = defineEmits(['update:modelValue'])
@@ -358,11 +451,15 @@ watch(
   },
 )
 
+const isEdit = ref(false)
+
 const editNote = () => {
   showEditNoteInput.value = true
+  isEdit.value = true
   newNote.value = {
     title: selectedNote.value.title,
     description: selectedNote.value.description,
+    tags: selectedNote.value.tags,
   }
   // showEditNoteInput.value = false
 }
@@ -401,9 +498,11 @@ const newNote = ref({
 
 function addNoteInput() {
   showAddNoteInput.value = true
+  selectedNote.value = null
 }
 
 async function saveNote() {
+  isLoading.value = true
   if (newNote.value) {
     // notes.value.push({ title: newNote.value.title, description: newNote.value.description })
 
@@ -412,24 +511,57 @@ async function saveNote() {
       description: newNote.value.description,
       links: '',
       category: '',
-      tags: selectedTags.value || [],
-      isPublic: isPublic.value,
+      tags: newNote.value.tags || [],
+      isPublic: selectedNote.value.isPublic,
       sharedWith: '',
     }
     console.log(payload)
-    await noteStore.createNote(payload)
-    console.log('saved')
+    if (isEdit.value) {
+      console.log('update', selectedNoteIndex.value)
+      await noteStore.updateNote(selectedNote.value.id, payload)
+      console.log('update', selectedNoteIndex.value)
+
+      isEdit.value = false
+    } else {
+      console.log('new ')
+      await noteStore.createNote(payload)
+      selectedNoteIndex.value = notes.value.length
+    }
+    await noteStore.fetchNotesByUser()
+
+    console.log(selectedNoteIndex.value)
+
+    notes.value = noteStore.userNotes
+
+    console.log('saved', notes.value)
     // title, description, links, category, tags, isPublic, sharedWith
     newNote.value = ''
     showAddNoteInput.value = false
     showEditNoteInput.value = false
   }
+  isLoading.value = false
+}
+const deleteNote = async () => {
+  isLoading.value = true
+  await noteStore.deleteNote(selectedNote.value.id)
+  notes.value = noteStore.userNotes
+  await noteStore.fetchNotesByUser()
+  isLoading.value = false
 }
 
 onMounted(async () => {
-  notes.value = await noteStore.fetchNotesByUser()
+  await noteStore.fetchNotesByUser()
+  await noteStore.fetchPublicNotes()
+  notes.value = noteStore.userNotes
 
-  console.log(notes.value)
+  console.log(noteStore.userNotes)
+  if (userStore.currentRole === 'teacher') {
+    tagOptions.value = [...teacherTags, ...statusTags]
+  } else if (userStore.currentRole === 'student') {
+    tagOptions.value = [...studentTags, ...statusTags]
+  } else {
+    tagOptions.value = [...adminTags, ...statusTags]
+  }
 })
 </script>
 

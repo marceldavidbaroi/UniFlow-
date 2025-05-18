@@ -3,7 +3,8 @@ import actions from './action'
 
 export const useNoteStore = defineStore('note', {
   state: () => ({
-    notes: [], // All fetched notes
+    userNotes: [], // All fetched notes
+    publicNotes: [], // All fetched notes
     selectedNote: null, // Currently selected note
     filters: {
       tags: [],
@@ -14,6 +15,15 @@ export const useNoteStore = defineStore('note', {
     sortCriteria: 'dateCreated', // or 'title', 'dateModified'
     groupBy: null, // 'tags' or 'category'
   }),
+
+  getters: {
+    sortedUserNotes: (state) => {
+      return [...state.userNotes].sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
+    },
+    sortedPublicNotes: (state) => {
+      return [...state.publicNotes].sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
+    },
+  },
 
   actions,
 

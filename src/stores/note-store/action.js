@@ -33,9 +33,7 @@ const userStore = useUserStore()
 const notesCollection = collection(db, 'notes')
 
 export default {
-  async createNote(
-    payload
-  ) {
+  async createNote(payload) {
     const newNote = {
       ...payload,
 
@@ -43,20 +41,26 @@ export default {
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     }
-    console.log('newNote',newNote)
+    console.log('newNote', newNote)
     await addDoc(notesCollection, newNote)
   },
 
-  async fetchNotesByUser() {
-    const q = query(notesCollection, where('ownerId', '==', userStore.currentUser.id))
-    const snapshot = await getDocs(q)
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-  },
-
+async fetchNotesByUser() {
+  const q = query(
+    notesCollection,
+    where('ownerId', '==', userStore.currentUser.id)
+  )
+  const snapshot = await getDocs(q)
+  const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  this.userNotes = data
+  return data
+},
   async fetchPublicNotes() {
     const q = query(notesCollection, where('isPublic', '==', true))
     const snapshot = await getDocs(q)
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    const data=snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    this.publicNotes=data
+    return data
   },
 
   async updateNote(noteId, updatedData) {
