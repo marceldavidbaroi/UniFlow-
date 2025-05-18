@@ -31,7 +31,14 @@
           <q-btn flat dense size="sm" color="secondary" icon="add" @click="addNoteInput" />
         </div>
         <div>
-          <q-btn flat dense color="red-10" icon="delete" size="sm" />
+          <q-btn
+            flat
+            dense
+            color="red-10"
+            icon="delete"
+            size="sm"
+            @click="showAddNoteInput = false"
+          />
           <q-btn
             flat
             dense
@@ -94,6 +101,79 @@
 
           <!-- RIGHT -->
           <template v-slot:after>
+            <div v-if="showEditNoteInput" class="q-gutter-sm q-ml-xs">
+              <q-btn
+                color="grey-6"
+                size="sm"
+                flat
+                dense
+                icon="label"
+                @click="showTagSelect = !showTagSelect"
+              >
+                <q-tooltip class="bg-secondary"> tags </q-tooltip>
+              </q-btn>
+              <q-btn
+                color="grey-6"
+                size="sm"
+                flat
+                dense
+                icon="person_add"
+                @click="showShareUser = !showShareUser"
+              >
+                <q-tooltip class="bg-secondary"> share </q-tooltip>
+              </q-btn>
+              <q-btn
+                color="grey-6"
+                size="sm"
+                flat
+                dense
+                :icon="isPublic ? 'public' : 'lock'"
+                @click="isPublic = !isPublic"
+              >
+                <q-tooltip class="bg-secondary"> {{ isPublic ? 'public' : 'private' }} </q-tooltip>
+              </q-btn>
+            </div>
+            <!-- for tags -->
+            <q-select
+              v-if="showTagSelect && showEditNoteInput"
+              outlined
+              v-model="selectedTags"
+              :options="tagOptions"
+              label="Select tags"
+              use-chips
+              multiple
+              emit-value
+              map-options
+              dense
+              option-value="value"
+              option-label="label"
+              color="secondary"
+            >
+              <!-- Custom chip rendering -->
+              <template v-slot:chip="scope">
+                <q-chip
+                  removable
+                  @remove="removeTag(scope.option.value)"
+                  :label="scope.option.label"
+                  :text-color="getTextColor(scope.option.color)"
+                  class="q-mx-xs"
+                  :class="`bg-${scope.option.color}`"
+                />
+              </template>
+
+              <!-- Option rendering -->
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+                  <q-item-section avatar>
+                    <q-icon name="label" :color="scope.opt.color" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
             <div class="column full-height q-pa-md">
               <div class="col-auto text-subtitle1">Note Detail</div>
               <div class="col scroll">
@@ -157,7 +237,9 @@
 </template>
 
 <script setup>
-import { ref, watch, onBeforeUnmount, computed } from 'vue'
+import { useNoteStore } from 'src/stores/note-store'
+import { ref, watch, onBeforeUnmount, computed, onMounted } from 'vue'
+const noteStore = useNoteStore()
 const splitterModel = ref(30)
 const props = defineProps({
   modelValue: Boolean,
@@ -168,6 +250,63 @@ const props = defineProps({
   initialWidth: { type: Number, default: 600 },
   initialHeight: { type: Number, default: 400 },
 })
+
+const tagOptions = [
+  // Student Tags (Blue - darker for chip bg)
+  { label: 'Lecture Notes', value: '#lecture-notes', color: 'blue-4' },
+  { label: 'Assignments', value: '#assignments', color: 'blue-5' },
+  { label: 'Exam Prep', value: '#exam-prep', color: 'blue-6' },
+  { label: 'Summary', value: '#summary', color: 'blue-4' },
+  { label: 'Homework', value: '#homework', color: 'blue-5' },
+
+  // Teacher Tags (Green)
+  { label: 'Lesson Plan', value: '#lesson-plan', color: 'green-4' },
+  { label: 'Class Materials', value: '#class-materials', color: 'green-5' },
+  { label: 'Quiz Questions', value: '#quiz-questions', color: 'green-6' },
+  { label: 'Syllabus', value: '#syllabus', color: 'green-4' },
+
+  // Subject Tags (Orange)
+  { label: 'Math', value: '#math', color: 'orange-4' },
+  { label: 'Science', value: '#science', color: 'orange-5' },
+  { label: 'History', value: '#history', color: 'orange-6' },
+  { label: 'Computer Science', value: '#computer-science', color: 'orange-4' },
+
+  // Utility / Priority (Red/Gray)
+  { label: 'Urgent', value: '#urgent', color: 'red-5' },
+  { label: 'Important', value: '#important', color: 'red-6' },
+  { label: 'To Review', value: '#to-review', color: 'grey-4' },
+  { label: 'Completed', value: '#completed', color: 'grey-5' },
+]
+
+const isPublic = ref(false)
+const showShareUser = ref(false)
+const showTagSelect = ref(false)
+
+const selectedTags = ref([])
+
+// helper to remove tag from selection
+function removeTag(val) {
+  selectedTags.value = selectedTags.value.filter((tag) => tag !== val)
+}
+
+// Helper to get text color based on chip bg color for contrast
+function getTextColor(bgColor) {
+  const darkColors = [
+    'blue-4',
+    'blue-5',
+    'blue-6',
+    'green-4',
+    'green-5',
+    'green-6',
+    'red-5',
+    'red-6',
+    'orange-4',
+    'orange-5',
+    'orange-6',
+    'grey-5',
+  ]
+  return darkColors.includes(bgColor) ? 'white' : 'black'
+}
 
 const notes = ref([
   {
@@ -264,14 +403,34 @@ function addNoteInput() {
   showAddNoteInput.value = true
 }
 
-function saveNote() {
+async function saveNote() {
   if (newNote.value) {
-    notes.value.push({ title: newNote.value.title, description: newNote.value.description })
+    // notes.value.push({ title: newNote.value.title, description: newNote.value.description })
+
+    const payload = {
+      title: newNote.value.title,
+      description: newNote.value.description,
+      links: '',
+      category: '',
+      tags: selectedTags.value || [],
+      isPublic: isPublic.value,
+      sharedWith: '',
+    }
+    console.log(payload)
+    await noteStore.createNote(payload)
+    console.log('saved')
+    // title, description, links, category, tags, isPublic, sharedWith
     newNote.value = ''
     showAddNoteInput.value = false
     showEditNoteInput.value = false
   }
 }
+
+onMounted(async () => {
+  notes.value = await noteStore.fetchNotesByUser()
+
+  console.log(notes.value)
+})
 </script>
 
 <style scoped>

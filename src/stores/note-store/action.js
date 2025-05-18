@@ -34,31 +34,21 @@ const notesCollection = collection(db, 'notes')
 
 export default {
   async createNote(
-    title,
-    description,
-    links = [],
-    category,
-    tags = [],
-    isPublic = false,
-    sharedWith = [],
+    payload
   ) {
     const newNote = {
-      title,
-      description,
-      links,
-      category,
-      tags,
-      isPublic,
-      sharedWith,
-      ownerId: userStore.user.uid,
+      ...payload,
+
+      ownerId: userStore.currentUser.id,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     }
+    console.log('newNote',newNote)
     await addDoc(notesCollection, newNote)
   },
 
   async fetchNotesByUser() {
-    const q = query(notesCollection, where('ownerId', '==', userStore.user.uid))
+    const q = query(notesCollection, where('ownerId', '==', userStore.currentUser.id))
     const snapshot = await getDocs(q)
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
   },
@@ -116,7 +106,7 @@ export default {
   },
 
   async searchNotes({ keyword }) {
-    const q = query(notesCollection, where('ownerId', '==', userStore.user.uid))
+    const q = query(notesCollection, where('ownerId', '==', userStore.currentUser.uid))
     const snapshot = await getDocs(q)
     return snapshot.docs
       .map((doc) => ({ id: doc.id, ...doc.data() }))

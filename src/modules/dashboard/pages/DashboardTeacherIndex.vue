@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    {{ userStore.currentUser }}
     <div class="text-h4 brand_sb text-center q-mb-md">Dashboard</div>
 
     <!-- Action Buttons -->
@@ -87,7 +88,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-// import { useUserStore } from 'src/stores/user-store'
+import { useUserStore } from 'src/stores/user-store'
 import { useRouter } from 'vue-router'
 import { Chart, registerables } from 'chart.js'
 import { useGroupStore } from 'src/stores/group-store'
@@ -97,7 +98,7 @@ const sessionStore = useSessionStore()
 
 Chart.register(...registerables)
 
-// const userStore = useUserStore()
+const userStore = useUserStore()
 const router = useRouter()
 
 const showCalendar = ref(false)

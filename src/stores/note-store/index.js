@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import actions from './action'
 
-export const useGroupStore = defineStore('note', {
+export const useNoteStore = defineStore('note', {
   state: () => ({
     notes: [], // All fetched notes
     selectedNote: null, // Currently selected note
