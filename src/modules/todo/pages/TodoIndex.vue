@@ -105,59 +105,24 @@
           </q-btn-dropdown>
         </div>
       </div>
+      <div>
+        <!-- Category filter as a QSelect dropdown -->
+        <q-select
+          v-model="selectedType"
+          :options="selectTypeOptions"
+          label="Select Category"
+          outlined
+          color="secondary"
+          dense
+          map-options
+          emit-value
+          @update:model-value="applyListFilters"
+          style="max-width: 200px"
+          class="q-px-md"
+        />
+      </div>
 
-      <!-- Task List Panels -->
-      <q-tab-panels v-model="selectedTab" animated>
-        <q-tab-panel name="all">
-          <TodoList :todos="filteredTodos" @todo-updated="handleTodoUpdated" />
-        </q-tab-panel>
-
-        <q-tab-panel name="today">
-          <TodoList :todos="filteredTodos" @todo-updated="handleTodoUpdated" />
-        </q-tab-panel>
-
-        <q-tab-panel name="yesterday">
-          <TodoList :todos="filteredTodos" @todo-updated="handleTodoUpdated" />
-        </q-tab-panel>
-
-        <q-tab-panel name="upcoming">
-          <TodoList :todos="filteredTodos" @todo-updated="handleTodoUpdated" />
-        </q-tab-panel>
-
-        <q-tab-panel name="completed">
-          <TodoList :todos="filteredTodos" @todo-updated="handleTodoUpdated" />
-        </q-tab-panel>
-      </q-tab-panels>
-    </div>
-    <!-- Left Side Tabs -->
-    <div class="col-auto flex flex-center" style="height: 100vh">
-      <q-tabs
-        v-model="selectedTab"
-        vertical
-        active-color="secondary"
-        indicator-color="secondary"
-        class="q-py-xl bg-grey-2"
-      >
-        <q-tab name="all" label="" icon="checklist" class="q-mb-lg">
-          <q-tooltip class="bg-secondary text-white">All Todos</q-tooltip>
-        </q-tab>
-
-        <q-tab name="today" label="" icon="today" class="q-mb-lg">
-          <q-tooltip class="bg-secondary text-white">Today’s Todos</q-tooltip>
-        </q-tab>
-
-        <q-tab name="yesterday" label="" icon="history" class="q-mb-lg">
-          <q-tooltip class="bg-secondary text-white">Yesterday’s Todos</q-tooltip>
-        </q-tab>
-
-        <q-tab name="upcoming" label="" icon="event" class="q-mb-lg">
-          <q-tooltip class="bg-secondary text-white">Upcoming Todos</q-tooltip>
-        </q-tab>
-
-        <q-tab name="completed" label="" icon="check_circle">
-          <q-tooltip class="bg-secondary text-white">Completed Todos</q-tooltip>
-        </q-tab>
-      </q-tabs>
+      <TodoList :todos="filteredTodos" @todo-updated="handleTodoUpdated" />
     </div>
 
     <!-- Floating Action Button -->
@@ -184,14 +149,23 @@ const filters = ref({
   low: false,
 })
 const data = ref()
-const selectedTab = ref('all')
 const selectedSort = ref('priority')
-const todayTasks = ref([])
-const yesterdayTasks = ref()
-const upcomingTasks = ref()
+// const todayTasks = ref([])
+// const yesterdayTasks = ref()
+// const upcomingTasks = ref()
 const completedTasks = ref([{ id: 5, text: 'Submit timesheet' }])
 const showSearchBox = ref(false)
 const searchQuery = ref('')
+
+const selectedType = ref()
+const selectTypeOptions = [
+  { label: 'All', value: 'all' },
+  { label: 'Today', value: 'today' },
+  { label: 'Yesterday', value: 'yesterday' },
+  { label: 'Upcoming', value: 'upcoming' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'Uncompleted', value: 'uncompleted' },
+]
 
 // Functions
 function onAllChange(val) {
@@ -210,19 +184,27 @@ function onOtherChange() {
   applyFilters()
 }
 
+const applyListFilters = (data) => {
+  const result = todoStore.filterTodos(todoStore.todos, (todo) => {
+    if (data === 'all') {
+      return true
+    } else if (data === 'today') {
+      return new Date(todo.dueDate).toLocaleDateString() === new Date().toLocaleDateString()
+    } else if (data === 'yesterday') {
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+      return new Date(todo.dueDate).toLocaleDateString() === yesterday.toLocaleDateString()
+    } else if (data === 'upcoming') {
+      return new Date(todo.dueDate) >= new Date()
+    } else if (data === 'completed') {
+      return todo.isCompleted
+    } else if (data === 'uncompleted') {
+      return !todo.isCompleted
+    }
+  })
+  filteredTodos.value = result.data
+}
 function applyFilters() {
-  if (selectedTab.value === 'all') {
-    data.value = todoStore.todos
-  } else if (selectedTab.value === 'today') {
-    data.value = todayTasks.value
-  } else if (selectedTab.value === 'yesterday') {
-    data.value = yesterdayTasks.value
-  } else if (selectedTab.value === 'upcoming') {
-    data.value = upcomingTasks.value
-  } else if (selectedTab.value === 'completed') {
-    data.value = completedTasks.value
-  }
-
   let filterFn
   const noFiltersSelected = !filters.value.high && !filters.value.medium && !filters.value.low
 
@@ -268,51 +250,35 @@ function sortTodos(criteria) {
 
 function handleTodoUpdated() {
   todoStore.getTodos().then(() => {
-    todayTasks.value = findTodosUpdatedToday(todoStore.todos)
-    upcomingTasks.value = findUpcomingTodos(todoStore.todos)
-    yesterdayTasks.value = findYesterdayTodos(todoStore.todos)
-
+    // todayTasks.value = findTodosUpdatedToday(todoStore.todos)
+    // upcomingTasks.value = findUpcomingTodos(todoStore.todos)
+    // yesterdayTasks.value = findYesterdayTodos(todoStore.todos)
     const completed = todoStore.filterTodos(data.value, (todo) => todo.isCompleted)
     completedTasks.value = completed.data
     filteredTodos.value = todoStore.todos
-    data.value = todoStore.todos
+    // data.value = todoStore.todos
   })
 }
 
-function findTodosUpdatedToday(todos) {
-  const today = new Date().toLocaleDateString()
-  return todos.filter((todo) => {
-    const updatedDate = new Date(todo.updatedAt).toLocaleDateString()
-    return updatedDate === today
-  })
-}
+// function findTodosUpdatedToday(todos) {
+//   const today = new Date().toLocaleDateString()
+//   return todos.filter((todo) => {
+//     const updatedDate = new Date(todo.updatedAt).toLocaleDateString()
+//     return updatedDate === today
+//   })
+// }
 
-function findUpcomingTodos(todos) {
-  const currentDate = new Date()
-  return todos.filter((todo) => new Date(todo.dueDate) >= currentDate)
-}
+// function findUpcomingTodos(todos) {
+//   const currentDate = new Date()
+//   return todos.filter((todo) => new Date(todo.dueDate) >= currentDate)
+// }
 
-function findYesterdayTodos(todos) {
-  const yesterday = new Date()
-  yesterday.setDate(yesterday.getDate() - 1)
-  const yesterdayString = yesterday.toLocaleDateString()
-  return todos.filter((todo) => new Date(todo.dueDate).toLocaleDateString() === yesterdayString)
-}
-
-// Watchers
-watch(selectedTab, (newVal) => {
-  if (newVal === 'today') {
-    filteredTodos.value = todayTasks.value
-  } else if (newVal === 'yesterday') {
-    filteredTodos.value = yesterdayTasks.value
-  } else if (newVal === 'upcoming') {
-    filteredTodos.value = upcomingTasks.value
-  } else if (newVal === 'completed') {
-    filteredTodos.value = completedTasks.value
-  } else {
-    filteredTodos.value = todoStore.todos
-  }
-})
+// function findYesterdayTodos(todos) {
+//   const yesterday = new Date()
+//   yesterday.setDate(yesterday.getDate() - 1)
+//   const yesterdayString = yesterday.toLocaleDateString()
+//   return todos.filter((todo) => new Date(todo.dueDate).toLocaleDateString() === yesterdayString)
+// }
 
 const onClear = () => {
   filters.value.all = true
@@ -360,6 +326,7 @@ watch(searchQuery, (newVal) => {
 onMounted(async () => {
   await todoStore.getTodos()
   filteredTodos.value = todoStore.todos
+  selectedType.value = 'all'
 })
 </script>
 

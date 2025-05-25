@@ -52,13 +52,7 @@
               icon="edit"
               size="sm"
               color="secondary"
-              @click.stop="showCreateDialog = true"
-            />
-            <CreateTodoDialog
-              v-model="showCreateDialog"
-              :todo="todo"
-              :isEdit="true"
-              @todo-updated="handleTodoUpdated"
+              @click.stop="openEditDialog(todo)"
             />
             <q-btn
               flat
@@ -93,6 +87,14 @@
     <div class="text-h6">No Todos Found</div>
     <div class="text-caption">You can add a new todo to get started!</div>
   </div>
+
+  <!-- Move CreateTodoDialog outside the v-for and use editTodo -->
+  <CreateTodoDialog
+    v-model="showCreateDialog"
+    :todo="editTodo"
+    :isEdit="true"
+    @todo-updated="handleTodoUpdated"
+  />
 </template>
 
 <script setup>
@@ -108,6 +110,7 @@ const props = defineProps({
 })
 const showCreateDialog = ref(false)
 const showDeleteDialog = ref(false)
+const editTodo = ref(null)
 
 const priorityOptions = [
   { label: 'Low', value: 'low' },
@@ -172,6 +175,11 @@ async function handleDelete(id) {
       timeout: 5000,
     })
   }
+}
+
+function openEditDialog(todo) {
+  editTodo.value = { ...todo } // clone to avoid direct mutation
+  showCreateDialog.value = true
 }
 </script>
 
