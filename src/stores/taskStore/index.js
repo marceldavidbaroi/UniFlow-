@@ -5,6 +5,7 @@ export const useTaskStore = defineStore('task', {
   state: () => ({
     taskList: [],
     taskCount: 0,
+    selectedTask: null,
   }),
 
   actions,

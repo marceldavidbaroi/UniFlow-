@@ -107,7 +107,7 @@ const teacherLinks = [
     title: 'Tasks',
     icon: 'event',
     subMenu: [
-      { title: 'Create tasks', icon: 'add_circle', link: '' },
+      { title: 'Create tasks', icon: 'add_circle', link: '/tasks/add' },
       { title: 'Task List', icon: 'view_list', link: '/tasks' },
     ],
   },

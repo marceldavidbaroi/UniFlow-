@@ -420,7 +420,23 @@
           </q-card>
         </q-expansion-item>
         <div class="row q-col-gutter-md q-mt-md"></div>
-        <q-btn label="Create Task" type="submit" color="secondary" class="full-width q-mt-md" />
+        <q-btn-dropdown
+          class="full-width q-mt-md"
+          color="secondary"
+          :label="submitLabel"
+          v-model="submitDropdown"
+        >
+          <q-list>
+            <q-item clickable v-close-popup @click="onSubmit('draft')">
+              <q-item-section>Save as Draft</q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="onSubmit('ready')">
+              <q-item-section>{{
+                taskStore.selectedTask ? 'Edit Task' : 'Create Task'
+              }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-form>
     </div>
   </div>
@@ -429,7 +445,11 @@
 <script setup>
 import { useGroupStore } from 'src/stores/group-store'
 import { useSessionStore } from 'src/stores/sessionStore'
-import { onMounted, ref } from 'vue'
+import { useTaskStore } from 'src/stores/taskStore'
+import { onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const taskStore = useTaskStore()
 const sessionStore = useSessionStore()
 const groupStore = useGroupStore()
 
@@ -449,7 +469,11 @@ onMounted(async () => {
     value: group.id,
   }))
 
-  console.log(groupOption.value)
+  // Initialize sessionAssignment
+  formData.value.sessionAssignment = {}
+  sessions.data.forEach((session) => {
+    formData.value.sessionAssignment[session.id] = false
+  })
 })
 
 const categories = ref([
@@ -510,7 +534,20 @@ const formData = ref({
   },
   announcements: [],
   resources: [],
+  state: 'draft', // Add state field
+  sessionAssignment: {}, // Add sessionAssignment field
 })
+
+// Prefill form if editing a task
+watch(
+  () => taskStore.selectedTask,
+  (selected) => {
+    if (selected) {
+      formData.value = { ...selected }
+    }
+  },
+  { immediate: true },
+)
 
 // const newTag = ref('')
 
@@ -605,9 +642,28 @@ const removeResource = (index) => {
   formData.value.resources.splice(index, 1)
 }
 
-const onSubmit = () => {
+import { ref as vueRef } from 'vue'
+const submitDropdown = vueRef(false)
+// const submitOptions = [
+//   { label: 'Save as Draft', value: 'draft' },
+//   { label: taskStore.selectedTask ? 'Edit Task' : 'Create Task', value: 'ready' },
+// ]
+const submitLabel = vueRef(taskStore.selectedTask ? 'Edit Task' : 'Create Task')
+
+const onSubmit = async (action = 'ready') => {
+  formData.value.state = action
   console.log('Form Data:', formData.value)
-  // Here you would typically send the formData to your backend
+
+  if (taskStore.selectedTask) {
+    // If a task is being edited, update it
+    await taskStore.updateTask(taskStore.selectedTask.id, formData.value)
+    taskStore.selectedTask = null
+    router.push({ name: 'task' })
+  } else {
+    // Otherwise, create a new task
+    await taskStore.createTask(formData.value)
+    router.push({ name: 'task' })
+  }
 }
 </script>
 

@@ -1,3 +1,4 @@
+
 export default [
   {
     path: '/tasks',
@@ -5,6 +6,7 @@ export default [
     children: [
       {
         path: '',
+        name: 'task',
         component: () => import('./pages/TaskIndex.vue'),
         meta: {
           requiresAuth: true,
@@ -13,6 +15,7 @@ export default [
       },
       {
         path: 'add',
+        name: 'task-add',
         component: () => import('./components/AddTask.vue'),
         meta: {
           requiresAuth: true,
