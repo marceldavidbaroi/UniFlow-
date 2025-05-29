@@ -1,43 +1,42 @@
 <template>
   <div class="row justify-center q-pa-lg">
     <div class="col-xs-12 col-sm-8 col-md-6">
-      <q-form @submit="onSubmit" class="q-gutter-md q-pa-md rounded-borders">
+      <div class="row items-center q-mb-md">
+        <div class="col-auto">
+          <q-btn flat round dense icon="info" color="secondary" @click="showInfoDialog = true" />
+        </div>
+        <div class="col">
+          <span class="text-h6">Add Task</span>
+        </div>
+      </div>
+      <q-form @submit="onSubmit" class="q-gutter-md q-pa-md rounded-borders modern-form">
         <div class="row q-col-gutter-md">
-          <!-- <q-input v-model="formData.taskID" label="Task ID" outlined class="col-xs-12 col-sm-6" /> -->
-          <q-select
-            v-model="formData.sessionId"
-            :options="sessionOption"
-            label="Session "
+          <q-input
+            v-model="formData.subject"
+            label="Subject"
             outlined
-            class="col-xs-12 col-sm-6"
+            class="col-xs-12 modern-input"
           />
-          <q-select
-            v-model="formData.groupID"
-            :options="groupOption"
-            label="Group"
-            outlined
-            class="col-xs-12 col-sm-6"
-          />
-          <!-- <q-input
-            v-model="formData.ownerId"
-            label="Owner ID"
-            outlined
-            class="col-xs-12 col-sm-6"
-          /> -->
-          <q-input v-model="formData.subject" label="Subject" outlined class="col-xs-12" />
           <q-input
             v-model="formData.description"
             type="textarea"
             label="Description"
             outlined
-            class="col-xs-12"
+            class="col-xs-12 modern-input"
+            autogrow
           />
           <q-select
             v-model="formData.category"
             :options="categories"
             label="Category"
             outlined
-            class="col-xs-12 col-sm-6"
+            class="col-xs-12 col-sm-6 modern-input"
+            dense
+            emit-value
+            map-options
+            color="secondary"
+            bg-color="white"
+            placeholder="Select category"
           />
           <div class="col-xs-12">
             <label class="text-weight-medium q-mb-sm text-grey-8">Tags</label>
@@ -64,7 +63,10 @@
                 multiple
                 emit-value
                 map-options
-                class="col"
+                class="col modern-input"
+                color="secondary"
+                bg-color="white"
+                placeholder="Add tags"
               />
             </div>
           </div>
@@ -72,19 +74,15 @@
             v-model="formData.deadline"
             label="Deadline"
             outlined
-            class="col-xs-12 col-sm-6"
+            class="col-xs-12 col-sm-6 modern-input"
             readonly
+            color="secondary"
+            placeholder="Select deadline"
           >
             <template v-slot:append>
               <q-icon name="event" color="secondary" class="cursor-pointer">
                 <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                  <q-date
-                    v-model="formData.deadline"
-                    mask="YYYY-MM-DDTHH:mm:ss"
-                    :default-view="'Calendar'"
-                    :emit-immediately="false"
-                    color="secondary"
-                  >
+                  <q-date v-model="formData.deadline" mask="YYYY-MM-DDTHH:mm:ss" color="secondary">
                     <div class="row items-center justify-end q-gutter-sm q-pa-sm">
                       <q-btn label="OK" color="secondary" flat v-close-popup />
                     </div>
@@ -92,7 +90,6 @@
                 </q-popup-proxy>
               </q-icon>
             </template>
-
             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
               <q-time v-model="formData.deadline" mask="YYYY-MM-DDTHH:mm:ss" format24h>
                 <div class="row items-center justify-end q-gutter-sm q-pa-sm">
@@ -101,29 +98,24 @@
               </q-time>
             </q-popup-proxy>
           </q-input>
-
           <q-input
             v-model="formData.totalMarks"
             type="number"
             label="Total Marks"
             outlined
-            class="col-xs-12 col-sm-6"
+            class="col-xs-12 col-sm-6 modern-input"
+            color="secondary"
+            placeholder="Enter total marks"
           />
         </div>
         <q-expansion-item label="Grading Rubric" icon="rule" color="secondary" class="q-mt-md">
-          <q-card bordered="">
+          <q-card bordered>
             <q-card-section class="bg-grey-2">
               <div
                 v-for="(criterion, index) in formData.gradingRubric.criteria"
                 :key="criterion.criterionId || index"
                 class="row q-col-gutter-md items-end"
               >
-                <!-- <q-input
-                  v-model="criterion.criterionId"
-                  label="Criterion ID"
-                  outlined
-                  class="col-xs-12 col-sm-6"
-                /> -->
                 <div class="col-12 text-bold text-secondary q-mt-lg">
                   Criterion No: {{ criterion.criterionId }}
                   <q-btn
@@ -140,16 +132,15 @@
                   v-model="criterion.description"
                   label="Description"
                   outlined
-                  class="col-xs-12 col-sm-8"
-                >
-                  <template #default></template>
-                </q-input>
+                  class="col-xs-12 col-sm-8 modern-input"
+                  autogrow
+                />
                 <q-input
                   v-model="criterion.maxPoints"
                   type="number"
                   label="Max Points"
                   outlined
-                  class="col-xs-12 col-sm-4"
+                  class="col-xs-12 col-sm-4 modern-input"
                 />
               </div>
               <div class="q-mt-md">
@@ -159,7 +150,8 @@
                   type="textarea"
                   label="Notes"
                   outlined
-                  class="q-mt-md"
+                  class="q-mt-md modern-input"
+                  autogrow
                 />
               </div>
             </q-card-section>
@@ -171,17 +163,10 @@
               <div
                 v-for="(task, index) in formData.tasks"
                 :key="task.taskId || index"
-                class="q-mb-md bg-grey-2"
+                class="q-mb-md bg-grey-2 rounded-borders"
               >
                 <div class="q-pa-md">
                   <div class="row q-col-gutter-md">
-                    <!-- <q-input
-                      v-model="task.taskId"
-                      label="Task ID"
-                      outlined
-                      class="col-xs-12 col-sm-6"
-                    /> -->
-
                     <div class="text-bold text-secondary">
                       Task No: {{ task.taskId }}
                       <q-btn
@@ -198,7 +183,8 @@
                       type="textarea"
                       label="Question"
                       outlined
-                      class="col-xs-12"
+                      class="col-xs-12 modern-input"
+                      autogrow
                     />
                   </div>
                   <q-separator class="q-my-md" />
@@ -208,32 +194,33 @@
                       type="textarea"
                       label="Description"
                       outlined
-                      class="col-xs-12"
+                      class="col-xs-12 modern-input"
+                      autogrow
                     />
                     <q-input
                       v-model="task.taskDetails.points"
                       type="number"
                       label="Points"
                       outlined
-                      class="col-xs-12 col-sm-6"
+                      class="col-xs-12 col-sm-6 modern-input"
                     />
                     <q-input
                       v-model="task.taskDetails.type"
                       label="Type"
                       outlined
-                      class="col-xs-12 col-sm-6"
+                      class="col-xs-12 col-sm-6 modern-input"
                     />
                     <q-input
                       v-model="task.taskDetails.timeLimit"
                       label="Time Limit"
                       outlined
-                      class="col-xs-12 col-sm-6"
+                      class="col-xs-12 col-sm-6 modern-input"
                     />
                     <q-input
                       v-model="task.taskDetails.difficulty"
                       label="Difficulty"
                       outlined
-                      class="col-xs-12 col-sm-6"
+                      class="col-xs-12 col-sm-6 modern-input"
                     />
                     <div class="col-xs-12 q-mt-md">
                       <label class="text-weight-medium q-mb-sm text-grey-8">Attachments</label>
@@ -246,9 +233,14 @@
                           v-model="attachment.filename"
                           label="Filename"
                           outlined
-                          class="col"
+                          class="col modern-input"
                         />
-                        <q-input v-model="attachment.url" label="URL" outlined class="col" />
+                        <q-input
+                          v-model="attachment.url"
+                          label="URL"
+                          outlined
+                          class="col modern-input"
+                        />
                         <q-btn
                           icon="delete"
                           color="negative"
@@ -270,18 +262,16 @@
                       v-model="task.dependencies"
                       label="Dependencies (comma-separated)"
                       outlined
-                      class="col-xs-12"
+                      class="col-xs-12 modern-input"
                     />
                     <q-input
                       v-model="task.learningObjectives"
                       label="Learning Objectives (comma-separated)"
                       outlined
-                      class="col-xs-12"
+                      class="col-xs-12 modern-input"
                     />
                   </div>
-                  <div class="q-mt-md flex justify-end">
-                    <!-- <q-btn icon="delete" color="negative" @click="removeTask(index)" /> -->
-                  </div>
+                  <div class="q-mt-md flex justify-end"></div>
                 </div>
               </div>
               <q-btn label="Add Task" @click="addTask" color="secondary" />
@@ -294,27 +284,40 @@
               <q-toggle
                 v-model="formData.settings.allowLateSubmissions"
                 label="Allow Late Submissions"
+                color="secondary"
               />
               <q-input
                 v-model="formData.settings.lateSubmissionPenalty"
                 type="number"
                 label="Late Submission Penalty"
                 outlined
+                class="modern-input"
+                color="secondary"
               />
-              <q-input v-model="formData.settings.gradingScheme" label="Grading Scheme" outlined />
+              <q-input
+                v-model="formData.settings.gradingScheme"
+                label="Grading Scheme"
+                outlined
+                class="modern-input"
+                color="secondary"
+              />
               <q-input
                 v-model="formData.settings.submissionType"
                 label="Submission Type"
                 outlined
+                class="modern-input"
+                color="secondary"
               />
               <div class="q-mt-md">
                 <q-toggle
                   v-model="formData.settings.reviewSettings.peerReview"
                   label="Peer Review"
+                  color="secondary"
                 />
                 <q-toggle
                   v-model="formData.settings.reviewSettings.instructorReview"
                   label="Instructor Review"
+                  color="secondary"
                 />
               </div>
             </q-card-section>
@@ -329,12 +332,6 @@
                 class="q-mb-md bordered rounded-borders bg-grey-2"
               >
                 <div class="q-pa-md row q-col-gutter-md items-end">
-                  <!-- <q-input
-                    v-model="announcement.announcementId"
-                    label="Announcement ID"
-                    outlined
-                    class="col-xs-12 col-sm-6"
-                  /> -->
                   <div class="text-secondary text-bold">
                     Announcement No: {{ announcement.announcementId }}
                     <q-btn
@@ -347,26 +344,32 @@
                       dense
                     />
                   </div>
-                  <q-input v-model="announcement.title" label="Title" outlined class="col-xs-12" />
+                  <q-input
+                    v-model="announcement.title"
+                    label="Title"
+                    outlined
+                    class="col-xs-12 modern-input"
+                  />
                   <q-input
                     v-model="announcement.content"
                     type="textarea"
                     label="Content"
                     outlined
-                    class="col-xs-12"
+                    class="col-xs-12 modern-input"
+                    autogrow
                   />
                   <q-input
                     v-model="announcement.createdAt"
                     type="datetime"
                     label="Created At"
                     outlined
-                    class="col-xs-12 col-sm-6"
+                    class="col-xs-12 col-sm-6 modern-input"
                   />
                   <q-input
                     v-model="announcement.authorId"
                     label="Author ID"
                     outlined
-                    class="col-xs-12 col-sm-6"
+                    class="col-xs-12 col-sm-6 modern-input"
                   />
                 </div>
               </div>
@@ -376,18 +379,12 @@
         </q-expansion-item>
         <q-expansion-item label="Resources" icon="folder" color="secondary" class="q-mt-md">
           <q-card class="bg-grey-2">
-            <q-card-section class="">
+            <q-card-section>
               <div
                 v-for="(resource, index) in formData.resources"
                 :key="resource.resourceId || index"
                 class="row q-col-gutter-md items-end q-mb-sm q-mt-md"
               >
-                <!-- <q-input
-                  v-model="resource.resourceId"
-                  label="Resource ID"
-                  outlined
-                  class="col-xs-12 col-sm-4"
-                /> -->
                 <div class="text-secondary text-bold col-12">
                   Resource No: {{ resource.resourceId }}
                   <q-btn
@@ -401,19 +398,19 @@
                     class="col-auto"
                   />
                 </div>
-                <q-input v-model="resource.title" label="Title" outlined class="col-12" />
-                <q-input v-model="resource.url" label="URL" outlined class="col-12" />
-                <q-input v-model="resource.type" label="Type" outlined class="col-12" />
-                <!-- <q-btn
-                  icon="delete"
-                  color="negative"
-                  @click="removeResource(index)"
-                  size="sm"
-                  flat
-                  round
-                  dense
-                  class="col-auto"
-                /> -->
+                <q-input
+                  v-model="resource.title"
+                  label="Title"
+                  outlined
+                  class="col-12 modern-input"
+                />
+                <q-input v-model="resource.url" label="URL" outlined class="col-12 modern-input" />
+                <q-input
+                  v-model="resource.type"
+                  label="Type"
+                  outlined
+                  class="col-12 modern-input"
+                />
               </div>
               <q-btn label="Add Resource" @click="addResource" color="secondary" />
             </q-card-section>
@@ -438,6 +435,10 @@
           </q-list>
         </q-btn-dropdown>
       </q-form>
+      <TaskInfoDialog
+        :model-value="showInfoDialog"
+        @update:model-value="(val) => (showInfoDialog = val)"
+      />
     </div>
   </div>
 </template>
@@ -448,6 +449,7 @@ import { useSessionStore } from 'src/stores/sessionStore'
 import { useTaskStore } from 'src/stores/taskStore'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import TaskInfoDialog from './TaskInfoDialog.vue'
 const router = useRouter()
 const taskStore = useTaskStore()
 const sessionStore = useSessionStore()
@@ -455,6 +457,7 @@ const groupStore = useGroupStore()
 
 const sessionOption = ref([])
 const groupOption = ref([])
+const showInfoDialog = ref(false)
 onMounted(async () => {
   const sessions = await sessionStore.fetchCreatedSessions()
   sessionOption.value = sessions.data.map((session) => ({
@@ -468,12 +471,6 @@ onMounted(async () => {
     label: group.groupName,
     value: group.id,
   }))
-
-  // Initialize sessionAssignment
-  formData.value.sessionAssignment = {}
-  sessions.data.forEach((session) => {
-    formData.value.sessionAssignment[session.id] = false
-  })
 })
 
 const categories = ref([
@@ -534,11 +531,9 @@ const formData = ref({
   },
   announcements: [],
   resources: [],
-  state: 'draft', // Add state field
-  sessionAssignment: {}, // Add sessionAssignment field
+  state: 'draft',
 })
 
-// Prefill form if editing a task
 watch(
   () => taskStore.selectedTask,
   (selected) => {
@@ -549,39 +544,30 @@ watch(
   { immediate: true },
 )
 
-// const newTag = ref('')
-
-// const addTag = () => {
-//   if (newTag.value.trim() !== '') {
-//     formData.value.tags.push(newTag.value.trim())
-//     newTag.value = ''
-//   }
-// }
-
 const removeTag = (index) => {
   formData.value.tags.splice(index, 1)
 }
 
-const criterionCounter = ref(1) // Initialize a counter for auto-incrementing IDs
+const criterionCounter = ref(1)
 
 const addCriterion = () => {
   formData.value.gradingRubric.criteria.push({
-    criterionId: criterionCounter.value, // Use the counter for the ID
+    criterionId: criterionCounter.value,
     description: '',
     maxPoints: null,
   })
-  criterionCounter.value++ // Increment the counter
+  criterionCounter.value++
 }
 
 const removeCriterion = (index) => {
   formData.value.gradingRubric.criteria.splice(index, 1)
 }
 
-const taskCounter = ref(1) // Initialize a counter for auto-incrementing task IDs
+const taskCounter = ref(1)
 
 const addTask = () => {
   formData.value.tasks.push({
-    taskId: taskCounter.value, // Use the counter for the task ID
+    taskId: taskCounter.value,
     question: '',
     taskDetails: {
       description: '',
@@ -593,9 +579,9 @@ const addTask = () => {
     },
     dependencies: [],
     learningObjectives: [],
-    membersProgress: [], // Note: This is usually populated dynamically
+    membersProgress: [],
   })
-  taskCounter.value++ // Increment the counter
+  taskCounter.value++
 }
 
 const removeTask = (index) => {
@@ -612,7 +598,7 @@ const addTaskAttachment = (taskIndex) => {
 const removeTaskAttachment = (taskIndex, attachIndex) => {
   formData.value.tasks[taskIndex].taskDetails.attachments.splice(attachIndex, 1)
 }
-const announcementCounter = ref(1) // Initialize a counter for auto-incrementing IDs
+const announcementCounter = ref(1)
 const addAnnouncement = () => {
   formData.value.announcements.push({
     announcementId: announcementCounter.value,
@@ -627,7 +613,7 @@ const addAnnouncement = () => {
 const removeAnnouncement = (index) => {
   formData.value.announcements.splice(index, 1)
 }
-const resourceCounter = ref(1) // Initialize a counter for auto-incrementing IDs
+const resourceCounter = ref(1)
 const addResource = () => {
   formData.value.resources.push({
     resourceId: resourceCounter.value,
@@ -642,25 +628,18 @@ const removeResource = (index) => {
   formData.value.resources.splice(index, 1)
 }
 
-import { ref as vueRef } from 'vue'
-const submitDropdown = vueRef(false)
-// const submitOptions = [
-//   { label: 'Save as Draft', value: 'draft' },
-//   { label: taskStore.selectedTask ? 'Edit Task' : 'Create Task', value: 'ready' },
-// ]
-const submitLabel = vueRef(taskStore.selectedTask ? 'Edit Task' : 'Create Task')
+const submitDropdown = ref(false)
+const submitLabel = ref(taskStore.selectedTask ? 'Edit Task' : 'Create Task')
 
 const onSubmit = async (action = 'ready') => {
   formData.value.state = action
   console.log('Form Data:', formData.value)
 
   if (taskStore.selectedTask) {
-    // If a task is being edited, update it
     await taskStore.updateTask(taskStore.selectedTask.id, formData.value)
     taskStore.selectedTask = null
     router.push({ name: 'task' })
   } else {
-    // Otherwise, create a new task
     await taskStore.createTask(formData.value)
     router.push({ name: 'task' })
   }
@@ -672,5 +651,29 @@ const onSubmit = async (action = 'ready') => {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   margin-bottom: 16px;
+}
+.modern-form {
+  background: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(60, 60, 60, 0.07);
+  border: 1px solid #e0e0e0;
+}
+.modern-input .q-field__control {
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+.modern-input .q-field__label {
+  color: #607d8b;
+  font-weight: 500;
+}
+.modern-input .q-chip {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+}
+.modern-input .q-field__native {
+  font-size: 15px;
 }
 </style>

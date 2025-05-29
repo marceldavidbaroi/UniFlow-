@@ -1,4 +1,3 @@
-
 export default [
   {
     path: '/tasks',
@@ -20,6 +19,15 @@ export default [
         meta: {
           requiresAuth: true,
           roles: ['teacher'],
+        },
+      },
+      {
+        path: 'submit/:taskId',
+        name: 'task-submit',
+        component: () => import('./pages/TaskSubmission.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['student', 'teacher'],
         },
       },
     ],
