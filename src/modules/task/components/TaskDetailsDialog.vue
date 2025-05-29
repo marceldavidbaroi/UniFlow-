@@ -334,8 +334,17 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'delete-task', 'edit'])
 const taskState = ref(props.task?.state || 'draft')
-const selectedGroup = ref(props.task?.groupID)
-const selectedSession = ref(props.task?.sessionId)
+const selectedGroup = ref()
+const selectedSession = ref()
+
+watch(
+  () => props.task,
+  (task) => {
+    selectedGroup.value = task?.groupID
+    selectedSession.value = task?.sessionId
+  },
+  { immediate: true },
+)
 
 function onGroupChange(val) {
   emit('edit', { ...props.task, groupID: val })

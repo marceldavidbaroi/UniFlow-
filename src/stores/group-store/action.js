@@ -403,4 +403,19 @@ export default {
       }
     }
   },
+
+  /**
+   * Get all groups (details) for the current user (teacher or student).
+   * @returns {Promise<Array<Object>>} Array of group objects (id + details).
+   */
+  async getAllGroupsForCurrentUser() {
+    let result = []
+    if (userStore.currentRole === 'teacher') {
+       result = await this.fetchAllGroups()
+    } else {
+       result = await this.fetchGroupsByStudent()
+    }
+    // Each group already contains id and details
+    return result?.data || []
+  },
 }

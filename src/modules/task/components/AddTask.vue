@@ -505,8 +505,8 @@ const tags = ref([
 
 const formData = ref({
   taskID: '',
-  sessionId: '',
-  groupID: '',
+  sessionId: null,
+  groupID: null,
   ownerId: '',
   subject: '',
   description: '',

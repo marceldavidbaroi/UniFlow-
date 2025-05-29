@@ -1,16 +1,18 @@
 /**
  * Task Store Actions
  *
- * Functions:
+ * Task CRUD:
  * - createTask(taskData): Create a new task in Firestore for the current user.
  * - getTasks(): Fetch all tasks from Firestore.
  * - getTaskById(taskId): Fetch a single task by its ID.
  * - getTasksByOwnerId(ownerId): Fetch all tasks owned by a specific user.
+ * - getTasksByGroupIds(groupIDs): Fetch all tasks for an array of group IDs.
+ * - getTasksBySessionIds(sessionIDs): Fetch all tasks for an array of session IDs.
  * - updateTask(taskId, updatedData): Update a task's data in Firestore.
  * - deleteTask(taskId): Delete a task from Firestore.
  * - sortTasks(key, direction): Sort tasks by a given key and direction.
  *
- *
+ * Submission CRUD:
  * - createSubmission(submissionData): Create a new task submission.
  * - getSubmission(taskId, userId): Get a submission for a task by a user.
  * - getSubmissionsByTask(taskId): Get all submissions for a task.
@@ -224,15 +226,42 @@ export default {
     await deleteDoc(submissionRef);
   },
 
+
+
+
   /**
-   * Fetch all sessions for a given groupID or sessionId.
-   * @param {string} id - The group ID or session ID to filter sessions.
-   * @returns {Promise<Array>} Array of matching session objects.
+   * Fetch all tasks for a given array of groupIDs.
+   * @param {Array<string>} groupIDs - The group IDs to filter tasks.
+   * @returns {Promise<Array>} Array of matching task objects.
    */
-  async getSessionsByGroupOrSessionId(id) {
-    const querySnapshot = await getDocs(collection(db, 'sessions'));
-    return querySnapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(session => session.groupID === id || session.sessionID === id);
+  async getTasksByGroupIds(groupIDs) {
+    const querySnapshot = await getDocs(collection(db, 'tasks'));
+    const tasks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const plainGroupIDs = Array.isArray(groupIDs)
+      ? Array.from(groupIDs).map(id => id && typeof id === 'object' && 'value' in id ? String(id.value) : String(id))
+      : [];
+    return tasks.filter(task =>
+      Array.isArray(task.groupID)
+        ? task.groupID.some(id => plainGroupIDs.includes(String(id)))
+        : plainGroupIDs.includes(String(task.groupID))
+    );
+  },
+
+  /**
+   * Fetch all tasks for a given array of sessionIDs.
+   * @param {Array<string>} sessionIDs - The session IDs to filter tasks.
+   * @returns {Promise<Array>} Array of matching task objects.
+   */
+  async getTasksBySessionIds(sessionIDs) {
+    const querySnapshot = await getDocs(collection(db, 'tasks'));
+    const tasks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const plainSessionIDs = Array.isArray(sessionIDs)
+      ? Array.from(sessionIDs).map(id => id && typeof id === 'object' && 'value' in id ? String(id.value) : String(id))
+      : [];
+    return tasks.filter(task =>
+      Array.isArray(task.sessionId)
+        ? task.sessionId.some(id => plainSessionIDs.includes(String(id)))
+        : plainSessionIDs.includes(String(task.sessionId))
+    );
   },
 }

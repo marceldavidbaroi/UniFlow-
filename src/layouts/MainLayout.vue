@@ -137,12 +137,26 @@ const studentLinks = [
 
   { title: 'Logout', icon: 'logout', link: '/auth/logout' },
 ]
+
+const adminLinks = [
+  { title: 'Admin Dashboard', icon: 'dashboard', link: '/admin' },
+  { title: 'Users', icon: 'people', link: '/admin/users' },
+  { title: 'Groups', icon: 'groups', link: '/admin/groups' },
+  { title: 'Sessions', icon: 'event', link: '/admin/sessions' },
+  { title: 'Tasks', icon: 'assignment', link: '/admin/tasks' },
+  { title: 'To-Do', icon: 'checklist', link: '/admin/todo' },
+  { title: 'Notes', icon: 'note', link: '/admin/notes' },
+  { title: 'Subjects', icon: 'book', link: '/admin/subjects' },
+  { title: 'Logs', icon: 'list_alt', link: '/admin/logs' },
+  { title: 'Logout', icon: 'logout', link: '/auth/logout' },
+]
+
 const linksList = authStore.isAuthenticated
   ? userStore.currentRole === 'teacher'
     ? teacherLinks
     : userStore.currentRole === 'student'
       ? studentLinks
-      : visitorLinks
+      : adminLinks
   : visitorLinks
 
 function toggleDrawer() {

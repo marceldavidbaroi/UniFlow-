@@ -6,6 +6,7 @@ import group from 'src/modules/group/routes'
 import session from 'src/modules/session/routes'
 import todo from 'src/modules/todo/routes'
 import task from 'src/modules/task/routes'
+import admin from 'src/modules/admin/routes'
 
 // Error and unauthorized fallback pages
 
@@ -17,6 +18,7 @@ const routes = [
   ...session,
   ...todo,
   ...task,
+  ...admin,
 
   // Unauthorized Route
   {

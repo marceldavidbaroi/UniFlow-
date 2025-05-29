@@ -329,4 +329,20 @@ export default {
       return { success: false, message: 'Failed to fetch participantsResponded.' }
     }
   },
+
+
+  /**
+   * Get all sessions (details) for the current user (teacher or student).
+   * @returns {Promise<Array<Object>>} Array of session objects (id + details).
+   */
+  async getAllSessionsForCurrentUser() {
+    let result = []
+    if (userStore.currentRole === 'teacher') {
+       result = await this.fetchCreatedSessions()
+    } else {
+       result = await this.fetchParticipatingSessions()
+    }
+    // Each session already contains id and details
+    return result?.data || []
+  },
 }

@@ -1,6 +1,7 @@
 <template>
   <q-page padding>
     <template v-if="taskStore.taskList && taskStore.taskList.length > 0">
+      {{ userStore.currentUser }}
       <TaskList
         :tasks="taskStore.taskList"
         :group-options="groupOption"
@@ -32,21 +33,43 @@ import { useRouter } from 'vue-router'
 import { useTaskStore } from 'src/stores/taskStore'
 import { useSessionStore } from 'src/stores/sessionStore'
 import { useGroupStore } from 'src/stores/group-store'
+import { useUserStore } from 'src/stores/user-store'
+const userStore = useUserStore()
 const groupStore = useGroupStore()
 const sessionStore = useSessionStore()
 const taskStore = useTaskStore()
 const router = useRouter()
 const sessionOptions = ref([])
 const groupOption = ref([])
-
+const sessionTask = ref([])
+const groupTask = ref([])
+const sessionIDs = ref([]) // Add this line
+const groupIDs = ref([]) // Add this line
 onMounted(async () => {
-  await taskStore.getTasks()
-  await sessionStore.fetchCreatedSessions()
-  await groupStore.fetchAllGroups()
-  groupOption.value = groupStore.groupList
-  sessionOptions.value = sessionStore.sessionList
+  sessionOptions.value = await sessionStore.getAllSessionsForCurrentUser()
+  sessionIDs.value = Array.isArray(sessionOptions.value)
+    ? sessionOptions.value.map((s) => s.id)
+    : []
+  groupOption.value = await groupStore.getAllGroupsForCurrentUser()
+  groupIDs.value = Array.isArray(groupOption.value) ? groupOption.value.map((g) => g.id) : []
+  if (userStore.currentRole === 'teacher') {
+    await taskStore.getTasks()
+  } else {
+    const sessionTasksResult = await taskStore.getTasksBySessionIds(sessionOptions.value)
+    const groupTasksResult = await taskStore.getTasksByGroupIds(groupIDs.value)
+    sessionTask.value = Array.isArray(sessionTasksResult) ? sessionTasksResult : []
+    groupTask.value = Array.isArray(groupTasksResult) ? groupTasksResult : []
+    // Merge and deduplicate tasks by id
+    const mergedTasks = [...sessionTask.value, ...groupTask.value]
+    const uniqueTasksMap = new Map()
+    mergedTasks.forEach((task) => {
+      if (task && task.id) uniqueTasksMap.set(task.id, task)
+    })
+    taskStore.taskList = Array.from(uniqueTasksMap.values())
+    console.log(groupTasksResult)
+  }
 
-  console.log('Tasks loaded:', taskStore.taskList)
+  // Create a new array with just the session IDs
 })
 
 const handleDeleteTask = async (taskId) => {
@@ -70,7 +93,6 @@ const handleUpdateTask = async (updatedTask) => {
   if (normalizedTask && normalizedTask.id) {
     await taskStore.updateTask(normalizedTask.id, normalizedTask)
     await taskStore.getTasks()
-    console.log('task is updated')
   }
 }
 </script>

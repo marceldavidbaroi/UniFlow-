@@ -175,7 +175,7 @@ const showStudentDialog = ref(false)
 const selectedTask = ref(null)
 
 function openTaskDialog(task) {
-  if (userStore.userRole === 'student') {
+  if (userStore.currentRole === 'student') {
     selectedTask.value = task
     showStudentDialog.value = true
   } else if (userStore.currentRole !== 'student') {

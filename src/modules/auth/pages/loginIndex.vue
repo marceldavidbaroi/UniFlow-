@@ -135,6 +135,8 @@ const onSubmit = async () => {
           router.push('/dashboard/teacher')
         } else if (userStore.currentRole === 'student') {
           router.push('/dashboard/student')
+        } else if (userStore.currentRole === 'admin') {
+          router.push('/admin')
         }
       }, 2000)
     }
