@@ -1,6 +1,6 @@
 /**
  * Functions:
- * - createGroup(groupName, batch, semester, year, subjectName, description, groupRules, password, confirmPassword, maxMembers, labGroup)
+ * - createGroup(groupName, batch, semester, year, courseName, description, groupRules, password, confirmPassword, maxMembers, labGroup)
  * - fetchAllGroups()
  * - addMemberToGroup(groupId, password)
  * - searchGroupById(groupId)
@@ -31,36 +31,29 @@ import { useUserStore } from '../user-store'
 const userStore = useUserStore()
 export default {
   // create a group
-  async createGroup(
-    groupName,
-    batch,
-    semester,
-    year,
-    subjectName,
-    description,
-    groupRules,
-    password,
-    confirmPassword,
-    maxMembers,
-    labGroup,
-  ) {
+  async createGroup(payload) {
     try {
-      if (
-        !groupName ||
-        !batch ||
-        !semester ||
-        !year ||
-        !subjectName ||
-        !password ||
-        !confirmPassword
-      ) {
-        throw new Error('Please fill in all required fields.')
+      const requiredFields = [
+        'groupName',
+        'batch',
+        'semester',
+        'year',
+        'course', // changed from courseName to course
+        'password',
+        'confirmPassword',
+      ]
+
+      for (const field of requiredFields) {
+        if (!payload[field]) {
+          throw new Error(`Missing required field: ${field}`)
+        }
       }
 
-      if (password !== confirmPassword) {
+      if (payload.password !== payload.confirmPassword) {
         return { success: false, message: 'Passwords do not match.' }
       }
-      const groupQuery = query(collection(db, 'group'), where('groupName', '==', groupName))
+
+      const groupQuery = query(collection(db, 'group'), where('groupName', '==', payload.groupName))
       const existingGroups = await getDocs(groupQuery)
 
       if (!existingGroups.empty) {
@@ -70,23 +63,20 @@ export default {
         }
       }
 
-      // const hashedPassword = await bcrypt.hash(password, 10)
+      // Optional password hashing (uncomment if needed)
+      // const hashedPassword = await bcrypt.hash(payload.password, 10)
 
       const newGroup = {
-        groupName,
-        batch,
-        semester,
-        year,
-        subjectName,
-        description,
-        groupRules,
-        password: password,
-        maxMembers: maxMembers ? parseInt(maxMembers, 10) : null,
-        labGroup: Boolean(labGroup),
+        ...payload,
+        password: payload.password, // or use hashedPassword
+        maxMembers: payload.maxMembers ? parseInt(payload.maxMembers, 10) : null,
+        labGroup: Boolean(payload.labGroup),
         createdAt: new Date(),
         owner: userStore.currentUser,
         members: [userStore.currentUser],
       }
+
+      delete newGroup.confirmPassword // Don't store confirmPassword
 
       const docRef = await addDoc(collection(db, 'group'), newGroup)
       this.group = docRef
@@ -286,7 +276,7 @@ export default {
         'batch',
         'semester',
         'year',
-        'subjectName',
+        'courseName',
         'description',
         'groupRules',
         'password',
@@ -334,9 +324,9 @@ export default {
       if (filters.year) {
         queryConstraints.push(where('year', '==', filters.year))
       }
-      if (filters.subjectName) {
-        queryConstraints.push(where('subjectName', '>=', filters.subjectName))
-        queryConstraints.push(where('subjectName', '<=', filters.subjectName + '\uf8ff'))
+      if (filters.courseName) {
+        queryConstraints.push(where('courseName', '>=', filters.courseName))
+        queryConstraints.push(where('courseName', '<=', filters.courseName + '\uf8ff'))
       }
       if (
         filters.labGroup !== undefined &&
@@ -411,9 +401,9 @@ export default {
   async getAllGroupsForCurrentUser() {
     let result = []
     if (userStore.currentRole === 'teacher') {
-       result = await this.fetchAllGroups()
+      result = await this.fetchAllGroups()
     } else {
-       result = await this.fetchGroupsByStudent()
+      result = await this.fetchGroupsByStudent()
     }
     // Each group already contains id and details
     return result?.data || []

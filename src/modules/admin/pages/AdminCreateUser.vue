@@ -61,6 +61,25 @@
           emit-value
           map-options
         />
+        <q-input
+          v-model="form.password"
+          label="Password"
+          type="password"
+          filled
+          color="secondary"
+          dense
+          clearable
+          :rules="[(val) => !val || val.length >= 6 || 'Password must be at least 6 characters']"
+        />
+        <q-input
+          v-model="form.confirmPassword"
+          label="Confirm Password"
+          type="password"
+          filled
+          color="secondary"
+          dense
+          clearable
+        />
       </q-card-section>
 
       <q-separator color="grey-4" class="q-mt-md q-mb-sm" />
@@ -83,7 +102,9 @@
 import { onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useAdminStore } from 'src/stores/admin-store'
+import { useAuthStore } from 'src/stores/auth-store'
 const adminStore = useAdminStore()
+const authStore = useAuthStore()
 
 const $q = useQuasar()
 
@@ -93,6 +114,8 @@ const form = ref({
   faculty: null,
   department: null,
   role: null,
+  password: '',
+  confirmPassword: '',
 })
 
 const onChangeFaculty = async () => {
@@ -112,9 +135,15 @@ async function createUser() {
     !form.value.nickname ||
     !form.value.faculty ||
     !form.value.department ||
-    !form.value.role
+    !form.value.role ||
+    form.value.password === ''
   ) {
     $q.notify({ type: 'negative', message: 'Please fill in all fields.' })
+    return
+  }
+
+  if (form.value.password !== form.value.confirmPassword) {
+    $q.notify({ type: 'negative', message: 'Passwords do not match.' })
     return
   }
 
@@ -133,7 +162,7 @@ async function createUser() {
       : (depData.teacherCount || 0) + 1
 
   const paddedCount = count.toString().padStart(3, '0') // e.g. 001
-  const userID = `${currentYear}${departmentCode}${paddedCount}`
+  const userID = `${currentYear}-${departmentCode}-${paddedCount}`
 
   const email = `${form.value.nickname.toLowerCase()}${userID}@example.com`.replace(/\s+/g, '')
 
@@ -145,7 +174,9 @@ async function createUser() {
     role: form.value.role,
     userID,
     email,
+    password: form.value.password,
   }
+  await authStore.registerUser(data)
 
   console.log('Creating user:', data)
   $q.notify({ type: 'positive', message: `User ${userID} created successfully!` })
@@ -159,6 +190,8 @@ async function createUser() {
     faculty: null,
     department: null,
     role: null,
+    password: '',
+    confirmPassword: '',
   }
 }
 

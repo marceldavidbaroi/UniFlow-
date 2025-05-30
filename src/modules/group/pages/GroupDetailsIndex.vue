@@ -66,7 +66,12 @@
           </div>
           <div class="detail-item"><span class="detail-label">Year:</span> {{ group?.year }}</div>
           <div class="detail-item">
-            <span class="detail-label">Subject:</span> {{ group?.subjectName }}
+            <span class="detail-label">Course:</span> {{ group?.course?.name }}
+            <span v-if="group?.course?.code"> ({{ group?.course?.code }})</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Department:</span> {{ group?.department?.name }}
+            <span v-if="group?.department?.initial"> ({{ group?.department?.initial }})</span>
           </div>
           <div class="detail-item" v-if="group?.labGroup">
             <span class="detail-label">Lab Group:</span>
@@ -83,7 +88,7 @@
       </div>
       <div class="member-table">
         <div class="table-title">Member Details</div>
-        <q-table :rows="formattedMembers || []" :columns="columns" row-key="id" flat bordered>
+        <q-table dense :rows="formattedMembers || []" :columns="columns" row-key="id" flat bordered>
           <template v-slot:body="props">
             <q-tr :props="props">
               <q-td key="name" :props="props">{{ props.row.name }}</q-td>
@@ -186,7 +191,8 @@ const formattedMembers = computed(() => {
 })
 
 const handleDelete = async () => {
-  const response = await groupStore.deleteGroup(groupId)
+  console.log('Deleting group with ID:', groupId.value)
+  const response = await groupStore.deleteGroup(groupId.value)
 
   if (response.success) {
     Notify.create({
@@ -195,6 +201,7 @@ const handleDelete = async () => {
       position: 'top',
       timeout: 3000,
     })
+    router.push('/group/list')
   } else {
     Notify.create({
       type: 'negative',

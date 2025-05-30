@@ -4,7 +4,7 @@
       <q-item-section>
         <q-item-label>{{ group.groupName }}</q-item-label>
         <div class="row">
-          <div class="">Subject: {{ group.subjectName }}</div>
+          <div class="">Course: {{ group.courseName }}</div>
           <div class="col text-right text-dark">
             <span class="">&nbsp;{{ group.semester }}</span>
             <span>&nbsp;||&nbsp;{{ group.year }} </span>

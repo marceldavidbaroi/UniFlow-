@@ -15,18 +15,16 @@ import { useUserStore } from '../user-store'
 const userStore = useUserStore()
 
 export default {
-  async registerUser(
-    name,
-    email,
-    batch,
-    id,
-    department,
-    faculty,
-    adminAccessPassword,
-    role,
-    password,
-  ) {
+  async registerUser(payload) {
     try {
+      const {
+        email,
+        password,
+        role,
+        adminAccessPassword, // optional, only used for validation
+        ...rest // everything else (name, nickname, faculty, department, etc.)
+      } = payload
+
       const usersRef = collection(db, 'users')
       const q = query(usersRef, where('email', '==', email))
       const querySnapshot = await getDocs(q)
@@ -35,31 +33,22 @@ export default {
         return { success: false, message: 'User already exists' }
       }
 
-      if (role.value === 'teacher' && adminAccessPassword !== '123123') {
+      // Teacher role: check admin access password
+      if (role === 'teacher' && adminAccessPassword !== '123123') {
         return { success: false, message: 'Wrong admin access password for Teacher' }
       }
 
-      const commonPayload = {
-        name,
+      const hashedPassword = await bcrypt.hash(password, 10)
+
+      const userPayload = {
+        ...rest,
         email,
-        personId: id,
-        role: role.value,
-        department,
+        role,
+        password: hashedPassword,
         createdAt: new Date(),
       }
 
-      const roleSpecificData =
-        role.value === 'teacher' ? { faculty } : role.value === 'student' ? { batch } : {}
-
-      const hashedPassword = await bcrypt.hash(password, 10) // Ensure password is hashed before usage
-
-      const payload = {
-        ...commonPayload,
-        ...roleSpecificData,
-        password: hashedPassword,
-      }
-
-      const userRef = await addDoc(usersRef, payload)
+      const userRef = await addDoc(usersRef, userPayload)
 
       return { success: true, message: 'User registered successfully', userId: userRef.id }
     } catch (error) {
@@ -67,7 +56,6 @@ export default {
       throw error
     }
   },
-
   // Log in a user
 
   async loginUser(email, password) {

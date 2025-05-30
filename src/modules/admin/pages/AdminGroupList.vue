@@ -61,57 +61,6 @@
         </q-td>
       </template>
     </q-table>
-    <!-- AddCourseDialog can be implemented similarly to AddFacultyDialog -->
-    <q-dialog v-model="showSampleDialog">
-      <q-card class="q-pa-md" style="min-width: 340px; max-width: 95vw; border-radius: 16px">
-        <q-card-section>
-          <div class="text-h6 text-negative">Add Sample Courses</div>
-          <div class="text-body2 q-mt-sm">
-            <b>Warning:</b> This action will
-            <span class="text-negative">permanently delete <u>all existing courses</u></span> and
-            replace them with sample data.<br />
-            <span class="text-warning">This cannot be undone.</span><br />
-            <br />
-            To proceed, please enter the admin password. <br />
-            <span class="text-caption text-grey-7"
-              >(All current course records will be lost and replaced with sample data.)</span
-            >
-          </div>
-          <q-input
-            v-model="samplePassword"
-            label="Admin Password"
-            type="password"
-            dense
-            autofocus
-            class="q-mt-md"
-            :disable="sampleLoading"
-            @keyup.enter="confirmSampleCourses"
-            :error="samplePasswordError !== ''"
-            :error-message="samplePasswordError"
-          />
-          <q-linear-progress
-            v-if="sampleLoading"
-            :value="sampleProgress"
-            color="negative"
-            class="q-mt-md"
-          >
-            <div class="absolute-full flex flex-center text-white text-weight-bold">
-              {{ Math.round(sampleProgress * 100) }}% - {{ sampleProgressMsg }}
-            </div>
-          </q-linear-progress>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="grey" v-close-popup :disable="sampleLoading" />
-          <q-btn
-            unelevated
-            label="Confirm"
-            color="negative"
-            @click="confirmSampleCourses"
-            :loading="sampleLoading"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
@@ -153,9 +102,8 @@ const columns = [
 
 async function fetchGroups(search = {}) {
   loading.value = true
-  const res = await adminStore.fetchGroups(search)
-  courses.value = res.data || []
-  console.log(courses.value)
+  await adminStore.fetchGroups(search)
+  console.log(adminStore.allGroup)
   loading.value = false
 }
 function goToDetailByCode(evt, row) {
@@ -171,10 +119,7 @@ function onSearch() {
     fetchGroups({ [searchType.value]: searchText.value })
   }
 }
-function onSearchClear() {
-  searchText.value = ''
-  fetchGroups()
-}
+
 function resetSampleDialog() {
   samplePassword.value = ''
   samplePasswordError.value = ''
@@ -182,51 +127,51 @@ function resetSampleDialog() {
 watch(showSampleDialog, (val) => {
   if (val === true) resetSampleDialog()
 })
-async function confirmSampleCourses() {
-  samplePasswordError.value = ''
-  if (samplePassword.value !== '123123') {
-    samplePasswordError.value = 'Incorrect password. Please try again.'
-    return
-  }
-  await addSampleCourses()
-}
+// async function confirmSampleCourses() {
+//   samplePasswordError.value = ''
+//   if (samplePassword.value !== '123123') {
+//     samplePasswordError.value = 'Incorrect password. Please try again.'
+//     return
+//   }
+//   await addSampleCourses()
+// }
 
-async function addSampleCourses() {
-  sampleLoading.value = true
-  sampleProgress.value = 0
-  sampleProgressMsg.value = 'Starting...'
-  try {
-    // Remove all courses
-    const res = await adminStore.fetchGroups()
-    if (res.data && res.data.length) {
-      let i = 0
-      for (const course of res.data) {
-        await adminStore.deleteCourse(course.id)
-        i++
-        sampleProgress.value = i / res.data.length
-        sampleProgressMsg.value = `Deleting courses (${i}/${res.data.length})`
-      }
-    }
-    sampleProgress.value = 0.95
-    sampleProgressMsg.value = 'Adding sample courses...'
-    // Insert sample courses using the store action (handles all logic)
-    await adminStore.injectSampleCourses()
-    sampleProgress.value = 1
-    sampleProgressMsg.value = 'Done!'
-    $q.notify({ type: 'positive', message: 'Sample courses added!' })
-    await fetchGroups()
-  } catch {
-    $q.notify({ type: 'negative', message: 'Failed to add sample courses.' })
-    sampleProgressMsg.value = 'Failed.'
-  }
-  setTimeout(() => {
-    sampleLoading.value = false
-    showSampleDialog.value = false
-    resetSampleDialog()
-    sampleProgress.value = 0
-    sampleProgressMsg.value = ''
-  }, 800)
-}
+// async function addSampleCourses() {
+//   sampleLoading.value = true
+//   sampleProgress.value = 0
+//   sampleProgressMsg.value = 'Starting...'
+//   try {
+//     // Remove all courses
+//     const res = await adminStore.fetchGroups()
+//     if (res.data && res.data.length) {
+//       let i = 0
+//       for (const course of res.data) {
+//         await adminStore.deleteCourse(course.id)
+//         i++
+//         sampleProgress.value = i / res.data.length
+//         sampleProgressMsg.value = `Deleting courses (${i}/${res.data.length})`
+//       }
+//     }
+//     sampleProgress.value = 0.95
+//     sampleProgressMsg.value = 'Adding sample courses...'
+//     // Insert sample courses using the store action (handles all logic)
+//     await adminStore.injectSampleCourses()
+//     sampleProgress.value = 1
+//     sampleProgressMsg.value = 'Done!'
+//     $q.notify({ type: 'positive', message: 'Sample courses added!' })
+//     await fetchGroups()
+//   } catch {
+//     $q.notify({ type: 'negative', message: 'Failed to add sample courses.' })
+//     sampleProgressMsg.value = 'Failed.'
+//   }
+//   setTimeout(() => {
+//     sampleLoading.value = false
+//     showSampleDialog.value = false
+//     resetSampleDialog()
+//     sampleProgress.value = 0
+//     sampleProgressMsg.value = ''
+//   }, 800)
+// }
 
 onMounted(fetchGroups)
 </script>

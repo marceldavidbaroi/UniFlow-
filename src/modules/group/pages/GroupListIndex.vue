@@ -67,7 +67,7 @@ const formattedGroupData = computed(() =>
     id: group.id,
     groupName: group.groupName,
     semester: group.semester,
-    subjectName: group.subjectName,
+    courseName: group?.course?.name,
     year: group.year,
     labGroup: group.labGroup,
     password: group.password,
@@ -88,6 +88,7 @@ onMounted(async () => {
   if (userStore.currentRole === 'student') {
     await groupStore.fetchGroupsByStudent()
   }
+  console.log('GroupListIndex mounted', groupStore.groupList)
 })
 </script>
 
