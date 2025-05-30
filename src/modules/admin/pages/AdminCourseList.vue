@@ -46,73 +46,22 @@
       :loading="loading"
       @row-click="goToDetailByCode"
     >
-      <template v-slot:body-cell-name="props">
-        <q-td :props="props">
-          {{ props.row.name }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-initial="props">
-        <q-td :props="props">
-          {{ props.row.initial }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-code="props">
-        <q-td :props="props">
-          {{ props.row.code }}
-        </q-td>
-      </template>
     </q-table>
-    <!-- AddCourseDialog can be implemented similarly to AddFacultyDialog -->
-    <q-dialog v-model="showSampleDialog">
-      <q-card class="q-pa-md" style="min-width: 340px; max-width: 95vw; border-radius: 16px">
-        <q-card-section>
-          <div class="text-h6 text-negative">Add Sample Courses</div>
-          <div class="text-body2 q-mt-sm">
-            <b>Warning:</b> This action will
-            <span class="text-negative">permanently delete <u>all existing courses</u></span> and
-            replace them with sample data.<br />
-            <span class="text-warning">This cannot be undone.</span><br />
-            <br />
-            To proceed, please enter the admin password. <br />
-            <span class="text-caption text-grey-7"
-              >(All current course records will be lost and replaced with sample data.)</span
-            >
-          </div>
-          <q-input
-            v-model="samplePassword"
-            label="Admin Password"
-            type="password"
-            dense
-            autofocus
-            class="q-mt-md"
-            :disable="sampleLoading"
-            @keyup.enter="confirmSampleCourses"
-            :error="samplePasswordError !== ''"
-            :error-message="samplePasswordError"
-          />
-          <q-linear-progress
-            v-if="sampleLoading"
-            :value="sampleProgress"
-            color="negative"
-            class="q-mt-md"
-          >
-            <div class="absolute-full flex flex-center text-white text-weight-bold">
-              {{ Math.round(sampleProgress * 100) }}% - {{ sampleProgressMsg }}
-            </div>
-          </q-linear-progress>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="grey" v-close-popup :disable="sampleLoading" />
-          <q-btn
-            unelevated
-            label="Confirm"
-            color="negative"
-            @click="confirmSampleCourses"
-            :loading="sampleLoading"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+
+    <bulkDeleteDialog
+      v-model="showSampleDialog"
+      title="Add Sample Courses"
+      warning="This action will permanently delete all existing courses and replace them with sample data."
+      note="To proceed, please enter the admin password."
+      :password="adminPassword"
+      :passwordLabel="'Admin Password'"
+      :confirmLabel="'Confirm'"
+      @confirm="confirmSampleCourses"
+      @cancel="showSampleDialog = false"
+      :loading="sampleLoading"
+      :progress="sampleProgress"
+      :sampleProgressMsg="sampleProgressMsg"
+    />
   </q-page>
 </template>
 
@@ -122,6 +71,7 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAdminStore } from 'src/stores/admin-store'
 import FilterSearch from '../components/filterSearch.vue'
+import bulkDeleteDialog from '../components/bulkDeleteDialog.vue'
 
 const adminStore = useAdminStore()
 const router = useRouter()
@@ -136,6 +86,7 @@ const samplePassword = ref('')
 const samplePasswordError = ref('')
 const sampleProgress = ref(0)
 const sampleProgressMsg = ref('')
+const adminPassword = ref('123123')
 
 const searchTypeOptions = [
   { label: 'Name', value: 'name' },
@@ -143,7 +94,6 @@ const searchTypeOptions = [
 ]
 
 const columns = [
-  // { name: 'id', label: 'ID', field: 'id', align: 'left' }, // hidden but kept for reference
   { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
   { name: 'code', label: 'Code', field: 'code', align: 'left', sortable: true },
   { name: 'credits', label: 'Credits', field: 'credits', align: 'left', sortable: true },
@@ -179,12 +129,8 @@ function resetSampleDialog() {
 watch(showSampleDialog, (val) => {
   if (val === true) resetSampleDialog()
 })
-async function confirmSampleCourses() {
-  samplePasswordError.value = ''
-  if (samplePassword.value !== '123123') {
-    samplePasswordError.value = 'Incorrect password. Please try again.'
-    return
-  }
+async function confirmSampleCourses(localPassword) {
+  console.log(localPassword)
   await addSampleCourses()
 }
 
