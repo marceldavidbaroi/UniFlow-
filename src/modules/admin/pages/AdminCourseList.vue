@@ -2,37 +2,8 @@
   <q-page padding class="bg-grey-1">
     <div class="text-h5 text-weight-bold q-mb-md text-secondary">Course Management</div>
     <div class="row items-center q-mb-md">
-      <q-select
-        v-model="searchType"
-        :options="searchTypeOptions"
-        dense
-        emit-value
-        map-options
-        outlined
-        color="blue-2"
-        text-color="blue-10"
-        class="q-mr-sm"
-        style="min-width: 120px"
-      />
-      <q-input
-        v-model="searchText"
-        dense
-        outlined
-        color="secondary"
-        placeholder="Search..."
-        :debounce="350"
-        @update:model-value="onSearch"
-        @keyup.enter="onSearch"
-        @blur="onSearch"
-        clearable
-        @clear="onSearchClear"
-        class="q-mr-sm"
-        style="min-width: 180px"
-      >
-        <template v-slot:append>
-          <q-icon name="search" @click="fetchCourses" class="cursor-pointer" />
-        </template>
-      </q-input>
+      <FilterSearch :searchTypeOptions="searchTypeOptions" @search="onSearch" />
+
       <q-space />
       <q-btn
         color="negative"
@@ -150,6 +121,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAdminStore } from 'src/stores/admin-store'
+import FilterSearch from '../components/filterSearch.vue'
 
 const adminStore = useAdminStore()
 const router = useRouter()
@@ -165,44 +137,41 @@ const samplePasswordError = ref('')
 const sampleProgress = ref(0)
 const sampleProgressMsg = ref('')
 
-const searchText = ref('')
-const searchType = ref('name')
 const searchTypeOptions = [
   { label: 'Name', value: 'name' },
-  { label: 'Initial', value: 'initial' },
   { label: 'Code', value: 'code' },
 ]
 
 const columns = [
   // { name: 'id', label: 'ID', field: 'id', align: 'left' }, // hidden but kept for reference
   { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
-  { name: 'initial', label: 'Initial', field: 'initial', align: 'left', sortable: true },
   { name: 'code', label: 'Code', field: 'code', align: 'left', sortable: true },
+  { name: 'credits', label: 'Credits', field: 'credits', align: 'left', sortable: true },
 ]
 
 async function fetchCourses(search = {}) {
+  console.log(search)
   loading.value = true
   const res = await adminStore.fetchCourses(search)
   courses.value = res.data || []
+  console.log(courses.value)
   loading.value = false
 }
 function goToDetailByCode(evt, row) {
-  router.push(`/admin/course/${row.code}`)
+  router.push(`/admin/course/${row.id}`)
 }
 function openAddDialog() {
   showAddDialog.value = true
 }
-function onSearch() {
-  if (!searchText.value) {
+function onSearch({ type, text }) {
+  console.log('Searching:', type, text)
+  if (!text) {
     fetchCourses()
   } else {
-    fetchCourses({ [searchType.value]: searchText.value })
+    fetchCourses({ [type]: text })
   }
 }
-function onSearchClear() {
-  searchText.value = ''
-  fetchCourses()
-}
+
 function resetSampleDialog() {
   samplePassword.value = ''
   samplePasswordError.value = ''
