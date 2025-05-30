@@ -148,6 +148,9 @@ const adminLinks = [
   { title: 'Notes', icon: 'note', link: '/admin/notes' },
   { title: 'Subjects', icon: 'book', link: '/admin/subjects' },
   { title: 'Logs', icon: 'list_alt', link: '/admin/logs' },
+  { title: 'Faculty', icon: 'school', link: '/admin/faculty' },
+  { title: 'Courses', icon: 'menu_book', link: '/admin/course' },
+  { title: 'Department', icon: 'apartment', link: '/admin/department' },
   { title: 'Logout', icon: 'logout', link: '/auth/logout' },
 ]
 

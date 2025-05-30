@@ -1,0 +1,290 @@
+// src/modules/admin/sample/sampleFaculties.js
+// Sample faculty data for mass insertion
+export const sampleFaculties = [
+  {
+    name: 'Information Technology',
+    initial: 'IT',
+    code: '15',
+    description: 'Faculty covering software, hardware, and IT systems.',
+    headOfFaculty: 'Dr. Sana Malik',
+    email: 'it@university.edu',
+    phone: '+123456789',
+    officeLocation: 'Block B, Room 104',
+    website: 'https://university.edu/faculties/it'
+  },
+  {
+    name: 'Electrical Engineering',
+    initial: 'EE',
+    code: '16',
+    description: 'Faculty focused on electrical systems and electronics.',
+    headOfFaculty: 'Dr. John Doe',
+    email: 'ee@university.edu',
+    phone: '+123456780',
+    officeLocation: 'Block C, Room 201',
+    website: 'https://university.edu/faculties/ee'
+  },
+  {
+    name: 'Mechanical Engineering',
+    initial: 'ME',
+    code: '17',
+    description: 'Faculty for mechanical systems and design.',
+    headOfFaculty: 'Dr. Jane Smith',
+    email: 'me@university.edu',
+    phone: '+123456781',
+    officeLocation: 'Block D, Room 301',
+    website: 'https://university.edu/faculties/me'
+  },
+  {
+    name: 'Civil Engineering',
+    initial: 'CE',
+    code: '20',
+    description: 'Faculty for civil, structural, and environmental engineering.',
+    headOfFaculty: 'Dr. Emily Clark',
+    email: 'ce@university.edu',
+    phone: '+123456784',
+    officeLocation: 'Block G, Room 601',
+    website: 'https://university.edu/faculties/ce'
+  },
+  {
+    name: 'Chemical Engineering',
+    initial: 'CHE',
+    code: '21',
+    description: 'Faculty for chemical processes and materials.',
+    headOfFaculty: 'Dr. Robert Brown',
+    email: 'che@university.edu',
+    phone: '+123456785',
+    officeLocation: 'Block H, Room 701',
+    website: 'https://university.edu/faculties/che'
+  },
+  {
+    name: 'Business Administration',
+    initial: 'BA',
+    code: '18',
+    description: 'Faculty for business, management, and economics.',
+    headOfFaculty: 'Prof. Ahmed Khan',
+    email: 'ba@university.edu',
+    phone: '+123456782',
+    officeLocation: 'Block E, Room 401',
+    website: 'https://university.edu/faculties/ba'
+  },
+  {
+    name: 'Humanities',
+    initial: 'HU',
+    code: '19',
+    description: 'Faculty for arts, languages, and social sciences.',
+    headOfFaculty: 'Prof. Maria Lee',
+    email: 'hu@university.edu',
+    phone: '+123456783',
+    officeLocation: 'Block F, Room 501',
+    website: 'https://university.edu/faculties/hu'
+  },
+  {
+    name: 'Law',
+    initial: 'LAW',
+    code: '22',
+    description: 'Faculty for legal studies and law.',
+    headOfFaculty: 'Dr. William Turner',
+    email: 'law@university.edu',
+    phone: '+123456786',
+    officeLocation: 'Block I, Room 801',
+    website: 'https://university.edu/faculties/law'
+  },
+  {
+    name: 'Medicine',
+    initial: 'MED',
+    code: '23',
+    description: 'Faculty for medical sciences and healthcare.',
+    headOfFaculty: 'Dr. Olivia White',
+    email: 'med@university.edu',
+    phone: '+123456787',
+    officeLocation: 'Block J, Room 901',
+    website: 'https://university.edu/faculties/med'
+  },
+  {
+    name: 'Pharmacy',
+    initial: 'PH',
+    code: '24',
+    description: 'Faculty for pharmaceutical sciences.',
+    headOfFaculty: 'Dr. Henry Green',
+    email: 'ph@university.edu',
+    phone: '+123456788',
+    officeLocation: 'Block K, Room 1001',
+    website: 'https://university.edu/faculties/ph'
+  },
+  {
+    name: 'Science',
+    initial: 'SCI',
+    code: '25',
+    description: 'Faculty for natural and physical sciences.',
+    headOfFaculty: 'Dr. Sophia Black',
+    email: 'sci@university.edu',
+    phone: '+1234567890',
+    officeLocation: 'Block L, Room 1101',
+    website: 'https://university.edu/faculties/sci'
+  },
+  {
+    name: 'Education',
+    initial: 'EDU',
+    code: '26',
+    description: 'Faculty for education and teacher training.',
+    headOfFaculty: 'Dr. Michael Adams',
+    email: 'edu@university.edu',
+    phone: '+1234567891',
+    officeLocation: 'Block M, Room 1201',
+    website: 'https://university.edu/faculties/edu'
+  },
+  {
+    name: 'Fine Arts',
+    initial: 'FA',
+    code: '27',
+    description: 'Faculty for visual and performing arts.',
+    headOfFaculty: 'Prof. Linda Scott',
+    email: 'fa@university.edu',
+    phone: '+1234567892',
+    officeLocation: 'Block N, Room 1301',
+    website: 'https://university.edu/faculties/fa'
+  },
+  {
+    name: 'Architecture',
+    initial: 'ARCH',
+    code: '28',
+    description: 'Faculty for architecture and design.',
+    headOfFaculty: 'Dr. Richard Evans',
+    email: 'arch@university.edu',
+    phone: '+1234567893',
+    officeLocation: 'Block O, Room 1401',
+    website: 'https://university.edu/faculties/arch'
+  },
+  {
+    name: 'Agriculture',
+    initial: 'AG',
+    code: '29',
+    description: 'Faculty for agricultural sciences.',
+    headOfFaculty: 'Dr. Barbara King',
+    email: 'ag@university.edu',
+    phone: '+1234567894',
+    officeLocation: 'Block P, Room 1501',
+    website: 'https://university.edu/faculties/ag'
+  },
+  {
+    name: 'Environmental Sciences',
+    initial: 'ENV',
+    code: '30',
+    description: 'Faculty for environmental studies, sustainability, and earth sciences.',
+    headOfFaculty: 'Dr. Alice Rivers',
+    email: 'env@university.edu',
+    phone: '+1234567900',
+    officeLocation: 'Block AB, Room 2701',
+    website: 'https://university.edu/faculties/env'
+  },
+  {
+    name: 'Social Sciences',
+    initial: 'SS',
+    code: '31',
+    description: 'Faculty for sociology, psychology, anthropology, and related fields.',
+    headOfFaculty: 'Dr. Mark Jensen',
+    email: 'ss@university.edu',
+    phone: '+1234567901',
+    officeLocation: 'Block AC, Room 2801',
+    website: 'https://university.edu/faculties/ss'
+  },
+  {
+    name: 'Mathematics and Statistics',
+    initial: 'MATH',
+    code: '32',
+    description: 'Faculty for mathematics, statistics, and data science.',
+    headOfFaculty: 'Dr. Priya Nair',
+    email: 'math@university.edu',
+    phone: '+1234567902',
+    officeLocation: 'Block AD, Room 2901',
+    website: 'https://university.edu/faculties/math'
+  },
+  {
+    name: 'Communication and Media Studies',
+    initial: 'CMS',
+    code: '33',
+    description: 'Faculty for journalism, media, and communication studies.',
+    headOfFaculty: 'Dr. Leo Martinez',
+    email: 'cms@university.edu',
+    phone: '+1234567903',
+    officeLocation: 'Block AE, Room 3001',
+    website: 'https://university.edu/faculties/cms'
+  },
+  {
+    name: 'Political Science and International Relations',
+    initial: 'PSIR',
+    code: '34',
+    description: 'Faculty for political science, public administration, and international relations.',
+    headOfFaculty: 'Dr. Hannah Kim',
+    email: 'psir@university.edu',
+    phone: '+1234567904',
+    officeLocation: 'Block AF, Room 3101',
+    website: 'https://university.edu/faculties/psir'
+  },
+  {
+    name: 'Library and Information Science',
+    initial: 'LIS',
+    code: '35',
+    description: 'Faculty for library science, information management, and archival studies.',
+    headOfFaculty: 'Dr. Omar Farouk',
+    email: 'lis@university.edu',
+    phone: '+1234567905',
+    officeLocation: 'Block AG, Room 3201',
+    website: 'https://university.edu/faculties/lis'
+  },
+  {
+    name: 'Sports Science and Physical Education',
+    initial: 'SSPE',
+    code: '36',
+    description: 'Faculty for sports science, physical education, and kinesiology.',
+    headOfFaculty: 'Dr. Grace Lee',
+    email: 'sspe@university.edu',
+    phone: '+1234567906',
+    officeLocation: 'Block AH, Room 3301',
+    website: 'https://university.edu/faculties/sspe'
+  },
+  {
+    name: 'Nursing',
+    initial: 'NUR',
+    code: '37',
+    description: 'Faculty for nursing and allied health sciences.',
+    headOfFaculty: 'Dr. Samuel Osei',
+    email: 'nur@university.edu',
+    phone: '+1234567907',
+    officeLocation: 'Block AI, Room 3401',
+    website: 'https://university.edu/faculties/nur'
+  },
+  {
+    name: 'Veterinary Medicine',
+    initial: 'VET',
+    code: '38',
+    description: 'Faculty for veterinary medicine and animal sciences.',
+    headOfFaculty: 'Dr. Julia Novak',
+    email: 'vet@university.edu',
+    phone: '+1234567908',
+    officeLocation: 'Block AJ, Room 3501',
+    website: 'https://university.edu/faculties/vet'
+  },
+  {
+    name: 'Tourism and Hospitality',
+    initial: 'THM',
+    code: '39',
+    description: 'Faculty for tourism, hospitality, and event management.',
+    headOfFaculty: 'Dr. Peter Mensah',
+    email: 'thm@university.edu',
+    phone: '+1234567909',
+    officeLocation: 'Block AK, Room 3601',
+    website: 'https://university.edu/faculties/thm'
+  },
+  {
+    name: 'Logistics and Supply Chain Management',
+    initial: 'LSCM',
+    code: '40',
+    description: 'Faculty for logistics, supply chain, and operations management.',
+    headOfFaculty: 'Dr. Isabella Rossi',
+    email: 'lscm@university.edu',
+    phone: '+1234567910',
+    officeLocation: 'Block AL, Room 3701',
+    website: 'https://university.edu/faculties/lscm'
+  }
+]

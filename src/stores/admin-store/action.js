@@ -56,6 +56,30 @@
  * - addLog(data): Add a new log.
  * - updateLog(id, data): Update a log by ID.
  * - deleteLog(id): Delete a log by ID.
+ *
+ * Faculty CRUD:
+ * - fetchFaculties(): Fetch all faculties.
+ * - getFacultyById(id): Get a faculty by ID.
+ * - addFaculty(data): Add a new faculty.
+ * - updateFaculty(id, data): Update a faculty by ID.
+ * - deleteFaculty(id): Delete a faculty by ID.
+ *
+ * Course CRUD:
+ * - fetchCourses(): Fetch all courses.
+ * - getCourseById(id): Get a course by ID.
+ * - addCourse(data): Add a new course.
+ * - updateCourse(id, data): Update a course by ID.
+ * - deleteCourse(id): Delete a course by ID.
+ *
+ * Department CRUD:
+ * - fetchDepartments(): Fetch all departments.
+ * - getDepartmentById(id): Get a department by ID.
+ * - addDepartment(data): Add a new department.
+ * - updateDepartment(id, data): Update a department by ID.
+ * - deleteDepartment(id): Delete a department by ID.
+ *
+ * Department Sample Injection:
+ * - injectSampleDepartments(): Replace all departments with sample data.
  */
 import { db } from 'src/boot/firebase'
 import {
@@ -67,6 +91,9 @@ import {
   updateDoc,
   deleteDoc,
 } from 'firebase/firestore'
+import { sampleFaculties } from '../../modules/admin/sample/sampleFaculties'
+import { sampleCourses } from '../../modules/admin/sample/sampleCourses'
+import { sampleDepartments } from '../../modules/admin/sample/sampleDepartments'
 
 export default {
   // USERS
@@ -347,4 +374,180 @@ export default {
     await deleteDoc(doc(db, 'logs', id))
     return { success: true, data: id }
   },
+  // FACULTY
+  async fetchFaculties(search = {}) {
+    const facultiesCol = collection(db, 'faculties')
+    const snapshot = await getDocs(facultiesCol)
+    let data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    if (search && Object.keys(search).length) {
+      data = data.filter(faculty => {
+        return Object.entries(search).every(([key, value]) => {
+          if (!value) return true
+          return (
+            faculty[key] &&
+            faculty[key].toString().toLowerCase().includes(value.toString().toLowerCase())
+          )
+        })
+      })
+    }
+    this.allFaculty = data
+    return { success: true, data }
+  },
+  async getFacultyById(id) {
+    const facultyDoc = await getDoc(doc(db, 'faculties', id))
+    const data = facultyDoc.exists() ? { id: facultyDoc.id, ...facultyDoc.data() } : null
+    this.selectedFaculty = data
+    return { success: true, data }
+  },
+  async addFaculty(data) {
+    // Validation
+    if (!data.name || !data.initial || !data.code || !data.headOfFaculty || !data.email) {
+      return { success: false, error: 'Required fields missing: name, initial, code, headOfFaculty, email.' }
+    }
+    if (!/^\d+$/.test(data.code)) {
+      return { success: false, error: 'Faculty code must be a number.' }
+    }
+    if (!/^[A-Z]{2,}$/.test(data.initial)) {
+      return { success: false, error: 'Initial must be at least 2 uppercase letters.' }
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) {
+      return { success: false, error: 'Invalid email format.' }
+    }
+    const docRef = await addDoc(collection(db, 'faculties'), data)
+    return { success: true, data: docRef }
+  },
+  async updateFaculty(id, data) {
+    await updateDoc(doc(db, 'faculties', id), data)
+    return { success: true, data: { id, ...data } }
+  },
+  async deleteFaculty(id) {
+    await deleteDoc(doc(db, 'faculties', id))
+    return { success: true, data: id }
+  },
+  // COURSES
+  async fetchCourses(search = {}) {
+    const coursesCol = collection(db, 'courses')
+    const snapshot = await getDocs(coursesCol)
+    let data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    if (search && Object.keys(search).length) {
+      data = data.filter(course => {
+        return Object.entries(search).every(([key, value]) => {
+          if (!value) return true
+          return (
+            course[key] &&
+            course[key].toString().toLowerCase().includes(value.toString().toLowerCase())
+          )
+        })
+      })
+    }
+    this.allCourse = data
+    return { success: true, data }
+  },
+  async getCourseById(id) {
+    const courseDoc = await getDoc(doc(db, 'courses', id))
+    const data = courseDoc.exists() ? { id: courseDoc.id, ...courseDoc.data() } : null
+    this.selectedCourse = data
+    return { success: true, data }
+  },
+  async addCourse(data) {
+    const docRef = await addDoc(collection(db, 'courses'), data)
+    return { success: true, data: docRef }
+  },
+  async updateCourse(id, data) {
+    await updateDoc(doc(db, 'courses', id), data)
+    return { success: true, data: { id, ...data } }
+  },
+  async deleteCourse(id) {
+    await deleteDoc(doc(db, 'courses', id))
+    return { success: true, data: id }
+  },
+  // DEPARTMENT
+  async fetchDepartments(search = {}) {
+    const departmentsCol = collection(db, 'departments')
+    const snapshot = await getDocs(departmentsCol)
+    let data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    if (search && Object.keys(search).length) {
+      data = data.filter(department => {
+        return Object.entries(search).every(([key, value]) => {
+          if (!value) return true
+          return (
+            department[key] &&
+            department[key].toString().toLowerCase().includes(value.toString().toLowerCase())
+          )
+        })
+      })
+    }
+    this.allDepartment = data
+    return { success: true, data }
+  },
+  async getDepartmentById(id) {
+    const departmentDoc = await getDoc(doc(db, 'departments', id))
+    const data = departmentDoc.exists() ? { id: departmentDoc.id, ...departmentDoc.data() } : null
+    this.selectedDepartment = data
+    return { success: true, data }
+  },
+  async addDepartment(data) {
+    // Validation
+    if (!data.name || !data.initial || !data.code || !data.headOfDepartment || !data.email) {
+      return { success: false, error: 'Required fields missing: name, initial, code, headOfDepartment, email.' }
+    }
+    if (!/^[A-Z]{2,}$/.test(data.initial)) {
+      return { success: false, error: 'Initial must be at least 2 uppercase letters.' }
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) {
+      return { success: false, error: 'Invalid email format.' }
+    }
+    const docRef = await addDoc(collection(db, 'departments'), data)
+    return { success: true, data: docRef }
+  },
+  async updateDepartment(id, data) {
+    await updateDoc(doc(db, 'departments', id), data)
+    return { success: true, data: { id, ...data } }
+  },
+  async deleteDepartment(id) {
+    await deleteDoc(doc(db, 'departments', id))
+    return { success: true, data: id }
+  },
+  async injectSampleFaculties() {
+    // First, delete all existing faculties
+    const facultiesCol = collection(db, 'faculties')
+    const snapshot = await getDocs(facultiesCol)
+    for (const docSnap of snapshot.docs) {
+      await deleteDoc(doc(db, 'faculties', docSnap.id))
+    }
+    // Then, insert sample faculties
+    for (const faculty of sampleFaculties) {
+      await addDoc(collection(db, 'faculties'), faculty)
+    }
+    return { success: true, count: sampleFaculties.length }
+  },
+  async injectSampleCourses() {
+  // First, delete all existing courses (from all faculties if needed, or assume one)
+  const coursesCol = collection(db,  'courses')
+  const snapshot = await getDocs(coursesCol)
+  for (const docSnap of snapshot.docs) {
+    await deleteDoc(doc(db, 'courses', docSnap.id))
+  }
+  // Then, insert sample courses
+  for (const course of sampleCourses) {
+    await addDoc(collection(db,  'courses'), course)
+  }
+  return { success: true, count: sampleCourses.length }
+},
+async injectSampleDepartments() {
+    // First, delete all existing departments
+    const departmentsCol = collection(db, 'departments')
+    const snapshot = await getDocs(departmentsCol)
+    for (const docSnap of snapshot.docs) {
+      await deleteDoc(doc(db, 'departments', docSnap.id))
+    }
+    // Then, insert sample departments
+    for (const department of sampleDepartments) {
+      await addDoc(collection(db, 'departments'), department)
+    }
+    return { success: true, count: sampleDepartments.length }
+  }
+
+
+
 }

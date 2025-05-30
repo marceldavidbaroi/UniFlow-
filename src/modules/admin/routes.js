@@ -49,6 +49,36 @@ export default [
         component: () => import('./pages/AdminLogList.vue'),
         meta: { requiresAuth: true, roles: ['admin'] },
       },
+      {
+        path: 'faculty',
+        component: () => import('./pages/AdminFacultyList.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
+        path: 'faculty/:id',
+        component: () => import('./pages/AdminFacultyDetail.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
+        path: 'course',
+        component: () => import('./pages/AdminCourseList.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
+        path: 'course/:id',
+        component: () => import('./pages/AdminCourseDetail.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
+        path: 'department',
+        component: () => import('./pages/AdminDepartmentList.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
+        path: 'department/:id',
+        component: () => import('./pages/AdminDepartmentDetail.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
     ],
   },
 ]

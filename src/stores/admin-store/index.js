@@ -22,6 +22,12 @@ export const useAdminStore = defineStore('admin', {
     selectedLog: null,
     loading: false,
     error: null,
+    allFaculty: [],
+    selectedFaculty: null,
+    allCourse: [],
+    selectedCourse: null,
+    allDepartment: [],
+    selectedDepartment: null,
   }),
   actions,
   persist: {
