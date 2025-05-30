@@ -2,7 +2,9 @@
   <q-page padding class="bg-grey-1">
     <div class="text-h5 text-weight-bold q-mb-md text-secondary">Faculty Management</div>
     <div class="row items-center q-mb-md">
-      <q-select
+      <FilterSearch :searchTypeOptions="searchTypeOptions" @search="onSearch" />
+
+      <!-- <q-select
         v-model="searchType"
         :options="searchTypeOptions"
         dense
@@ -32,7 +34,7 @@
         <template v-slot:append>
           <q-icon name="search" @click="fetchFaculties" class="cursor-pointer" />
         </template>
-      </q-input>
+      </q-input> -->
       <q-space />
       <q-btn
         color="negative"
@@ -92,7 +94,7 @@
       </template>
     </q-table>
     <AddFacultyDialog :show="showAddDialog" @close="showAddDialog = false" @submit="addFaculty" />
-    <q-dialog v-model="showSampleDialog">
+    <!-- <q-dialog v-model="showSampleDialog">
       <q-card class="q-pa-md" style="min-width: 340px; max-width: 95vw; border-radius: 16px">
         <q-card-section>
           <div class="text-h6 text-negative">Add Sample Faculties</div>
@@ -131,7 +133,21 @@
           />
         </q-card-actions>
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
+    <BulkDeleteDialog
+      v-model="showSampleDialog"
+      title="Add Sample Courses"
+      warning="This action will permanently delete all existing faculties and replace them with sample data."
+      note="To proceed, please enter the admin password."
+      :password="adminPassword"
+      :passwordLabel="'Admin Password'"
+      :confirmLabel="'Confirm'"
+      @confirm="confirmSampleFaculties"
+      @cancel="showSampleDialog = false"
+      :loading="sampleLoading"
+      :progress="sampleProgress"
+      :sampleProgressMsg="sampleProgressMsg"
+    />
   </q-page>
 </template>
 
@@ -141,6 +157,8 @@ import { useQuasar } from 'quasar'
 import AddFacultyDialog from '../components/AddFacultyDialog.vue'
 import { useRouter } from 'vue-router'
 import { useAdminStore } from 'src/stores/admin-store'
+import FilterSearch from '../components/filterSearch.vue'
+import BulkDeleteDialog from '../components/bulkDeleteDialog.vue'
 
 const adminStore = useAdminStore()
 const $q = useQuasar()
@@ -152,9 +170,10 @@ const showSampleDialog = ref(false)
 const sampleLoading = ref(false)
 const samplePassword = ref('')
 const samplePasswordError = ref('')
+const sampleProgress = ref(0)
+const sampleProgressMsg = ref('')
+const adminPassword = ref('123123')
 
-const searchText = ref('')
-const searchType = ref('name')
 const searchTypeOptions = [
   { label: 'Name', value: 'name' },
   { label: 'Initial', value: 'initial' },
@@ -198,45 +217,58 @@ watch(showSampleDialog, (val) => {
 })
 
 async function confirmSampleFaculties() {
-  samplePasswordError.value = ''
-  if (samplePassword.value !== '123123') {
-    samplePasswordError.value = 'Incorrect password. Please try again.'
-    return
-  }
   await addSampleFaculties()
 }
 async function addSampleFaculties() {
   sampleLoading.value = true
+  sampleProgress.value = 0
+  sampleProgressMsg.value = 'Starting...'
+
   try {
     // Remove all faculties
     const res = await adminStore.fetchFaculties()
     if (res.data && res.data.length) {
+      let i = 0
       for (const fac of res.data) {
         await adminStore.deleteFaculty(fac.id)
+        i++
+        sampleProgress.value = i / res.data.length
+        sampleProgressMsg.value = `Deleting faculties (${i}/${res.data.length})`
       }
     }
+
+    sampleProgress.value = 0.95
+    sampleProgressMsg.value = 'Adding sample faculties...'
+
     // Insert sample faculties
     await adminStore.injectSampleFaculties()
+
+    sampleProgress.value = 1
+    sampleProgressMsg.value = 'Done!'
     $q.notify({ type: 'positive', message: 'Sample faculties added!' })
+
     await fetchFaculties()
   } catch {
     $q.notify({ type: 'negative', message: 'Failed to add sample faculties.' })
+    sampleProgressMsg.value = 'Failed.'
   }
-  sampleLoading.value = false
-  showSampleDialog.value = false
-  resetSampleDialog()
+
+  // Reset the dialog and loading state
+  setTimeout(() => {
+    sampleLoading.value = false
+    showSampleDialog.value = false
+    resetSampleDialog()
+    sampleProgress.value = 0
+    sampleProgressMsg.value = ''
+  }, 800)
 }
 
-function onSearch() {
-  if (!searchText.value) {
+function onSearch({ type, text }) {
+  if (!text) {
     fetchFaculties()
   } else {
-    fetchFaculties({ [searchType.value]: searchText.value })
+    fetchFaculties({ [type]: text })
   }
-}
-function onSearchClear() {
-  searchText.value = ''
-  fetchFaculties()
 }
 
 onMounted(fetchFaculties)

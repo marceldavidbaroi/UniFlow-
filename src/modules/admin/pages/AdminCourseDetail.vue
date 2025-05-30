@@ -7,7 +7,7 @@
       :show-avatar="true"
       :show-code="true"
       :show-back-button="true"
-      go-back-url="/admin/faculty"
+      :backUrl="backURL"
       :items="detailsItems"
     />
   </q-page>
@@ -15,13 +15,13 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useAdminStore } from 'src/stores/admin-store'
 import DetailsCardComponent from '../components/DetailsCardComponent.vue'
 
 const route = useRoute()
-const router = useRouter()
 const adminStore = useAdminStore()
+const backURL = '/admin/course'
 
 onMounted(async () => {
   const courseId = route.params.id

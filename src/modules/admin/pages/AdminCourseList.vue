@@ -114,7 +114,6 @@ function openAddDialog() {
   showAddDialog.value = true
 }
 function onSearch({ type, text }) {
-  console.log('Searching:', type, text)
   if (!text) {
     fetchCourses()
   } else {

@@ -28,7 +28,7 @@ Props:
 - showAvatar (Boolean): Whether to show the avatar.
 - showCode (Boolean): Whether to display the course code.
 - showBackButton (Boolean): Whether to show the top-left back button.
-- goBackURL (String): Route to navigate when back button is clicked.
+- backUrl (String): Route to navigate when back button is clicked.
 - items (Array): Array of objects representing detail items:
     - label: String (e.g. "Email")
     - value: String (e.g. "admin@example.com")
@@ -138,7 +138,7 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  goBackURL: {
+  backUrl: {
     type: String,
     default: '/admin',
   },
@@ -151,7 +151,7 @@ const props = defineProps({
 const router = useRouter()
 
 function goBack() {
-  router.push(props.goBackURL)
+  router.push(props.backUrl)
 }
 </script>
 

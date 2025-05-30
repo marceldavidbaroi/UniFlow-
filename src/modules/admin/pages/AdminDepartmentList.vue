@@ -2,37 +2,8 @@
   <q-page padding class="bg-grey-1">
     <div class="text-h5 text-weight-bold q-mb-md text-secondary">Department Management</div>
     <div class="row items-center q-mb-md">
-      <q-select
-        v-model="searchType"
-        :options="searchTypeOptions"
-        dense
-        emit-value
-        map-options
-        outlined
-        color="blue-2"
-        text-color="blue-10"
-        class="q-mr-sm"
-        style="min-width: 120px"
-      />
-      <q-input
-        v-model="searchText"
-        dense
-        outlined
-        color="secondary"
-        placeholder="Search..."
-        :debounce="350"
-        @update:model-value="onSearch"
-        @keyup.enter="onSearch"
-        @blur="onSearch"
-        clearable
-        @clear="onSearchClear"
-        class="q-mr-sm"
-        style="min-width: 180px"
-      >
-        <template v-slot:append>
-          <q-icon name="search" @click="fetchDepartments" class="cursor-pointer" />
-        </template>
-      </q-input>
+      <FilterSearch :searchTypeOptions="searchTypeOptions" @search="onSearch" />
+
       <q-space />
       <q-btn
         color="negative"
@@ -97,46 +68,21 @@
       @close="showAddDialog = false"
       @submit="addDepartment"
     />
-    <q-dialog v-model="showSampleDialog">
-      <q-card class="q-pa-md" style="min-width: 340px; max-width: 95vw; border-radius: 16px">
-        <q-card-section>
-          <div class="text-h6 text-negative">Add Sample Departments</div>
-          <div class="text-body2 q-mt-sm">
-            <b>Warning:</b> This action will
-            <span class="text-negative">permanently delete <u>all existing departments</u></span>
-            and replace them with sample data.<br />
-            <span class="text-warning">This cannot be undone.</span><br />
-            <br />
-            To proceed, please enter the admin password. <br />
-            <span class="text-caption text-grey-7"
-              >(All current department records will be lost and replaced with sample data.)</span
-            >
-          </div>
-          <q-input
-            v-model="samplePassword"
-            label="Admin Password"
-            type="password"
-            dense
-            autofocus
-            class="q-mt-md"
-            :disable="sampleLoading"
-            @keyup.enter="confirmSampleDepartments"
-            :error="samplePasswordError !== ''"
-            :error-message="samplePasswordError"
-          />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="grey" v-close-popup :disable="sampleLoading" />
-          <q-btn
-            unelevated
-            label="Confirm"
-            color="negative"
-            @click="confirmSampleDepartments"
-            :loading="sampleLoading"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+
+    <bulkDeleteDialog
+      v-model="showSampleDialog"
+      title="Refactor Sample Departments"
+      warning="This action will permanently delete all existing departments and replace them with sample data."
+      note="To proceed, please enter the admin password."
+      :password="adminPassword"
+      :passwordLabel="'Admin Password'"
+      :confirmLabel="'Confirm'"
+      @confirm="confirmSampleDepartments"
+      @cancel="showSampleDialog = false"
+      :loading="sampleLoading"
+      :progress="sampleProgress"
+      :sampleProgressMsg="sampleProgressMsg"
+    />
   </q-page>
 </template>
 
@@ -146,6 +92,8 @@ import { useQuasar } from 'quasar'
 import AddDepartmentDialog from '../components/AddDepartmentDialog.vue'
 import { useRouter } from 'vue-router'
 import { useAdminStore } from 'src/stores/admin-store'
+import FilterSearch from '../components/filterSearch.vue'
+import bulkDeleteDialog from '../components/bulkDeleteDialog.vue'
 
 const adminStore = useAdminStore()
 const $q = useQuasar()
@@ -156,9 +104,12 @@ const showSampleDialog = ref(false)
 const sampleLoading = ref(false)
 const samplePassword = ref('')
 const samplePasswordError = ref('')
+const sampleProgress = ref(0)
+const sampleProgressMsg = ref('')
+const adminPassword = ref('123123')
 
-const searchText = ref('')
-const searchType = ref('name')
+// const searchText = ref('')
+// const searchType = ref('name')
 const searchTypeOptions = [
   { label: 'Name', value: 'name' },
   { label: 'Initial', value: 'initial' },
@@ -207,45 +158,57 @@ watch(showSampleDialog, (val) => {
 })
 
 async function confirmSampleDepartments() {
-  samplePasswordError.value = ''
-  if (samplePassword.value !== '123123') {
-    samplePasswordError.value = 'Incorrect password. Please try again.'
-    return
-  }
   await addSampleDepartments()
 }
 async function addSampleDepartments() {
   sampleLoading.value = true
+  sampleProgress.value = 0
+  sampleProgressMsg.value = 'Starting...'
   try {
     // Remove all departments
     const res = await adminStore.fetchDepartments()
-    if (res.data && res.data?.length) {
+    if (res.data && res.data.length) {
+      let i = 0
       for (const dep of res.data) {
         await adminStore.deleteDepartment(dep.id)
+        i++
+        sampleProgress.value = i / res.data.length
+        sampleProgressMsg.value = `Deleting departments (${i}/${res.data.length})`
       }
     }
+
+    sampleProgress.value = 0.95
+    sampleProgressMsg.value = 'Adding sample departments...'
+
     // Insert sample departments
     await adminStore.injectSampleDepartments()
+
+    sampleProgress.value = 1
+    sampleProgressMsg.value = 'Done!'
     $q.notify({ type: 'positive', message: 'Sample departments added!' })
+
     await fetchDepartments()
   } catch {
     $q.notify({ type: 'negative', message: 'Failed to add sample departments.' })
+    sampleProgressMsg.value = 'Failed.'
   }
-  sampleLoading.value = false
-  showSampleDialog.value = false
-  resetSampleDialog()
+
+  // Reset UI after short delay
+  setTimeout(() => {
+    sampleLoading.value = false
+    showSampleDialog.value = false
+    resetSampleDialog()
+    sampleProgress.value = 0
+    sampleProgressMsg.value = ''
+  }, 800)
 }
 
-function onSearch() {
-  if (!searchText.value) {
+function onSearch({ type, text }) {
+  if (!text) {
     fetchDepartments()
   } else {
-    fetchDepartments({ [searchType.value]: searchText.value })
+    fetchDepartments({ [type]: text })
   }
-}
-function onSearchClear() {
-  searchText.value = ''
-  fetchDepartments()
 }
 
 onMounted(fetchDepartments)
