@@ -79,6 +79,11 @@ export default [
         component: () => import('./pages/AdminDepartmentDetail.vue'),
         meta: { requiresAuth: true, roles: ['admin'] },
       },
+        {
+        path: 'create-user',
+        component: () => import('./pages/AdminCreateUser.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
     ],
   },
 ]

@@ -463,6 +463,7 @@ export default {
   },
   // DEPARTMENT
   async fetchDepartments(search = {}) {
+    console.log('search',search)
     const departmentsCol = collection(db, 'departments')
     const snapshot = await getDocs(departmentsCol)
     let data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
@@ -486,20 +487,30 @@ export default {
     this.selectedDepartment = data
     return { success: true, data }
   },
-  async addDepartment(data) {
-    // Validation
-    if (!data.name || !data.initial || !data.code || !data.headOfDepartment || !data.email) {
-      return { success: false, error: 'Required fields missing: name, initial, code, headOfDepartment, email.' }
-    }
-    if (!/^[A-Z]{2,}$/.test(data.initial)) {
-      return { success: false, error: 'Initial must be at least 2 uppercase letters.' }
-    }
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) {
-      return { success: false, error: 'Invalid email format.' }
-    }
-    const docRef = await addDoc(collection(db, 'departments'), data)
-    return { success: true, data: docRef }
-  },
+async addDepartment(data) {
+  // Validation
+  if (!data.name || !data.initial || !data.code || !data.headOfDepartment || !data.email) {
+    return { success: false, error: 'Required fields missing: name, initial, code, headOfDepartment, email.' }
+  }
+
+  if (!/^[A-Z]{2,}$/.test(data.initial)) {
+    return { success: false, error: 'Initial must be at least 2 uppercase letters.' }
+  }
+
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)) {
+    return { success: false, error: 'Invalid email format.' }
+  }
+
+  // Add default counts
+  const payload = {
+    ...data,
+    studentCount: 0,
+    teacherCount: 0,
+  }
+
+  const docRef = await addDoc(collection(db, 'departments'), payload)
+  return { success: true, data: docRef }
+},
   async updateDepartment(id, data) {
     await updateDoc(doc(db, 'departments', id), data)
     return { success: true, data: { id, ...data } }
@@ -535,18 +546,25 @@ export default {
   return { success: true, count: sampleCourses.length }
 },
 async injectSampleDepartments() {
-    // First, delete all existing departments
-    const departmentsCol = collection(db, 'departments')
-    const snapshot = await getDocs(departmentsCol)
-    for (const docSnap of snapshot.docs) {
-      await deleteDoc(doc(db, 'departments', docSnap.id))
-    }
-    // Then, insert sample departments
-    for (const department of sampleDepartments) {
-      await addDoc(collection(db, 'departments'), department)
-    }
-    return { success: true, count: sampleDepartments.length }
+  // First, delete all existing departments
+  const departmentsCol = collection(db, 'departments')
+  const snapshot = await getDocs(departmentsCol)
+  for (const docSnap of snapshot.docs) {
+    await deleteDoc(doc(db, 'departments', docSnap.id))
   }
+
+  // Then, insert sample departments with counts initialized
+  for (const department of sampleDepartments) {
+    const payload = {
+      ...department,
+      studentCount: 0,
+      teacherCount: 0
+    }
+    await addDoc(collection(db, 'departments'), payload)
+  }
+
+  return { success: true, count: sampleDepartments.length }
+}
 
 
 

@@ -149,7 +149,15 @@ const adminLinks = [
       { title: 'Faculty', icon: 'school', link: '/admin/faculty' },
     ],
   },
-  { title: 'Users', icon: 'people', link: '/admin/users' },
+  {
+    title: 'Users',
+    icon: 'people',
+    subMenu: [
+      { title: 'Create User', icon: 'add_circle', link: '/admin/create-user' },
+      { title: 'User List', icon: 'view_list', link: '/admin/users' },
+    ],
+  },
+
   { title: 'Groups', icon: 'groups', link: '/admin/groups' },
   { title: 'Sessions', icon: 'event', link: '/admin/sessions' },
   { title: 'Tasks', icon: 'assignment', link: '/admin/tasks' },

@@ -2,37 +2,7 @@
   <q-page padding class="bg-grey-1">
     <div class="text-h5 text-weight-bold q-mb-md text-secondary">Group Management</div>
     <div class="row items-center q-mb-md">
-      <q-select
-        v-model="searchType"
-        :options="searchTypeOptions"
-        dense
-        emit-value
-        map-options
-        outlined
-        color="blue-2"
-        text-color="blue-10"
-        class="q-mr-sm"
-        style="min-width: 120px"
-      />
-      <q-input
-        v-model="searchText"
-        dense
-        outlined
-        color="secondary"
-        placeholder="Search..."
-        :debounce="350"
-        @update:model-value="onSearch"
-        @keyup.enter="onSearch"
-        @blur="onSearch"
-        clearable
-        @clear="onSearchClear"
-        class="q-mr-sm"
-        style="min-width: 180px"
-      >
-        <template v-slot:append>
-          <q-icon name="search" @click="fetchGroups" class="cursor-pointer" />
-        </template>
-      </q-input>
+      <FilterSearch :searchTypeOptions="searchTypeOptions" @search="onSearch" />
       <q-space />
       <q-btn
         color="negative"
@@ -150,6 +120,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAdminStore } from 'src/stores/admin-store'
+import FilterSearch from '../components/filterSearch.vue'
 
 const adminStore = useAdminStore()
 const router = useRouter()
