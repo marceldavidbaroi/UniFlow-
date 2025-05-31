@@ -78,46 +78,87 @@
           </div>
         </div>
       </div>
-      <div class="group-section">
-        <div class="section-title">Description</div>
-        <div class="section-content">{{ group?.description }}</div>
+
+      <!-- Button group for General/Recent -->
+      <div class="tab-toggle-wrapper q-mt-md q-mb-lg flex flex-center">
+        <q-btn-group spread class="tab-btn-group shadow-2">
+          <q-btn
+            :color="selectedTab === 'recent' ? 'primary' : 'white'"
+            text-color="selectedTab === 'recent' ? 'white' : 'primary'"
+            label="Recent"
+            @click="selectedTab = 'recent'"
+            :unelevated="true"
+            class="tab-btn"
+            :class="{ 'tab-btn-active': selectedTab === 'recent' }"
+          />
+          <q-btn
+            :color="selectedTab === 'general' ? 'primary' : 'white'"
+            text-color="selectedTab === 'general' ? 'white' : 'primary'"
+            label="General"
+            @click="selectedTab = 'general'"
+            :unelevated="true"
+            class="tab-btn"
+            :class="{ 'tab-btn-active': selectedTab === 'general' }"
+          />
+        </q-btn-group>
       </div>
-      <div class="group-section">
-        <div class="section-title">Group Rules</div>
-        <div class="section-content" v-html="group?.groupRules"></div>
+
+      <div v-if="selectedTab === 'general'">
+        <div class="group-section">
+          <div class="section-title">Description</div>
+          <div class="section-content">{{ group?.description }}</div>
+        </div>
+        <div class="group-section">
+          <div class="section-title">Group Rules</div>
+          <div class="section-content" v-html="group?.groupRules"></div>
+        </div>
+        <div class="member-table">
+          <div class="table-title">Member Details</div>
+          <q-table
+            dense
+            :rows="formattedMembers || []"
+            :columns="columns"
+            row-key="id"
+            flat
+            bordered
+          >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td key="name" :props="props">{{ props.row.name }}</q-td>
+                <q-td key="pId" :props="props">{{ props.row.pId }}</q-td>
+                <q-td key="email" :props="props">{{ props.row.email }}</q-td>
+                <q-td key="department" :props="props">{{ props.row.department }}</q-td>
+                <q-td key="actions" :props="props">
+                  <q-btn
+                    flat
+                    :disable="userStore.currentRole !== 'teacher'"
+                    dense
+                    size="sm"
+                    color="negative"
+                    icon="delete"
+                    @click="showRemoveMember = true"
+                  >
+                    <q-tooltip>Remove Member</q-tooltip>
+                  </q-btn>
+                  <DeleteDialog
+                    v-model="showRemoveMember"
+                    cardTitle="Remove Member"
+                    description="Do you really want to remove this member"
+                    buttonLabel="Remove"
+                    @confirm-delete="removeMember(props.row.id)"
+                  />
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
+        </div>
       </div>
-      <div class="member-table">
-        <div class="table-title">Member Details</div>
-        <q-table dense :rows="formattedMembers || []" :columns="columns" row-key="id" flat bordered>
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td key="name" :props="props">{{ props.row.name }}</q-td>
-              <q-td key="pId" :props="props">{{ props.row.pId }}</q-td>
-              <q-td key="email" :props="props">{{ props.row.email }}</q-td>
-              <q-td key="department" :props="props">{{ props.row.department }}</q-td>
-              <q-td key="actions" :props="props">
-                <q-btn
-                  flat
-                  :disable="userStore.currentRole !== 'teacher'"
-                  dense
-                  size="sm"
-                  color="negative"
-                  icon="delete"
-                  @click="showRemoveMember = true"
-                >
-                  <q-tooltip>Remove Member</q-tooltip>
-                </q-btn>
-                <DeleteDialog
-                  v-model="showRemoveMember"
-                  cardTitle="Remove Member"
-                  description="Do you really want to remove this member"
-                  buttonLabel="Remove"
-                  @confirm-delete="removeMember(props.row.id)"
-                />
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
+      <div v-else-if="selectedTab === 'recent'">
+        <!-- <div class="group-section">
+          <div class="section-title">Recent Activity</div>
+          <div class="section-content text-grey">Recent activity will be shown here.</div>
+        </div> -->
+        <GroupRecentDetails :group="group" />
       </div>
     </div>
 
@@ -139,6 +180,7 @@ import { onMounted, ref, computed, nextTick } from 'vue'
 import DeleteDialog from 'src/components/DeleteDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
 import LeaveGroupDialog from '../components/LeaveGroupDialog.vue'
+import GroupRecentDetails from '../components/GroupRecentDetails.vue'
 
 const router = useRouter()
 const groupStore = useGroupStore()
@@ -150,6 +192,7 @@ const showDeletePopup = ref(false)
 const showSharePopup = ref(false)
 const showLeaveGroup = ref(false)
 const showRemoveMember = ref(false)
+const selectedTab = ref('recent')
 
 onMounted(async () => {
   groupId.value = window.location.pathname.split('/group/')[1]
@@ -300,5 +343,32 @@ const removeMember = async (memberId) => {
 .section-content li {
   margin-bottom: 0.5rem;
   line-height: 1.5;
+}
+
+.tab-toggle-wrapper {
+  margin-bottom: 2rem;
+}
+.tab-btn-group {
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(30, 136, 229, 0.08);
+}
+.tab-btn {
+  border-radius: 2rem !important;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.18s;
+  min-width: 120px;
+  padding: 0.7em 1.5em;
+}
+.tab-btn-active {
+  background: linear-gradient(90deg, #42a5f5 60%, #1976d2 100%) !important;
+  color: #fff !important;
+  transform: scale(1.07);
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.13);
+  z-index: 1;
 }
 </style>

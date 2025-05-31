@@ -9,7 +9,7 @@
         <q-tab name="materials" label="Materials" />
         <q-tab name="video" label="Video Links" />
         <q-tab name="coding" label="Coding Links" />
-        <q-tab name="tasks" label="Tasks" />
+        <!-- <q-tab name="tasks" label="Tasks" /> -->
       </q-tabs>
 
       <q-separator class="q-my-md" />
