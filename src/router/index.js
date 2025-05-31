@@ -7,6 +7,7 @@ import session from 'src/modules/session/routes'
 import todo from 'src/modules/todo/routes'
 import task from 'src/modules/task/routes'
 import admin from 'src/modules/admin/routes'
+import liveShare from 'src/modules/liveShare/routes'
 
 // Error and unauthorized fallback pages
 
@@ -19,6 +20,7 @@ const routes = [
   ...todo,
   ...task,
   ...admin,
+  ...liveShare,
 
   // Unauthorized Route
   {

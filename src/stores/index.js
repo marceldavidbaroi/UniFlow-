@@ -20,3 +20,5 @@ export default defineStore((/* { ssrContext } */) => {
 
   return pinia
 })
+
+export * from './liveShare-store'
