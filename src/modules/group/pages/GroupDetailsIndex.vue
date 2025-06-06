@@ -164,7 +164,7 @@
 
     <div v-else class="flex flex-center q-mt-md" style="height: 100vh">
       <div class="text-center">
-        <q-spinner-pie color="secondary" size="2em" />
+        <q-spinner-grid color="secondary" size="50px" />
         <div>Loading group details...</div>
       </div>
     </div>

@@ -47,7 +47,6 @@ export default {
     try {
       const requiredFields = [
         'groupName',
-        'batch',
         'semester',
         'year',
         'course', // changed from courseName to course

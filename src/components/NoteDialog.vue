@@ -123,11 +123,11 @@
           <!-- RIGHT -->
           <template v-slot:after>
             <!-- <div v-if="isLoading" class="flex flex-center items-center">
-              <q-spinner-bars color="primary" size="40px" />
+              <q-spinner-grid color="primary" size="40px" />
             </div> -->
             <div v-if="isLoading" class="flex flex-center" style="height: 400px">
               <div class="text-center">
-                <q-spinner-bars color="secondary" size="2em" />
+                <q-spinner-grid color="secondary" size="2em" />
                 <div>Loading note...</div>
               </div>
             </div>

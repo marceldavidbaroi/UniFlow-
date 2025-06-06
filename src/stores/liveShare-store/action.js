@@ -27,7 +27,7 @@ export default {
 
   // Remove a participant
   async removeParticipant(participantId) {
-    this.participant(s) = this.participants.filter(p => p.id !== participantId)
+    this.participants = this.participants.filter((p) => p.id !== participantId)
     return { success: true }
   },
 

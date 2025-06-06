@@ -1,6 +1,5 @@
 <template>
   <q-page padding>
-    {{ userStore.currentUser }}
     <div class="text-h4 brand_sb text-center q-mb-md">Dashboard</div>
 
     <!-- Action Buttons -->
@@ -52,14 +51,31 @@
         <!-- Group and Session Details -->
         <q-card flat bordered class="q-mt-md bg-light">
           <q-card-section>
-            <div class="text-h6 text-secondary text-center q-mb-md">Group and Session Details</div>
+            <div class="text-h6 text-secondary text-center q-mb-md">Todays Session</div>
             <q-table
-              title="Groups and Sessions"
-              :rows="tableData"
-              :columns="columns"
+              dense
+              :rows="todaysSession"
+              :columns="todaysSessionColumn"
+              row-key="name"
+              @row-click="(evt, row, index) => router.push(`/session/teacher/${row.id}`)"
+              :sortable="true"
+              class="q-mt-md"
+            />
+          </q-card-section>
+        </q-card>
+
+        <!-- Group and Session Details -->
+        <q-card flat bordered class="q-mt-md bg-light">
+          <q-card-section>
+            <div class="text-h6 text-secondary text-center q-mb-md">Group Details</div>
+            <q-table
+              dense
+              :rows="groupStore.groupList"
+              :columns="groupColumns"
               row-key="name"
               :sortable="true"
               class="q-mt-md"
+              @row-click="(evt, row, index) => router.push(`/group/${row.id}`)"
             />
           </q-card-section>
         </q-card>
@@ -67,18 +83,15 @@
         <!-- Task Management -->
         <q-card flat bordered class="q-mt-md bg-light">
           <q-card-section>
-            <div class="text-h6 text-secondary text-center q-mb-md">Task Management</div>
-            <q-list bordered separator class="q-mt-md">
-              <q-item v-for="(task, index) in tasks" :key="index">
-                <q-item-section>
-                  <q-item-label>{{ task.title }}</q-item-label>
-                  <q-item-label caption>{{ task.description }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-checkbox v-model="task.completed" />
-                </q-item-section>
-              </q-item>
-            </q-list>
+            <div class="text-h6 text-secondary text-center q-mb-md">Task List</div>
+            <q-table
+              dense
+              :rows="taskStore.taskList"
+              :columns="taskColumns"
+              row-key="name"
+              :sortable="true"
+              class="q-mt-md"
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -88,17 +101,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useUserStore } from 'src/stores/user-store'
 import { useRouter } from 'vue-router'
 import { Chart, registerables } from 'chart.js'
 import { useGroupStore } from 'src/stores/group-store'
 import { useSessionStore } from 'src/stores/sessionStore'
+import { useTaskStore } from 'src/stores/taskStore'
 const groupStore = useGroupStore()
+const taskStore = useTaskStore()
 const sessionStore = useSessionStore()
 
 Chart.register(...registerables)
 
-const userStore = useUserStore()
 const router = useRouter()
 
 const showCalendar = ref(false)
@@ -165,6 +178,41 @@ const createGroupStudentChart = () => {
     },
   })
 }
+
+const taskColumns = [
+  { name: 'subject', label: 'Subject', align: 'left', field: 'subject', sortable: true },
+  { name: 'category', label: 'Category', align: 'left', field: 'category', sortable: true },
+  {
+    name: 'deadline',
+    label: 'Deadline',
+    align: 'left',
+    field: (row) => row.deadline?.slice(0, 10) || '-',
+    sortable: true,
+  },
+  { name: 'state', label: 'State', align: 'left', field: 'state', sortable: true },
+  { name: 'totalMarks', label: 'Total Marks', align: 'left', field: 'totalMarks', sortable: true },
+  {
+    name: 'tags',
+    label: 'Tags',
+    align: 'left',
+    field: (row) => row.tags?.join(', ') || '-',
+    sortable: false,
+  },
+  {
+    name: 'groupID',
+    label: 'Groups',
+    align: 'left',
+    field: (row) => row.groupID?.length || 0,
+    sortable: true,
+  },
+  {
+    name: 'createdAt',
+    label: 'Created At',
+    align: 'left',
+    field: (row) => row.createdAt?.slice(0, 10) || '-',
+    sortable: true,
+  },
+]
 
 const graphDataGroup = ref()
 
@@ -252,6 +300,8 @@ const createSessionTypeChart = () => {
   })
 }
 
+const todaysSession = ref([])
+
 onMounted(async () => {
   await groupStore.fetchAllGroups()
   graphDataGroup.value = getgraphDataGroup()
@@ -259,62 +309,65 @@ onMounted(async () => {
   graphDataSession.value = getgraphDataSession()
   createGroupStudentChart()
   createSessionTypeChart()
+
+  todaysSession.value = sessionStore.sessionList.filter(
+    (session) => new Date(session.sessionDate).toDateString() === new Date().toDateString(),
+  )
+
+  console.log(taskStore.taskList)
 })
 
-const columns = [
-  { name: 'group', required: true, label: 'Group', align: 'left', field: 'group', sortable: true },
-  { name: 'session', align: 'left', label: 'Session', field: 'session' },
-  { name: 'date', align: 'left', label: 'Date', field: 'date' },
-  { name: 'taskSubmitted', align: 'left', label: 'Task Submitted', field: 'taskSubmitted' },
-  { name: 'taskEvaluated', align: 'left', label: 'Task Evaluated', field: 'taskEvaluated' },
+const todaysSessionColumn = [
   {
-    name: 'totalParticipated',
+    name: 'sessionName',
+    required: true,
+    label: 'Session Name',
     align: 'left',
-    label: 'Total Participated',
-    field: 'totalParticipated',
+    field: 'sessionName',
+    sortable: true,
+  },
+  { name: 'sessionDate', align: 'left', label: 'Session Date', field: 'sessionDate' },
+  {
+    name: 'isActive',
+    align: 'left',
+    label: 'Active',
+    field: 'isActive',
   },
 ]
-
-const tableData = ref([
+const groupColumns = [
+  { name: 'groupName', label: 'Group Name', align: 'left', field: 'groupName', sortable: true },
   {
-    group: 'Group A',
-    session: 'Session 1',
-    date: '2023-10-26',
-    taskSubmitted: 10,
-    taskEvaluated: 8,
-    totalParticipated: 15,
+    name: 'code',
+    label: 'Course Code',
+    align: 'left',
+    field: (row) => row.course?.code || '-',
+    sortable: true,
   },
   {
-    group: 'Group B',
-    session: 'Session 2',
-    date: '2023-10-27',
-    taskSubmitted: 12,
-    taskEvaluated: 11,
-    totalParticipated: 20,
+    name: 'course',
+    label: 'Course Name',
+    align: 'left',
+    field: (row) => row.course?.name || '-',
+    sortable: true,
   },
   {
-    group: 'Group C',
-    session: 'Session 3',
-    date: '2023-10-28',
-    taskSubmitted: 8,
-    taskEvaluated: 8,
-    totalParticipated: 10,
+    name: 'department',
+    label: 'Department',
+    align: 'left',
+    field: (row) => row.department?.name || '-',
+    sortable: true,
   },
+  { name: 'batch', label: 'Batch', align: 'left', field: 'batch', sortable: true },
+  { name: 'semester', label: 'Semester', align: 'left', field: 'semester', sortable: true },
+  { name: 'year', label: 'Year', align: 'left', field: 'year', sortable: true },
   {
-    group: 'Group D',
-    session: 'Session 4',
-    date: '2023-10-29',
-    taskSubmitted: 15,
-    taskEvaluated: 13,
-    totalParticipated: 25,
+    name: 'members',
+    label: 'Members',
+    align: 'left',
+    field: (row) => row.members?.length || 0,
+    sortable: true,
   },
-])
-
-const tasks = ref([
-  { title: 'Prepare Lesson Plan', description: 'For Group A', completed: false },
-  { title: 'Send Session Reminders', description: 'To all students', completed: true },
-  { title: 'Review Assignments', description: 'From Week 2', completed: false },
-])
+]
 
 // const totalGroups = ref(3)
 // const totalSessions = ref(15)
@@ -346,5 +399,19 @@ const tasks = ref([
 .q-table {
   border-radius: 8px;
   overflow: hidden;
+}
+
+/* Header background: grey */
+::v-deep(.q-table thead tr) {
+  background-color: #f0f0f0;
+}
+
+/* Alternate row colors */
+::v-deep(.q-table tbody tr:nth-child(even)) {
+  background-color: #fafafa;
+}
+
+::v-deep(.q-table tbody tr:nth-child(odd)) {
+  background-color: #ffffff;
 }
 </style>

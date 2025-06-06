@@ -9,7 +9,7 @@
         <q-tab name="materials" label="Materials" />
         <q-tab name="video" label="Video Links" />
         <q-tab name="coding" label="Coding Links" />
-        <q-tab name="tasks" label="Tasks" />
+        <!-- <q-tab name="tasks" label="Tasks" /> -->
       </q-tabs>
 
       <q-separator class="q-my-md" />
@@ -199,7 +199,7 @@
         </q-tab-panel>
 
         <!-- Tasks -->
-        <q-tab-panel name="tasks">
+        <!-- <q-tab-panel name="tasks">
           <div v-for="(task, index) in tasks" :key="index" class="q-mb-sm">
             <div class="text-h6">Task {{ index + 1 }}</div>
             here
@@ -231,7 +231,7 @@
             Total: {{ tasks.length }}
             <q-btn label="Add Task" color="primary" @click="addTask" class="q-mb-sm" />
           </div>
-        </q-tab-panel>
+        </q-tab-panel> -->
       </q-tab-panels>
 
       <!-- Submit -->
@@ -331,9 +331,9 @@ const addVideoLink = () => {
 }
 
 // Add Task Function
-const addTask = () => {
-  tasks.value.push({ title: '', description: '' })
-}
+// const addTask = () => {
+//   tasks.value.push({ title: '', description: '' })
+// }
 
 // Remove Question Function
 const removeQuestion = (index) => {
@@ -341,9 +341,9 @@ const removeQuestion = (index) => {
 }
 
 // Remove Task Function
-const removeTask = (index) => {
-  tasks.value.splice(index, 1)
-}
+// const removeTask = (index) => {
+//   tasks.value.splice(index, 1)
+// }
 
 // Remove Link Function (for material, video, and coding platform links)
 const removeLink = (arrayName, index) => {

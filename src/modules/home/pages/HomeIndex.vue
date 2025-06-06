@@ -1,132 +1,177 @@
 <template>
-  <q-page padding class="q-pa-md q-px-xl">
-    <!-- banner section -->
-    <section
-      class="q-pa-md text-h1 row items-center"
-      style="height: 90vh; font-family: 'Londrina Shadow', cursive"
-    >
-      <div class="row">
-        <div class="col-12 brand">
-          <span class="text-secondary">Code.</span><span>&nbsp;With Joy</span>
+  <q-page padding class="modern-bg q-pa-none">
+    <!-- Hero Section -->
+    <section class="hero-section flex flex-center column q-pa-xl">
+      <div class="hero-title text-center q-mb-sm">
+        <span class="gradient-text">UNIFLOW</span>
+      </div>
+      <div class="hero-subtitle text-center q-mb-lg">
+        Modern Interactive Class Management<br />
+        <span class="gradient-text-2">Groups • Sessions • Tasks • Notes</span>
+      </div>
+      <q-btn
+        color="secondary"
+        size="lg"
+        class=""
+        label="Get Started"
+        @click="router.push('/auth/login')"
+      />
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section flex flex-center q-py-xl">
+      <div class="features-grid">
+        <div class="feature-card">
+          <q-icon name="group" color="secondary" size="40px" />
+          <div class="feature-title">Interactive Classes</div>
+          <div class="feature-desc">
+            Manage and participate in dynamic, real-time class sessions.
+          </div>
         </div>
-        <div class="col-12 brand">
-          <span class="text-secondary">Share.</span><span>&nbsp;Anytime</span>
+        <div class="feature-card">
+          <q-icon name="groups" color="secondary" size="40px" />
+          <div class="feature-title">Group Collaboration</div>
+          <div class="feature-desc">Create and join groups for seamless teamwork and learning.</div>
         </div>
-        <div class="col-12 brand">
-          <span class="text-secondary">Collaborate.</span><span>&nbsp;With Friends</span>
+        <div class="feature-card">
+          <q-icon name="event_note" color="secondary" size="40px" />
+          <div class="feature-title">Session Management</div>
+          <div class="feature-desc">Organize group-based sessions with ease and flexibility.</div>
         </div>
-        <div class="col-12 brand">
-          <span class="text-secondary">A Lab Experience</span><span>&nbsp;Won't Bore You</span>
+        <div class="feature-card">
+          <q-icon name="edit_note" color="secondary" size="40px" />
+          <div class="feature-title">Smart Notes</div>
+          <div class="feature-desc">Take, organize, and share notes during sessions.</div>
         </div>
-        <div class="col-12 brand">
-          <span class="text-secondary">Like Never Before!</span><span>&nbsp;With Fun & Joy!!!</span>
+        <div class="feature-card">
+          <q-icon name="checklist" color="secondary" size="40px" />
+          <div class="feature-title">To-Do & Tasks</div>
+          <div class="feature-desc">Track your to-dos and submit tasks efficiently.</div>
+        </div>
+        <div class="feature-card">
+          <q-icon name="assignment_turned_in" color="secondary" size="40px" />
+          <div class="feature-title">Easy Submission</div>
+          <div class="feature-desc">Create, assign, and submit tasks in a few clicks.</div>
         </div>
       </div>
     </section>
-
-    <!-- description section  -->
-    <section
-      class="row justify-center items-center q-pa-md text-dark text-body1 description-layout"
-      style="height: 80vh"
-    >
-      <div class="q-ma-xl description-bg">
-        <div>
-          <div class="text-h2 text-bold text-center q-pb-md brand_bb">
-            Welcome to <span class="brand_sb">UNIFLOW</span>
-          </div>
-          A real-time collaborative learning hub designed for university students and educators.
-          Built with Quasar and Firebase, our platform revolutionizes lab-based coding classes by
-          making them interactive, engaging, and efficient.
-        </div>
-        <div class="key-features q-mt-lg text-h4">Key Features:</div>
-        <div style="font-family: 'Londrina Solid', cursive" class="q-ml-lg q-pa-md">
-          <div style="">
-            <i class="fa-regular fa-square-check"></i> Role-Based Authentication – Secure access for
-            students, teachers, and admins.
-          </div>
-          <div>
-            <i class="fa-regular fa-square-check"></i> Seamless Class Management – Easily create or
-            join class sessions using unique IDs.
-          </div>
-          <div>
-            <i class="fa-regular fa-square-check"></i> Smart Task Assignment – Upload, submit, and
-            evaluate assignments effortlessly.
-          </div>
-          <div>
-            <i class="fa-regular fa-square-check"></i> Live Code Collaboration – Work together in
-            real-time with a shared online code editor.
-          </div>
-          <div>
-            <i class="fa-regular fa-square-check"></i> Instant Chat & Feedback – Communicate and
-            collaborate seamlessly.
-          </div>
-          <div>
-            <i class="fa-regular fa-square-check"></i> Leaderboard & Performance Tracking – Stay
-            motivated with rankings and task scores.
-          </div>
-          <div>
-            <i class="fa-regular fa-square-check"></i> Admin Control Panel – Manage users, sessions,
-            and activities efficiently.
-          </div>
-        </div>
-        <div>
-          Whether you’re a student looking to enhance your coding skills, a teacher simplifying lab
-          management, or an admin ensuring smooth operations,
-          <span style="font-family: 'Londrina Solid', cursives">UNIFLOW</span>
-          provides the perfect environment for hands-on learning. Join now and elevate your lab
-          experience with real-time collaboration!
-        </div>
-      </div>
-    </section>
-
-    <!-- user count -->
-    <section class="q-pa-md text-dark text-body1">
-      <div class="text-h1 text-center" style="font-family: 'Londrina Solid', cursive">11</div>
-    </section>
-    <section>Futer plans</section>
   </q-page>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+</script>
 
 <style lang="scss" scoped>
-.brand {
-  font-family: 'Londrina Shadow', cursive;
-  color: #fff;
-  transition:
-    color 0.3s ease-in-out,
-    transform 0.3s ease-in-out;
+.modern-bg {
+  min-height: 100vh;
+  background: #ffffff;
 }
 
-.brand:hover {
-  color: #e97b2f;
-  transform: scale(1.05); /* Increases size on hover */
+.hero-section {
+  min-height: 60vh;
+  background: #ffffff;
+  border-bottom: 2px solid #e0e0e0;
+  position: relative;
+  z-index: 2;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
-.description-bg {
-  background: rgba(255, 255, 255, 0.164);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.key-features {
+.hero-title {
   font-family: 'Londrina Solid', cursive;
-  transition: text-shadow 0.3s ease-in-out;
+  font-size: 3.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #134f7b;
 }
 
-.key-features:hover {
-  font-family: 'Londrina Shadow', cursive;
+.hero-subtitle {
+  font-family: 'Londrina Solid', cursive;
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
 }
 
-.description-layout {
-  background-color: #c0ccd4;
-  // background-size: cover;
-  // width: 100%;
-  // height: fit-content;
-  // background-position: center;
-  // background-repeat: no-repeat;
-  border-radius: 10px;
+.gradient-text,
+.gradient-text-2 {
+  color: #134f7b;
+  background: none;
+  -webkit-text-fill-color: initial;
+}
+
+.hero-btn {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 24px;
+  background-color: #134f7b;
+  color: #fff;
+  padding: 12px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.hero-btn:hover {
+  background-color: #0e3d61;
+}
+
+.features-section {
+  background: #ffffff;
+  position: relative;
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.feature-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e0e0e0;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-height: 240px;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.feature-title {
+  font-family: 'Londrina Solid', cursive;
+  font-size: 1.25rem;
+  color: #134f7b;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.feature-desc {
+  font-size: 1rem;
+  color: #444;
+  text-align: center;
+  font-family: 'Londrina Solid', cursive;
+}
+
+.q-icon {
+  color: #134f7b !important;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 6px;
 }
 </style>

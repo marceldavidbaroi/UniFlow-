@@ -77,7 +77,7 @@
                 style="min-width: 160px; max-width: 220px"
               />
 
-              <q-select
+              <!-- <q-select
                 v-model="selectedSession"
                 :options="sessionOptions"
                 label="Session"
@@ -94,7 +94,7 @@
                 color="secondary"
                 bg-color="white"
                 style="min-width: 160px; max-width: 220px"
-              />
+              /> -->
             </div>
             <div class="text-h5 text-primary q-mb-xs modern-task-title">{{ task?.subject }}</div>
             <div class="q-mb-md text-grey-7 text-body1 modern-task-desc">
@@ -349,9 +349,9 @@ watch(
 function onGroupChange(val) {
   emit('edit', { ...props.task, groupID: val })
 }
-function onSessionChange(val) {
-  emit('edit', { ...props.task, sessionId: val })
-}
+// function onSessionChange(val) {
+//   emit('edit', { ...props.task, sessionId: val })
+// }
 
 watch(
   () => props.task?.state,

@@ -140,7 +140,6 @@
     v-model="showTaskDialog"
     :task="selectedTask"
     :group-options="props.groupOptions"
-    :session-options="props.sessionOptions"
     @delete-task="handleDeleteTask"
     @edit="handleUpdateTask"
   />

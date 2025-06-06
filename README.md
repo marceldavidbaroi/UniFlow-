@@ -1,112 +1,82 @@
-# Collaborative Learning Hub (or Live Classroom Connect)
+# UNIFLOW – Modern Interactive Class Management
 
-A real-time collaborative learning platform for university students, built with Quasar Framework and Firebase.
+A real-time collaborative learning platform for university students and educators, built with Quasar Framework and Firebase.
 
-## Project Overview
+## Overview
 
-This project aims to create a dynamic and interactive online learning environment that facilitates seamless collaboration between students and teachers. It leverages the power of Quasar Framework for a responsive user interface and Firebase for real-time data management and authentication.
+UNIFLOW provides a seamless environment for managing interactive classes, creating and joining groups, organizing group-based sessions, and handling tasks and notes—all in real time. The platform is designed for students, teachers, and admins to collaborate efficiently and intuitively.
 
 ## Core Features
 
-- **Authentication and Authorization:**
-  -      Firebase Authentication (email/password, Google, etc.).
-  -      Role-based access control (Student, Teacher, Admin).
-  -      Unique Teacher ID.
-  -      Secure Admin Panel.
-- **Class Sessions:**
-  -      Session creation with date/time, unique ID, and subject.
-  -      Session management (add/remove students, edit details, end sessions).
-  -      Student joining via unique Session ID.
-- **Task Management:**
-  -      Task creation with descriptions, due dates, and attachments (Firebase Storage).
-  -      Student submissions (file uploads, online code editor).
-  -      Teacher grading and feedback.
-- **Real-time Collaborative Coding:**
-  -      Integrated online code editor (Monaco, CodeMirror).
-  -      Live coding and code sharing.
-  -      Real-time chat (Firebase Realtime Database/Firestore).
-- **Leaderboard:**
-  -      Displays student scores and submission status.
-  -      Real-time updates, filtering, and sorting.
+- **Authentication & Authorization:**
+  - Secure login with Firebase Authentication (email/password, Google, etc.)
+  - Role-based access: Student, Teacher, Admin
+- **Interactive Class Management:**
+  - Create, join, and manage class sessions
+  - Group-based session creation and management
+- **Group Collaboration:**
+  - Create and join groups for collaborative learning
+  - Group chat and shared resources
+- **Task & To-Do Management:**
+  - Create, assign, and submit tasks
+  - Track to-dos and deadlines
+  - Attachments and online code editor for submissions
+- **Smart Notes:**
+  - Take, organize, and share notes during sessions
 - **Admin Panel:**
-  -      User management (view, authorize, delete, change roles).
-  -      Session management (view, delete).
-  -      System logs.
+  - Manage users, sessions, groups, and activities
+  - View system logs and change user roles
 
 ## Technology Stack
 
 - **Frontend:**
-  -      [Quasar Framework](https://quasar.dev/) (Vue.js)
-  - Real time code editors(Monaco, CodeMirror).
+  - [Quasar Framework](https://quasar.dev/) (Vue.js)
 - **Backend:**
-  -      [Firebase Authentication](https://firebase.google.com/docs/auth)
+  - [Firebase Authentication](https://firebase.google.com/docs/auth)
   - [Firebase Firestore](https://firebase.google.com/docs/firestore)
   - [Firebase Realtime Database](https://firebase.google.com/docs/database)
   - [Firebase Storage](https://firebase.google.com/docs/storage)
   - [Firebase Cloud Functions](https://firebase.google.com/docs/functions) (optional)
-  - Possible integration with WebRTC for enhanced real time features.
 
-## Architecture Considerations
+## Architecture & Design
 
-- Component-based design.
-- State management (Vuex/Pinia).
-- Firebase Security Rules.
-- Robust error handling.
-- Scalable design.
-- User-centered UX.
-- Responsive UI.
-
-## Implementation Steps
-
-1.  **Project Setup:** Firebase project, Quasar CLI, Firebase SDK.
-2.  **Authentication:** Firebase Authentication, login/logout/signup components.
-3.  **Database Design:** Firestore collections and documents.
-4.  **Session Management:** Session creation, joining, management.
-5.  **Task Management:** Task creation, submission, grading.
-6.  **Real-time Collaboration:** Code editor integration, live coding, chat.
-7.  **Leaderboard:** Leaderboard component with real-time updates.
-8.  **Admin Panel:** User and session management.
-9.  **Testing:** Thorough testing of all features.
-10. **Deployment:** Firebase Hosting.
-
-## Enhancements (Future)
-
-- Push notifications.
-- Video conferencing.
-- Calendar integration.
-- Code Playback.
-- API integrations.
-- Accessibility improvements.
+- Component-based UI
+- State management with Pinia or Vuex
+- Firebase Security Rules for data protection
+- Responsive, user-centered design
+- Robust error handling and scalable structure
 
 ## Getting Started
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
+   ```bash
+   git clone [repository_url]
+   cd [project_directory]
+   ```
+2. **Install dependencies:**
+   ```bash
+   yarn install # or npm install
+   ```
+3. **Configure Firebase:**
+   - Create a Firebase project
+   - Add your Firebase configuration to the project
+4. **Run the development server:**
+   ```bash
+   quasar dev
+   ```
 
-    ```bash
-    git clone [repository_url]
-    cd [project_directory]
-    ```
+## Future Enhancements
 
-2.  **Install dependencies:**
-
-    ```bash
-    yarn install # or npm install
-    ```
-
-3.  **Configure Firebase:**
-
-    - Create a Firebase project.
-    - Add your Firebase configuration to the project.
-
-4.  **Run the development server:**
-
-    ```bash
-    quasar dev
-    ```
+- Push notifications
+- Video conferencing
+- Calendar integration
+- Code playback and review
+- API integrations
+- Accessibility improvements
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs or feature requests.
+Contributions are welcome! Please submit pull requests or open issues for bugs or feature requests.
 
 ## License
 

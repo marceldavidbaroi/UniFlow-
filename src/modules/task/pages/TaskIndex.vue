@@ -1,7 +1,6 @@
 <template>
   <q-page padding>
     <template v-if="taskStore.taskList && taskStore.taskList.length > 0">
-      {{ userStore.currentUser }}
       <TaskList
         :tasks="taskStore.taskList"
         :group-options="groupOption"

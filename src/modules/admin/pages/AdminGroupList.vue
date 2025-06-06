@@ -67,23 +67,17 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
 import { useAdminStore } from 'src/stores/admin-store'
 import FilterSearch from '../components/filterSearch.vue'
 
 const adminStore = useAdminStore()
 const router = useRouter()
-const $q = useQuasar()
 
-const courses = ref([])
 const loading = ref(false)
 const showAddDialog = ref(false)
 const showSampleDialog = ref(false)
-const sampleLoading = ref(false)
 const samplePassword = ref('')
 const samplePasswordError = ref('')
-const sampleProgress = ref(0)
-const sampleProgressMsg = ref('')
 
 const searchText = ref('')
 const searchType = ref('name')

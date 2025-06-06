@@ -17,7 +17,7 @@
 
     <!-- Loading State -->
     <q-inner-loading :showing="loading">
-      <q-spinner-pie size="50px" color="secondary" />
+      <q-spinner-grid size="50px" color="secondary" />
     </q-inner-loading>
 
     <!-- Empty State -->

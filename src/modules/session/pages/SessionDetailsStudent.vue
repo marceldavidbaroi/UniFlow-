@@ -1,6 +1,5 @@
 <template>
   <q-page>
-    this needs work
     <div v-if="data">
       <!-- Session Name -->
       <div class="brand_sb text-center text-h2 q-my-lg">
@@ -70,7 +69,7 @@
           <q-tab name="materials" label="Material Links" icon="article" />
           <q-tab name="questions" label="Questions" icon="quiz" />
           <q-tab name="coding" label="Coding Challenges " icon="code" />
-          <q-tab name="tasks" label="Tasks" icon="task" />
+          <!-- <q-tab name="tasks" label="Tasks" icon="task" /> -->
           <q-tab name="participants" label="Participants" icon="group" />
         </q-tabs>
 
@@ -394,7 +393,7 @@
     <!-- Loading State -->
     <div v-else class="flex flex-center q-mt-md" style="height: 100vh">
       <div class="text-center">
-        <q-spinner-pie color="secondary" size="2em" />
+        <q-spinner-grid color="secondary" size="50px" />
         <div>Loading session details...</div>
       </div>
     </div>
