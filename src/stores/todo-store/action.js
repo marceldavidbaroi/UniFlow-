@@ -7,6 +7,7 @@
  * - searchTodos(searchTerm)
  * - sortTodos(key, direction)
  * - filterTodos(filterFn)
+ *  - deleteAllTodos()
 
  */
 
@@ -153,6 +154,28 @@ export default {
       success: true,
       message: `${filtered.length} todo(s) matched the filter`,
       data: filtered,
+    }
+  },
+  async deleteAllTodos() {
+    const userStore = useUserStore()
+    const userId = userStore.currentUser.id
+    if (!userId) throw new Error('User not authenticated')
+
+    const todosRef = collection(db, 'todos', userId, 'items')
+    const snapshot = await getDocs(todosRef)
+
+    const batchDeletes = []
+    snapshot.forEach((docSnap) => {
+      batchDeletes.push(deleteDoc(docSnap.ref))
+    })
+
+    await Promise.all(batchDeletes)
+
+    this.todos = []
+
+    return {
+      success: true,
+      message: 'All todos deleted successfully',
     }
   },
 }

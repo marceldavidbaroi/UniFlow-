@@ -83,7 +83,7 @@
           <!-- LEFT -->
           <template v-slot:before>
             <div class="column full-height bg-grey-1 q-pa-sm">
-              <div class="row items-center justify-between q-mb-sm">
+              <div class="row items-center q-mb-sm">
                 <div class="text-subtitle1">Notes</div>
                 <q-btn
                   dense
@@ -93,6 +93,7 @@
                   text-color="blue-10"
                   :label="isUserNotes ? 'Your notes' : 'Public notes'"
                   @click="toggleNotes"
+                  class="q-ml-md"
                 />
               </div>
 

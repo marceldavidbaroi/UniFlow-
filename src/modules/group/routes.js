@@ -16,27 +16,33 @@ export default [
         component: () => import('./pages/GroupListIndex.vue'),
         meta: {
           requiresAuth: true,
-          roles: ['teacher','student'],
+          roles: ['teacher', 'student'],
         },
       },
-      { path: ':id', component: () => import('./pages/GroupDetailsIndex.vue'),
+      {
+        path: ':id',
+        component: () => import('./pages/GroupDetailsIndex.vue'),
         meta: {
           requiresAuth: true,
-          roles: ['teacher','student']
-        }
-       },
-      { path: 'join/:id', component: () => import('./pages/GroupJoinIndex.vue'),
+          roles: ['teacher', 'student', 'admin'],
+        },
+      },
+      {
+        path: 'join/:id',
+        component: () => import('./pages/GroupJoinIndex.vue'),
         meta: {
           requiresAuth: true,
-          roles: ['teacher','student']
-        }
-       },
-       { path: 'edit/:id', component: () => import('./pages/EditGroupDetails.vue'),
+          roles: ['teacher', 'student'],
+        },
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('./pages/EditGroupDetails.vue'),
         meta: {
           requiresAuth: true,
-          roles: ['teacher']
-        }
-       },
+          roles: ['teacher'],
+        },
+      },
     ],
   },
 ]

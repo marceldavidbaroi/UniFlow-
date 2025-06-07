@@ -4,7 +4,7 @@
     <div class="row items-center q-mb-md">
       <FilterSearch :searchTypeOptions="searchTypeOptions" @search="onSearch" />
       <q-space />
-      <q-btn
+      <!-- <q-btn
         color="negative"
         label="Add Sample Courses"
         @click="showSampleDialog = true"
@@ -17,7 +17,7 @@
         @click="openAddDialog"
         icon="add"
         class="q-ml-md shadow-1 rounded-borders"
-      />
+      /> -->
     </div>
     <div class="q-mb-sm">
       <q-chip
@@ -28,7 +28,7 @@
         align="middle"
         class="q-pa-sm text-subtitle2 shadow-1 rounded-borders"
       >
-        Total Courses: {{ Array.isArray(adminStore.allGroup) ? adminStore.allGroup.length : 0 }}
+        Total Groups: {{ Array.isArray(adminStore.allGroup) ? adminStore.allGroup.length : 0 }}
       </q-chip>
     </div>
     <q-table
@@ -45,21 +45,6 @@
       :loading="loading"
       @row-click="goToDetailByCode"
     >
-      <template v-slot:body-cell-name="props">
-        <q-td :props="props">
-          {{ props.row.name }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-initial="props">
-        <q-td :props="props">
-          {{ props.row.initial }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-code="props">
-        <q-td :props="props">
-          {{ props.row.code }}
-        </q-td>
-      </template>
     </q-table>
   </q-page>
 </template>
@@ -74,24 +59,66 @@ const adminStore = useAdminStore()
 const router = useRouter()
 
 const loading = ref(false)
-const showAddDialog = ref(false)
+// const showAddDialog = ref(false)
 const showSampleDialog = ref(false)
 const samplePassword = ref('')
 const samplePasswordError = ref('')
 
-const searchText = ref('')
-const searchType = ref('name')
 const searchTypeOptions = [
-  { label: 'Name', value: 'name' },
-  { label: 'Initial', value: 'initial' },
-  { label: 'Code', value: 'code' },
+  { label: 'Name', value: 'groupName' },
+  { label: 'Year', value: 'year' },
 ]
 
 const columns = [
-  // { name: 'id', label: 'ID', field: 'id', align: 'left' }, // hidden but kept for reference
-  { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
-  { name: 'code', label: 'Code', field: 'code', align: 'left', sortable: true },
-  { name: 'credits', label: 'Credits', field: 'credits', align: 'left', sortable: true },
+  {
+    name: 'groupName',
+    label: 'Group Name',
+    field: 'groupName',
+    align: 'left',
+    sortable: true,
+  },
+  {
+    name: 'course',
+    label: 'Course',
+    field: (row) => row.course?.name || '—',
+    align: 'left',
+    sortable: true,
+  },
+  {
+    name: 'department',
+    label: 'Department',
+    field: (row) => row.department?.name || '—',
+    align: 'left',
+    sortable: true,
+  },
+  {
+    name: 'owner',
+    label: 'Owner',
+    field: (row) => row.owner?.name || '—',
+    align: 'left',
+    sortable: true,
+  },
+  {
+    name: 'members',
+    label: 'Members',
+    field: (row) => row.members?.length || 0,
+    align: 'left',
+    sortable: true,
+  },
+  {
+    name: 'semester',
+    label: 'Semester',
+    field: 'semester',
+    align: 'left',
+    sortable: true,
+  },
+  {
+    name: 'year',
+    label: 'Year',
+    field: 'year',
+    align: 'left',
+    sortable: true,
+  },
 ]
 
 async function fetchGroups(search = {}) {
@@ -101,16 +128,25 @@ async function fetchGroups(search = {}) {
   loading.value = false
 }
 function goToDetailByCode(evt, row) {
-  router.push(`/admin/course/${row.id}`)
+  router.push(`/group/${row.id}`)
 }
-function openAddDialog() {
-  showAddDialog.value = true
-}
-function onSearch() {
-  if (!searchText.value) {
+// function openAddDialog() {
+//   showAddDialog.value = true
+// }
+// async function onSearch() {
+//   if (!searchText.value) {
+//     console.log(searchText)
+//     await fetchGroups()
+//   } else {
+//     await fetchGroups({ [searchType.value]: searchText.value })
+//   }
+// }
+
+function onSearch({ type, text }) {
+  if (!text) {
     fetchGroups()
   } else {
-    fetchGroups({ [searchType.value]: searchText.value })
+    fetchGroups({ [type]: text })
   }
 }
 

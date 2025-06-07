@@ -26,7 +26,7 @@
 
         <div v-else>
           <q-btn icon="search" label="Search" @click="toggleSearchBox" />
-          <q-btn icon="clear" label="Clear" @click="onClear" />
+          <q-btn icon="clear" label="Clear All Filters" @click="onClear" />
           <q-btn-dropdown icon="filter_list" label="Filter">
             <q-list style="min-width: 150px">
               <!-- ALL Option -->
@@ -103,6 +103,7 @@
               </q-item>
             </q-list>
           </q-btn-dropdown>
+          <q-btn icon="delete" color="negative" label="Delete" @click="onDeleteAll" />
         </div>
       </div>
       <div>
@@ -128,6 +129,15 @@
     <!-- Floating Action Button -->
     <q-btn fab color="secondary" icon="add" class="fab-button" @click="showCreateDialog = true" />
     <CreateTodoDialog v-model="showCreateDialog" />
+
+    <DeleteDialog
+      v-model="showDialog"
+      :card-title="'Delete Todos'"
+      :description="'Are you sure you want to delete all todos?'"
+      :input-field="false"
+      :button-label="'Delete Forever'"
+      @confirm-delete="handleDelete"
+    />
   </q-page>
 </template>
 
@@ -137,6 +147,7 @@ import { useTodoStore } from 'src/stores/todo-store'
 import { onMounted, ref, watch } from 'vue'
 import TodoList from '../components/TodoList.vue'
 import CreateTodoDialog from '../components/CreateTodoDialog.vue'
+import DeleteDialog from '../../../components/DeleteDialog.vue'
 
 // Reactive references
 const todoStore = useTodoStore()
@@ -213,15 +224,17 @@ function applyFilters() {
   } else {
     filterFn = (todo) => {
       const matchPriority =
-        (filters.value.high && todo.priority === 'high') ||
-        (filters.value.medium && todo.priority === 'medium') ||
-        (filters.value.low && todo.priority === 'low')
+        (filters.value.high && todo.priority.toLowerCase() === 'high') ||
+        (filters.value.medium && todo.priority.toLowerCase() === 'medium') ||
+        (filters.value.low && todo.priority.toLowerCase() === 'low')
+
       return matchPriority
     }
   }
 
-  const result = todoStore.filterTodos(data.value, filterFn)
+  const result = todoStore.filterTodos(todoStore.todos, filterFn)
   filteredTodos.value = result.data
+  console.log(filteredTodos.value)
 }
 
 function sortTodos(criteria) {
@@ -321,7 +334,15 @@ watch(searchQuery, (newVal) => {
   console.log('Search input changed:', newVal)
   applySearch()
 })
+const showDialog = ref(false)
+const onDeleteAll = () => {
+  showDialog.value = true
+}
 
+const handleDelete = async () => {
+  await todoStore.deleteAllTodos()
+  await todoStore.getTodos()
+}
 // Ensure todos are fetched before searching
 onMounted(async () => {
   await todoStore.getTodos()
