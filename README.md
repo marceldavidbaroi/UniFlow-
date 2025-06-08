@@ -32,36 +32,52 @@ UNIFLOW provides a seamless environment for managing interactive classes, creati
 - **Frontend:**
   - [Quasar Framework](https://quasar.dev/) (Vue.js)
 - **Backend:**
-  - [Firebase Authentication](https://firebase.google.com/docs/auth)
   - [Firebase Firestore](https://firebase.google.com/docs/firestore)
-  - [Firebase Realtime Database](https://firebase.google.com/docs/database)
-  - [Firebase Storage](https://firebase.google.com/docs/storage)
-  - [Firebase Cloud Functions](https://firebase.google.com/docs/functions) (optional)
 
 ## Architecture & Design
 
 - Component-based UI
-- State management with Pinia or Vuex
+- State management with Pinia
 - Firebase Security Rules for data protection
 - Responsive, user-centered design
 - Robust error handling and scalable structure
 
+## Firestore Requirement
+
+This project requires a Firebase Firestore database to store and sync data in real time. You must create a Firestore instance in your Firebase project and configure security rules to protect your data.
+
+## Environment Setup
+
+Create a `.env` file at the root of your project and add your Firebase configuration using the example below:
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+Note: The VITE\_ prefix is required so these variables can be accessed in your Quasar application via import.meta.env.
+
 ## Getting Started
 
 1. **Clone the repository:**
-   ```bash
+   ```powershell
    git clone [repository_url]
    cd [project_directory]
    ```
 2. **Install dependencies:**
-   ```bash
-   yarn install # or npm install
+   ```powershell
+   npm install
    ```
 3. **Configure Firebase:**
-   - Create a Firebase project
-   - Add your Firebase configuration to the project
+   - Create a Firebase project and enable Firestore and Authentication.
+   - Add your Firebase config to the .env file as shown above.
 4. **Run the development server:**
-   ```bash
+   ```powershell
    quasar dev
    ```
 
