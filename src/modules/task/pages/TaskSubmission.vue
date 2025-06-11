@@ -228,7 +228,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTaskStore } from 'src/stores/taskStore'
-import { useUserStore } from 'src/stores/user-store'
+import { useUserStore } from 'src/stores/taskStore'
 import { Notify } from 'quasar'
 const route = useRoute()
 const taskStore = useTaskStore()
